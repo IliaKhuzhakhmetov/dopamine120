@@ -10,4 +10,3 @@ components during development.
   `Dop*` widgets.
 - `packages/dopamine_ui/example/` - Widgetbook catalog app for the UI kit.
 - `apps/dopamine_app/` - placeholder for the future product app.
-
