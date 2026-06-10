@@ -1,0 +1,30 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Repository layout
+
+DOPAMINE120 is a Flutter monorepo:
+
+- `packages/dopamine_ui/` — the UI kit (design tokens, theme, core `Dop*` widgets). 
+- `packages/dopamine_ui/example/` — a Widgetbook catalog app for browsing the UI kit
+- `apps/dopamine_app/` — placeholder for the future product app; currently empty.
+
+## Commands
+
+Run these from the package directory you're working in (e.g. `packages/dopamine_ui`), not the repo root:
+
+- `flutter pub get` — fetch dependencies
+- `flutter analyze` — lint (flutter_lints, configured per package via `analysis_options.yaml`)
+- `flutter test` — run tests; single file: `flutter test test/<file>_test.dart`
+- `dart format .` — format
+
+To see widgets rendered, run the Widgetbook catalog:
+
+```sh
+cd packages/dopamine_ui/example && flutter run
+```
+
+## Architecture
+
+The UI kit follows a token → theme → widget pipeline; conventions for working inside it are in `.claude/rules/dopamine-ui.md` and load automatically when you touch its files.
