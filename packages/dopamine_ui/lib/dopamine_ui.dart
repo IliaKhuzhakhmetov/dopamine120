@@ -7,4 +7,5 @@ export 'src/theme/dop_theme.dart';
 export 'src/theme/dop_typography.dart';
 export 'src/widgets/dop_button.dart';
 export 'src/widgets/dop_input.dart';
+export 'src/widgets/dop_list_tile.dart';
 export 'src/widgets/dop_text.dart';

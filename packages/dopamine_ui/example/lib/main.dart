@@ -99,6 +99,27 @@ class WidgetbookApp extends StatelessWidget {
           ],
         ),
         WidgetbookComponent(
+          name: 'DopListTile',
+          useCases: [
+            WidgetbookUseCase(
+              name: 'Milestones',
+              builder: (_) => const _MilestoneList(),
+            ),
+            WidgetbookUseCase(
+              name: 'Single',
+              builder: (_) => Center(
+                child: DopListTile(
+                  index: '001',
+                  title: 'first silence',
+                  subtitle: '24 hours, no feeds',
+                  trailing: 'claimed',
+                  onTap: () {},
+                ),
+              ),
+            ),
+          ],
+        ),
+        WidgetbookComponent(
           name: 'Colors',
           useCases: [
             WidgetbookUseCase(name: 'Palette', builder: (_) => const _Palette()),
@@ -139,6 +160,64 @@ class _TextGallery extends StatelessWidget {
           SizedBox(height: 28),
           DopText.label('label'),
           DopText.label('current load'),
+        ],
+      ),
+    );
+  }
+}
+
+/// The milestones ledger: claimed rows full ink, locked rows dimmed.
+class _MilestoneList extends StatelessWidget {
+  const _MilestoneList();
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          DopListTile(
+            index: '001',
+            title: 'first silence',
+            subtitle: '24 hours, no feeds',
+            trailing: 'claimed',
+            onTap: () {},
+          ),
+          DopListTile(
+            index: '002',
+            title: 'seven',
+            subtitle: 'a clean week',
+            trailing: 'claimed',
+            onTap: () {},
+          ),
+          DopListTile(
+            index: '003',
+            title: 'under eighty',
+            subtitle: 'load below 80',
+            trailing: 'claimed',
+            onTap: () {},
+          ),
+          DopListTile(
+            index: '004',
+            title: 'dawn patrol',
+            subtitle: 'nothing before noon · 5 days',
+            trailing: 'claimed',
+            onTap: () {},
+          ),
+          const DopListTile(
+            index: '005',
+            title: 'off-grid weekend',
+            subtitle: 'a whole weekend dark',
+            trailing: '1 / 2',
+            dimmed: true,
+          ),
+          const DopListTile(
+            index: '006',
+            title: 'century down',
+            subtitle: 'average under 100 for a month',
+            trailing: '78 / 100',
+            dimmed: true,
+            divider: false,
+          ),
         ],
       ),
     );
