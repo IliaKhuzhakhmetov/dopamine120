@@ -7,7 +7,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 DOPAMINE120 is a Flutter monorepo:
 
 - `packages/dopamine_ui/` — the UI kit (design tokens, theme, core `Dop*` widgets). 
-- `packages/dopamine_ui/example/` — a Widgetbook catalog app for browsing the UI kit
 - `packages/logger/` — private `app_logger` package with a static `Log` API for debug-only console logging.
 - `apps/dopamine_app/` — placeholder for the future product app; currently empty.
 
