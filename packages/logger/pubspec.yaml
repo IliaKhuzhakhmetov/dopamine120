@@ -1,0 +1,17 @@
+name: app_logger
+description: "Minimal pretty console logger. Debug-only; silent in release builds."
+version: 0.0.1
+publish_to: none
+
+environment:
+  sdk: ^3.11.5
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0

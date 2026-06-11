@@ -8,6 +8,7 @@ DOPAMINE120 is a Flutter monorepo:
 
 - `packages/dopamine_ui/` — the UI kit (design tokens, theme, core `Dop*` widgets). 
 - `packages/dopamine_ui/example/` — a Widgetbook catalog app for browsing the UI kit
+- `packages/logger/` — private `app_logger` package with a static `Log` API for debug-only console logging.
 - `apps/dopamine_app/` — placeholder for the future product app; currently empty.
 
 ## Commands
@@ -24,7 +25,3 @@ To see widgets rendered, run the Widgetbook catalog:
 ```sh
 cd packages/dopamine_ui/example && flutter run
 ```
-
-## Architecture
-
-The UI kit follows a token → theme → widget pipeline; conventions for working inside it are in `.claude/rules/dopamine-ui.md` and load automatically when you touch its files.
