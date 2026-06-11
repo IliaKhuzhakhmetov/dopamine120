@@ -8,6 +8,7 @@ DOPAMINE120 is a Flutter monorepo:
 
 - `packages/dopamine_ui/` — the UI kit (design tokens, theme, core `Dop*` widgets). 
 - `packages/logger/` — private `app_logger` package with a static `Log` API for debug-only console logging.
+- `packages/platform_bridge/` — plugin exposing app blocking (iOS Screen Time / Android AccessibilityService) and health data (HealthKit / Health Connect) over MethodChannels; `PlatformBridgeFake` allows native-free development.
 - `apps/dopamine_app/` — placeholder for the future product app; currently empty.
 
 ## Commands

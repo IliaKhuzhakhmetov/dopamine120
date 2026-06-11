@@ -10,6 +10,13 @@
       "deviceId": "macos"
     },
     {
+      "name": "UI Kit Widgetbook (macOS)",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "${workspaceFolder}/packages/platform_bridge/example",
+      "program": "lib/main.dart",
+    },
+    {
       "name": "UI Kit Widgetbook (Chrome)",
       "request": "launch",
       "type": "dart",

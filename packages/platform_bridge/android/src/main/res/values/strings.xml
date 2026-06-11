@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_blocker_service_description">Sends apps you chose to block back to the home screen when they are opened during a focus block.</string>
+</resources>
