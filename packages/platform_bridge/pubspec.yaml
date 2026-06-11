@@ -2,6 +2,7 @@ name: platform_bridge
 description: "App blocking (Screen Time / AccessibilityService) and health data (HealthKit / Health Connect) bridge for DOPAMINE120."
 version: 0.0.1
 publish_to: none
+resolution: workspace
 
 environment:
   sdk: ^3.10.7

@@ -1,6 +1,7 @@
 name: dopamine_ui
 description: "DOPAMINE120 UI kit: design tokens, theme, and core widgets."
 version: 0.0.1
+resolution: workspace
 homepage:
 
 environment:

@@ -1,4 +1,4 @@
-name: dopamine120
+name: dopamine120_workspace
 description: "A new Flutter project."
 publish_to: 'none'
 version: 0.1.0
@@ -6,8 +6,13 @@ version: 0.1.0
 environment:
   sdk: ^3.10.7
 
-# workspace:
-#   uncomment when add new packages - packages/
+workspace:
+  - apps/dopamine120
+  - packages/dopamine_ui
+  - packages/dopamine_ui/example
+  - packages/logger
+  - packages/platform_bridge
+  - packages/platform_bridge/example
 
 dependencies:
   flutter:
