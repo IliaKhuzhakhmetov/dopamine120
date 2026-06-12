@@ -1,20 +1,40 @@
 name: dopamine120
-description: "A new Flutter project."
+description: "DOPAMINE120 — a dopamine trainer that pairs deliberate effort with a chosen reward to teach the brain to do things other than scrolling."
 publish_to: 'none'
 version: 0.1.0+1
 resolution: workspace
 
 environment:
-  sdk: ^3.11.5
+  sdk: ^3.10.7
 
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # packages  
+  app_logger:
+    path: ../../packages/logger
+  core:
+    path: ../../packages/core
+  dopamine_ui:
+    path: ../../packages/dopamine_ui
+  platform_bridge:
+    path: ../../packages/platform_bridge
+
+  # core  
+  auto_route: ^11.1.0           # For code generation type safe routes
+  shared_preferences: ^2.5.5    # For storing simple key-value data like user settings, onboarding status, etc.
+  intl: any
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  auto_route_generator: ^10.5.0
+  build_runner: ^2.4.0
   flutter_lints: ^6.0.0
 
 flutter:
   uses-material-design: true
+  generate: true

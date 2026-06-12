@@ -8,6 +8,7 @@ environment:
 
 workspace:
   - apps/dopamine120
+  - packages/core
   - packages/dopamine_ui
   - packages/dopamine_ui/example
   - packages/logger

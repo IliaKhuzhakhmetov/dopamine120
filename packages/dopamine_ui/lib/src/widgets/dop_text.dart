@@ -16,54 +16,118 @@ class DopText extends StatelessWidget {
   }) : _uppercase = uppercase;
 
   /// Archivo 96 w900 — hero numbers.
-  const DopText.giant(String text,
-      {Key? key, Color? color, TextAlign? align, int? maxLines})
-      : this._(text, _giant,
-            key: key, color: color, align: align, maxLines: maxLines);
+  const DopText.giant(
+    String text, {
+    Key? key,
+    Color? color,
+    TextAlign? align,
+    int? maxLines,
+  }) : this._(
+         text,
+         _giant,
+         key: key,
+         color: color,
+         align: align,
+         maxLines: maxLines,
+       );
 
   /// Archivo 34 w800 — screen headers.
-  const DopText.header(String text,
-      {Key? key, Color? color, TextAlign? align, int? maxLines})
-      : this._(text, _header,
-            key: key, color: color, align: align, maxLines: maxLines);
+  const DopText.header(
+    String text, {
+    Key? key,
+    Color? color,
+    TextAlign? align,
+    int? maxLines,
+  }) : this._(
+         text,
+         _header,
+         key: key,
+         color: color,
+         align: align,
+         maxLines: maxLines,
+       );
 
   /// Archivo 21 w800, auto-uppercased — section titles.
-  const DopText.title(String text,
-      {Key? key, Color? color, TextAlign? align, int? maxLines})
-      : this._(text, _title,
-            key: key,
-            color: color,
-            align: align,
-            maxLines: maxLines,
-            uppercase: true);
+  const DopText.title(
+    String text, {
+    Key? key,
+    Color? color,
+    TextAlign? align,
+    int? maxLines,
+  }) : this._(
+         text,
+         _title,
+         key: key,
+         color: color,
+         align: align,
+         maxLines: maxLines,
+         uppercase: true,
+       );
 
   /// DM Mono 14 w300 — body copy.
-  const DopText.body(String text,
-      {Key? key, Color? color, TextAlign? align, int? maxLines})
-      : this._(text, _body,
-            key: key, color: color, align: align, maxLines: maxLines);
+  const DopText.body(
+    String text, {
+    Key? key,
+    Color? color,
+    TextAlign? align,
+    int? maxLines,
+  }) : this._(
+         text,
+         _body,
+         key: key,
+         color: color,
+         align: align,
+         maxLines: maxLines,
+       );
 
   /// DM Mono 14 w500 — emphasized body copy.
-  const DopText.bodyBold(String text,
-      {Key? key, Color? color, TextAlign? align, int? maxLines})
-      : this._(text, _bodyBold,
-            key: key, color: color, align: align, maxLines: maxLines);
+  const DopText.bodyBold(
+    String text, {
+    Key? key,
+    Color? color,
+    TextAlign? align,
+    int? maxLines,
+  }) : this._(
+         text,
+         _bodyBold,
+         key: key,
+         color: color,
+         align: align,
+         maxLines: maxLines,
+       );
 
   /// DM Mono 11.5 w300 — fine print.
-  const DopText.caption(String text,
-      {Key? key, Color? color, TextAlign? align, int? maxLines})
-      : this._(text, _caption,
-            key: key, color: color, align: align, maxLines: maxLines);
+  const DopText.caption(
+    String text, {
+    Key? key,
+    Color? color,
+    TextAlign? align,
+    int? maxLines,
+  }) : this._(
+         text,
+         _caption,
+         key: key,
+         color: color,
+         align: align,
+         maxLines: maxLines,
+       );
 
   /// DM Mono 10.5 w400, wide tracking, auto-uppercased — labels.
-  const DopText.label(String text,
-      {Key? key, Color? color, TextAlign? align, int? maxLines})
-      : this._(text, _label,
-            key: key,
-            color: color,
-            align: align,
-            maxLines: maxLines,
-            uppercase: true);
+  const DopText.label(
+    String text, {
+    Key? key,
+    Color? color,
+    TextAlign? align,
+    int? maxLines,
+  }) : this._(
+         text,
+         _label,
+         key: key,
+         color: color,
+         align: align,
+         maxLines: maxLines,
+         uppercase: true,
+       );
 
   /// The text to display.
   final String text;

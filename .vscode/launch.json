@@ -2,19 +2,19 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "DOPAMINE120",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "${workspaceFolder}/apps/dopamine120",
+      "program": "lib/main.dart"
+    },
+    {
       "name": "UI Kit Widgetbook (macOS)",
       "request": "launch",
       "type": "dart",
       "cwd": "${workspaceFolder}/packages/dopamine_ui/example",
       "program": "lib/main.dart",
       "deviceId": "macos"
-    },
-    {
-      "name": "UI Kit Widgetbook (macOS)",
-      "request": "launch",
-      "type": "dart",
-      "cwd": "${workspaceFolder}/packages/platform_bridge/example",
-      "program": "lib/main.dart",
     },
     {
       "name": "UI Kit Widgetbook (Chrome)",

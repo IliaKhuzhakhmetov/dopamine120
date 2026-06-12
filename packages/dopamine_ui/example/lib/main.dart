@@ -26,17 +26,17 @@ class WidgetbookApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: DopTheme.light(),
         home: Scaffold(
-          body: Padding(
-            padding: const EdgeInsets.all(28),
-            child: child,
-          ),
+          body: Padding(padding: const EdgeInsets.all(28), child: child),
         ),
       ),
       directories: [
         WidgetbookComponent(
           name: 'DopText',
           useCases: [
-            WidgetbookUseCase(name: 'All styles', builder: (_) => const _TextGallery()),
+            WidgetbookUseCase(
+              name: 'All styles',
+              builder: (_) => const _TextGallery(),
+            ),
           ],
         ),
         WidgetbookComponent(
@@ -51,7 +51,10 @@ class WidgetbookApp extends StatelessWidget {
             WidgetbookUseCase(
               name: 'Outline',
               builder: (_) => Center(
-                child: DopButton.outline(label: 'see the math', onPressed: () {}),
+                child: DopButton.outline(
+                  label: 'see the math',
+                  onPressed: () {},
+                ),
               ),
             ),
             WidgetbookUseCase(
@@ -78,6 +81,23 @@ class WidgetbookApp extends StatelessWidget {
           ],
         ),
         WidgetbookComponent(
+          name: 'DopBackButton',
+          useCases: [
+            WidgetbookUseCase(
+              name: 'Enabled',
+              builder: (_) => Center(
+                child: DopBackButton(semanticLabel: 'back', onPressed: () {}),
+              ),
+            ),
+            WidgetbookUseCase(
+              name: 'Disabled',
+              builder: (_) => const Center(
+                child: DopBackButton(semanticLabel: 'back', onPressed: null),
+              ),
+            ),
+          ],
+        ),
+        WidgetbookComponent(
           name: 'DopInput',
           useCases: [
             WidgetbookUseCase(
@@ -99,6 +119,15 @@ class WidgetbookApp extends StatelessWidget {
           ],
         ),
         WidgetbookComponent(
+          name: 'DopCheckbox',
+          useCases: [
+            WidgetbookUseCase(
+              name: 'States',
+              builder: (_) => const Center(child: _CheckboxStates()),
+            ),
+          ],
+        ),
+        WidgetbookComponent(
           name: 'DopListTile',
           useCases: [
             WidgetbookUseCase(
@@ -112,8 +141,55 @@ class WidgetbookApp extends StatelessWidget {
                   index: '001',
                   title: 'first silence',
                   subtitle: '24 hours, no feeds',
-                  trailing: 'claimed',
+                  trailingText: 'claimed',
                   onTap: () {},
+                ),
+              ),
+            ),
+            WidgetbookUseCase(
+              name: 'Checkbox rows',
+              builder: (_) => const _CheckboxList(),
+            ),
+          ],
+        ),
+        WidgetbookComponent(
+          name: 'DopScaleSelector',
+          useCases: [
+            WidgetbookUseCase(
+              name: 'Interactive',
+              builder: (_) => const Center(child: _ScalePlayground()),
+            ),
+            WidgetbookUseCase(
+              name: 'Disabled',
+              builder: (_) => const Center(
+                child: DopScaleSelector(
+                  value: 5,
+                  onChanged: null,
+                  minLabel: 'scroll / autopilot',
+                  maxLabel: 'study / useful action',
+                  semanticLabel: 'Useful action readiness',
+                ),
+              ),
+            ),
+          ],
+        ),
+        WidgetbookComponent(
+          name: 'DopStepIndicator',
+          useCases: [
+            WidgetbookUseCase(
+              name: 'Steps',
+              builder: (_) => const Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    DopStepIndicator(count: 4, index: 0),
+                    SizedBox(height: 24),
+                    DopStepIndicator(count: 4, index: 1),
+                    SizedBox(height: 24),
+                    DopStepIndicator(count: 4, index: 2),
+                    SizedBox(height: 24),
+                    DopStepIndicator(count: 4, index: 3),
+                  ],
                 ),
               ),
             ),
@@ -122,7 +198,10 @@ class WidgetbookApp extends StatelessWidget {
         WidgetbookComponent(
           name: 'Colors',
           useCases: [
-            WidgetbookUseCase(name: 'Palette', builder: (_) => const _Palette()),
+            WidgetbookUseCase(
+              name: 'Palette',
+              builder: (_) => const _Palette(),
+            ),
           ],
         ),
       ],
@@ -166,6 +245,116 @@ class _TextGallery extends StatelessWidget {
   }
 }
 
+/// Standalone checkbox controls.
+class _CheckboxStates extends StatefulWidget {
+  const _CheckboxStates();
+
+  @override
+  State<_CheckboxStates> createState() => _CheckboxStatesState();
+}
+
+class _CheckboxStatesState extends State<_CheckboxStates> {
+  bool _checked = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        DopCheckbox(
+          value: _checked,
+          semanticLabel: 'interactive checkbox',
+          onChanged: (value) => setState(() => _checked = value),
+        ),
+        const SizedBox(width: 28),
+        const DopCheckbox(
+          value: false,
+          enabled: true,
+          semanticLabel: 'unchecked checkbox',
+        ),
+        const SizedBox(width: 28),
+        const DopCheckbox(
+          value: true,
+          enabled: false,
+          semanticLabel: 'disabled checkbox',
+        ),
+      ],
+    );
+  }
+}
+
+/// Controlled selection rows used by setup and settings flows.
+class _CheckboxList extends StatefulWidget {
+  const _CheckboxList();
+
+  @override
+  State<_CheckboxList> createState() => _CheckboxListState();
+}
+
+class _CheckboxListState extends State<_CheckboxList> {
+  final Set<int> _selected = {0};
+
+  @override
+  Widget build(BuildContext context) {
+    final items = [
+      ('feeds', 'environment support during focus'),
+      ('short video', 'fast dopamine source'),
+      ('late-night loops', 'optional, never required'),
+    ];
+
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          for (var i = 0; i < items.length; i++)
+            DopListTile(
+              index: '${i + 1}'.padLeft(3, '0'),
+              title: items[i].$1,
+              subtitle: items[i].$2,
+              divider: i != items.length - 1,
+              trailing: DopCheckbox(
+                value: _selected.contains(i),
+                enabled: true,
+                semanticLabel: items[i].$1,
+              ),
+              onTap: () {
+                setState(() {
+                  if (_selected.contains(i)) {
+                    _selected.remove(i);
+                  } else {
+                    _selected.add(i);
+                  }
+                });
+              },
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Interactive scale; each change fires the selection-click haptic on device.
+class _ScalePlayground extends StatefulWidget {
+  const _ScalePlayground();
+
+  @override
+  State<_ScalePlayground> createState() => _ScalePlaygroundState();
+}
+
+class _ScalePlaygroundState extends State<_ScalePlayground> {
+  var _value = 5;
+
+  @override
+  Widget build(BuildContext context) {
+    return DopScaleSelector(
+      value: _value,
+      minLabel: 'scroll / autopilot',
+      maxLabel: 'study / useful action',
+      semanticLabel: 'Useful action readiness',
+      onChanged: (value) => setState(() => _value = value),
+    );
+  }
+}
+
 /// The milestones ledger: claimed rows full ink, locked rows dimmed.
 class _MilestoneList extends StatelessWidget {
   const _MilestoneList();
@@ -179,42 +368,42 @@ class _MilestoneList extends StatelessWidget {
             index: '001',
             title: 'first silence',
             subtitle: '24 hours, no feeds',
-            trailing: 'claimed',
+            trailingText: 'claimed',
             onTap: () {},
           ),
           DopListTile(
             index: '002',
             title: 'seven',
             subtitle: 'a clean week',
-            trailing: 'claimed',
+            trailingText: 'claimed',
             onTap: () {},
           ),
           DopListTile(
             index: '003',
             title: 'under eighty',
             subtitle: 'load below 80',
-            trailing: 'claimed',
+            trailingText: 'claimed',
             onTap: () {},
           ),
           DopListTile(
             index: '004',
             title: 'dawn patrol',
             subtitle: 'nothing before noon · 5 days',
-            trailing: 'claimed',
+            trailingText: 'claimed',
             onTap: () {},
           ),
           const DopListTile(
             index: '005',
             title: 'off-grid weekend',
             subtitle: 'a whole weekend dark',
-            trailing: '1 / 2',
+            trailingText: '1 / 2',
             dimmed: true,
           ),
           const DopListTile(
             index: '006',
             title: 'century down',
             subtitle: 'average under 100 for a month',
-            trailing: '78 / 100',
+            trailingText: '78 / 100',
             dimmed: true,
             divider: false,
           ),
@@ -241,6 +430,7 @@ class _Palette extends StatelessWidget {
       ('voidBlack', colors.voidBlack),
       ('onVoid', colors.onVoid),
       ('onVoidSoft', colors.onVoidSoft),
+      ('accent', colors.accent),
     ];
     return SingleChildScrollView(
       child: Column(

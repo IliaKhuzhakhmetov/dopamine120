@@ -13,19 +13,21 @@ class DopColors extends ThemeExtension<DopColors> {
     required this.voidBlack,
     required this.onVoid,
     required this.onVoidSoft,
+    required this.accent,
   });
 
   /// The single light palette.
   const DopColors.light()
-      : wall = const Color(0xFFE9E9E5),
-        paper = const Color(0xFFF4F4F1),
-        ink = const Color(0xFF121211),
-        inkSoft = const Color(0xFF6A6A65),
-        inkFaint = const Color(0xFFA4A49E),
-        line = const Color(0xFFD4D4CE),
-        voidBlack = const Color(0xFF0C0C0B),
-        onVoid = const Color(0xFFE9E9E2),
-        onVoidSoft = const Color(0xFF75746C);
+    : wall = const Color(0xFFE9E9E5),
+      paper = const Color(0xFFF4F4F1),
+      ink = const Color(0xFF121211),
+      inkSoft = const Color(0xFF6A6A65),
+      inkFaint = const Color(0xFFA4A49E),
+      line = const Color(0xFFD4D4CE),
+      voidBlack = const Color(0xFF0C0C0B),
+      onVoid = const Color(0xFFE9E9E2),
+      onVoidSoft = const Color(0xFF75746C),
+      accent = const Color(0xFFE8512D);
 
   /// Background.
   final Color wall;
@@ -54,6 +56,9 @@ class DopColors extends ThemeExtension<DopColors> {
   /// Secondary text on [voidBlack].
   final Color onVoidSoft;
 
+  /// Highlight — progress, the rare loud moment.
+  final Color accent;
+
   @override
   DopColors copyWith({
     Color? wall,
@@ -65,6 +70,7 @@ class DopColors extends ThemeExtension<DopColors> {
     Color? voidBlack,
     Color? onVoid,
     Color? onVoidSoft,
+    Color? accent,
   }) {
     return DopColors(
       wall: wall ?? this.wall,
@@ -76,6 +82,7 @@ class DopColors extends ThemeExtension<DopColors> {
       voidBlack: voidBlack ?? this.voidBlack,
       onVoid: onVoid ?? this.onVoid,
       onVoidSoft: onVoidSoft ?? this.onVoidSoft,
+      accent: accent ?? this.accent,
     );
   }
 
@@ -92,6 +99,7 @@ class DopColors extends ThemeExtension<DopColors> {
       voidBlack: Color.lerp(voidBlack, other.voidBlack, t)!,
       onVoid: Color.lerp(onVoid, other.onVoid, t)!,
       onVoidSoft: Color.lerp(onVoidSoft, other.onVoidSoft, t)!,
+      accent: Color.lerp(accent, other.accent, t)!,
     );
   }
 }

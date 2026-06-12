@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../theme/context_ext.dart';
+import '../theme/dop_spacing.dart';
 
 enum _DopButtonVariant { primary, outline, link }
 
@@ -21,8 +22,13 @@ class DopButton extends StatefulWidget {
     required String label,
     required VoidCallback? onPressed,
     bool arrow = true,
-  }) : this._(_DopButtonVariant.primary,
-            key: key, label: label, onPressed: onPressed, arrow: arrow);
+  }) : this._(
+         _DopButtonVariant.primary,
+         key: key,
+         label: label,
+         onPressed: onPressed,
+         arrow: arrow,
+       );
 
   /// Transparent with a 1px ink border, optional trailing arrow.
   const DopButton.outline({
@@ -30,16 +36,25 @@ class DopButton extends StatefulWidget {
     required String label,
     required VoidCallback? onPressed,
     bool arrow = true,
-  }) : this._(_DopButtonVariant.outline,
-            key: key, label: label, onPressed: onPressed, arrow: arrow);
+  }) : this._(
+         _DopButtonVariant.outline,
+         key: key,
+         label: label,
+         onPressed: onPressed,
+         arrow: arrow,
+       );
 
   /// Underlined centered text, no box.
   const DopButton.link({
     Key? key,
     required String label,
     required VoidCallback? onPressed,
-  }) : this._(_DopButtonVariant.link,
-            key: key, label: label, onPressed: onPressed);
+  }) : this._(
+         _DopButtonVariant.link,
+         key: key,
+         label: label,
+         onPressed: onPressed,
+       );
 
   /// The button label.
   final String label;
@@ -77,8 +92,9 @@ class _DopButtonState extends State<DopButton> {
     );
 
     final row = Row(
-      mainAxisAlignment:
-          isLink ? MainAxisAlignment.center : MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: isLink
+          ? MainAxisAlignment.center
+          : MainAxisAlignment.spaceBetween,
       children: [
         Text(widget.label, style: labelStyle),
         if (!isLink && widget.arrow) Text('→', style: labelStyle),
@@ -87,11 +103,9 @@ class _DopButtonState extends State<DopButton> {
 
     final box = Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(DopSpacing.control),
       decoration: BoxDecoration(
-        color: widget._variant == _DopButtonVariant.primary
-            ? colors.ink
-            : null,
+        color: widget._variant == _DopButtonVariant.primary ? colors.ink : null,
         border: widget._variant == _DopButtonVariant.outline
             ? Border.all(color: colors.ink)
             : null,
@@ -111,8 +125,8 @@ class _DopButtonState extends State<DopButton> {
           opacity: !_enabled
               ? 0.4
               : _pressed
-                  ? 0.9
-                  : 1,
+              ? 0.9
+              : 1,
           duration: const Duration(milliseconds: 80),
           child: box,
         ),
