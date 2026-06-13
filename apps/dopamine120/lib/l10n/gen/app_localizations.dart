@@ -98,29 +98,65 @@ abstract class AppLocalizations {
     Locale('ru'),
   ];
 
-  /// No description provided for @onboardingIntroSignal.
-  ///
-  /// In en, this message translates to:
-  /// **'a trainer, not a guilt tracker'**
-  String get onboardingIntroSignal;
-
   /// No description provided for @onboardingIntroTitle.
   ///
   /// In en, this message translates to:
-  /// **'Teach your brain a new reward.'**
+  /// **'How to train *your brain*'**
   String get onboardingIntroTitle;
 
-  /// No description provided for @onboardingIntroBody.
+  /// No description provided for @onboardingIntroSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'DOPAMINE120 pairs deliberate effort with a reward you choose. Quiet the noise, focus on a task you avoid, then do something pleasant on purpose. Each repetition teaches your brain that good feelings can follow effort.'**
-  String get onboardingIntroBody;
+  /// **'to do a heavy job easily'**
+  String get onboardingIntroSubtitle;
 
-  /// No description provided for @onboardingIntroChoice.
+  /// No description provided for @onboardingStepDeprivationTitle.
   ///
   /// In en, this message translates to:
-  /// **'pleasure stays allowed — it becomes chosen'**
-  String get onboardingIntroChoice;
+  /// **'Deprivation'**
+  String get onboardingStepDeprivationTitle;
+
+  /// No description provided for @onboardingStepDeprivationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'nothing for 30 min'**
+  String get onboardingStepDeprivationBody;
+
+  /// No description provided for @onboardingStepImaginationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Imagination'**
+  String get onboardingStepImaginationTitle;
+
+  /// No description provided for @onboardingStepImaginationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'plan for 2 min'**
+  String get onboardingStepImaginationBody;
+
+  /// No description provided for @onboardingStepCreationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Creation'**
+  String get onboardingStepCreationTitle;
+
+  /// No description provided for @onboardingStepCreationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'25 min of work'**
+  String get onboardingStepCreationBody;
+
+  /// No description provided for @onboardingStepRewardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reward'**
+  String get onboardingStepRewardTitle;
+
+  /// No description provided for @onboardingStepRewardBody.
+  ///
+  /// In en, this message translates to:
+  /// **'any dopamine activity'**
+  String get onboardingStepRewardBody;
 
   /// No description provided for @onboardingReadinessTitle.
   ///
@@ -247,6 +283,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This device does not support setup access yet. Training still works.'**
   String get setupAccessUnsupported;
+
+  /// No description provided for @nextLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'next'**
+  String get nextLabel;
 
   /// No description provided for @continueLabel.
   ///

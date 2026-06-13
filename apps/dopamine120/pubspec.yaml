@@ -13,7 +13,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-  # packages  
+  # local packages  
   app_logger:
     path: ../../packages/logger
   core:
@@ -23,10 +23,12 @@ dependencies:
   platform_bridge:
     path: ../../packages/platform_bridge
 
-  # core  
+  # core
   auto_route: ^11.1.0           # For code generation type safe routes
   shared_preferences: ^2.5.5    # For storing simple key-value data like user settings, onboarding status, etc.
   intl: any
+  flutter_svg: ^2.0.10          # For rendering the hand-drawn SVG icons
+  just_audio: ^0.10.5           # For playing the short UI sound effects
 
 dev_dependencies:
   flutter_test:
@@ -34,7 +36,17 @@ dev_dependencies:
   auto_route_generator: ^10.5.0
   build_runner: ^2.4.0
   flutter_lints: ^6.0.0
+  flutter_gen_runner: ^5.14.1
 
 flutter:
   uses-material-design: true
   generate: true
+  assets:
+    - assets/icons/
+    - assets/icons/imagination/
+    - assets/sound/dopamine120_op1_pack/
+
+flutter_gen:
+  output: lib/gen/
+  integrations:
+    flutter_svg: true

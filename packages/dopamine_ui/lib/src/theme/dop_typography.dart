@@ -9,6 +9,7 @@ class DopTypography extends ThemeExtension<DopTypography> {
   const DopTypography({
     required this.giant,
     required this.header,
+    required this.headerAccent,
     required this.title,
     required this.body,
     required this.bodyBold,
@@ -16,9 +17,21 @@ class DopTypography extends ThemeExtension<DopTypography> {
     required this.label,
   });
 
-  /// The single light type scale (Archivo display, DM Mono UI).
+  /// The light type scale (Urbanist display, Instrument Serif accents,
+  /// DM Mono UI).
   factory DopTypography.light() {
     const colors = DopColors.light();
+    return DopTypography.fromColors(colors);
+  }
+
+  /// The dark type scale with the same font system and dark palette colors.
+  factory DopTypography.dark() {
+    const colors = DopColors.dark();
+    return DopTypography.fromColors(colors);
+  }
+
+  /// Creates the type scale from a token palette.
+  factory DopTypography.fromColors(DopColors colors) {
     return DopTypography(
       giant: GoogleFonts.archivo(
         fontSize: 96,
@@ -27,9 +40,18 @@ class DopTypography extends ThemeExtension<DopTypography> {
         height: 0.8,
         color: colors.ink,
       ),
-      header: GoogleFonts.archivo(
+      header: GoogleFonts.urbanist(
         fontSize: 34,
         fontWeight: FontWeight.w800,
+        letterSpacing: -0.5,
+        color: colors.ink,
+      ),
+      // 38 instead of 34: the serif italic needs the bump to optically match
+      // the heavy sans it sits next to.
+      headerAccent: GoogleFonts.instrumentSerif(
+        fontSize: 38,
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.italic,
         letterSpacing: -0.5,
         color: colors.ink,
       ),
@@ -66,8 +88,11 @@ class DopTypography extends ThemeExtension<DopTypography> {
   /// Archivo 96 w900, tight tracking — hero numbers.
   final TextStyle giant;
 
-  /// Archivo 34 w800 — screen headers.
+  /// Urbanist 34 w800 — screen headers.
   final TextStyle header;
+
+  /// Instrument Serif 38 italic — accent words inside headers.
+  final TextStyle headerAccent;
 
   /// Archivo 21 w800, rendered uppercase — section titles.
   final TextStyle title;
@@ -88,6 +113,7 @@ class DopTypography extends ThemeExtension<DopTypography> {
   DopTypography copyWith({
     TextStyle? giant,
     TextStyle? header,
+    TextStyle? headerAccent,
     TextStyle? title,
     TextStyle? body,
     TextStyle? bodyBold,
@@ -97,6 +123,7 @@ class DopTypography extends ThemeExtension<DopTypography> {
     return DopTypography(
       giant: giant ?? this.giant,
       header: header ?? this.header,
+      headerAccent: headerAccent ?? this.headerAccent,
       title: title ?? this.title,
       body: body ?? this.body,
       bodyBold: bodyBold ?? this.bodyBold,
@@ -111,6 +138,7 @@ class DopTypography extends ThemeExtension<DopTypography> {
     return DopTypography(
       giant: TextStyle.lerp(giant, other.giant, t)!,
       header: TextStyle.lerp(header, other.header, t)!,
+      headerAccent: TextStyle.lerp(headerAccent, other.headerAccent, t)!,
       title: TextStyle.lerp(title, other.title, t)!,
       body: TextStyle.lerp(body, other.body, t)!,
       bodyBold: TextStyle.lerp(bodyBold, other.bodyBold, t)!,

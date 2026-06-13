@@ -9,18 +9,34 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get onboardingIntroSignal => 'a trainer, not a guilt tracker';
+  String get onboardingIntroTitle => 'How to train *your brain*';
 
   @override
-  String get onboardingIntroTitle => 'Teach your brain a new reward.';
+  String get onboardingIntroSubtitle => 'to do a heavy job easily';
 
   @override
-  String get onboardingIntroBody =>
-      'DOPAMINE120 pairs deliberate effort with a reward you choose. Quiet the noise, focus on a task you avoid, then do something pleasant on purpose. Each repetition teaches your brain that good feelings can follow effort.';
+  String get onboardingStepDeprivationTitle => 'Deprivation';
 
   @override
-  String get onboardingIntroChoice =>
-      'pleasure stays allowed — it becomes chosen';
+  String get onboardingStepDeprivationBody => 'nothing for 30 min';
+
+  @override
+  String get onboardingStepImaginationTitle => 'Imagination';
+
+  @override
+  String get onboardingStepImaginationBody => 'plan for 2 min';
+
+  @override
+  String get onboardingStepCreationTitle => 'Creation';
+
+  @override
+  String get onboardingStepCreationBody => '25 min of work';
+
+  @override
+  String get onboardingStepRewardTitle => 'Reward';
+
+  @override
+  String get onboardingStepRewardBody => 'any dopamine activity';
 
   @override
   String get onboardingReadinessTitle => 'Where are you starting from?';
@@ -94,6 +110,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get setupAccessUnsupported =>
       'This device does not support setup access yet. Training still works.';
+
+  @override
+  String get nextLabel => 'next';
 
   @override
   String get continueLabel => 'continue';

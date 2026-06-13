@@ -11,7 +11,7 @@ import 'package:dopamine120/features/onboarding/domain/usecases/get_health_acces
 import 'package:dopamine120/features/onboarding/domain/usecases/request_health_access.dart';
 import 'package:dopamine120/features/onboarding/domain/usecases/request_setup_access.dart';
 import 'package:dopamine120/features/onboarding/domain/usecases/save_action_readiness.dart';
-import 'package:dopamine120/features/onboarding/presentation/onboarding_screen.dart';
+import 'package:dopamine120/features/onboarding/presentation/onboarding_screen/onboarding_screen.dart';
 import 'package:dopamine120/l10n/l10n.dart';
 import 'package:dopamine_ui/dopamine_ui.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +19,134 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  testWidgets('shows reward step before the first action without scrolling', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(
+      _OnboardingHost(
+        repository: _FakeOnboardingRepository(),
+        onFinished: (_) {},
+      ),
+    );
+
+    final rewardBottom = tester.getBottomLeft(find.text('REWARD')).dy;
+    final nextTop = tester
+        .getTopLeft(find.widgetWithText(DopButton, 'next'))
+        .dy;
+
+    expect(rewardBottom, lessThan(nextTop));
+  });
+
+  testWidgets('animates the imagination icon on tap and returns to idle', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _OnboardingHost(
+        repository: _FakeOnboardingRepository(),
+        onFinished: (_) {},
+      ),
+    );
+
+    expect(
+      find.byKey(const ValueKey('imagination-icon-frame-0')),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.text('IMAGINATION'));
+    await tester.pump();
+    expect(
+      find.byKey(const ValueKey('imagination-icon-frame-1')),
+      findsOneWidget,
+    );
+
+    await tester.pump(const Duration(milliseconds: 750));
+    expect(
+      find.byKey(const ValueKey('imagination-icon-frame-2')),
+      findsOneWidget,
+    );
+
+    await tester.pump(const Duration(milliseconds: 750));
+    expect(
+      find.byKey(const ValueKey('imagination-icon-frame-3')),
+      findsOneWidget,
+    );
+
+    await tester.pump(const Duration(milliseconds: 750));
+    expect(
+      find.byKey(const ValueKey('imagination-icon-frame-4')),
+      findsOneWidget,
+    );
+
+    await tester.pump(const Duration(milliseconds: 750));
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(
+      find.byKey(const ValueKey('imagination-icon-frame-0')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('imagination-icon-frame-4')),
+      findsNothing,
+    );
+  });
+
+  testWidgets('animates the creation icon on tap and returns to idle', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _OnboardingHost(
+        repository: _FakeOnboardingRepository(),
+        onFinished: (_) {},
+      ),
+    );
+
+    expect(find.byKey(const ValueKey('creation-icon-frame-0')), findsOneWidget);
+
+    await tester.tap(find.text('CREATION'));
+    await tester.pump();
+    expect(find.byKey(const ValueKey('creation-icon-frame-1')), findsOneWidget);
+
+    await tester.pump(const Duration(milliseconds: 210));
+    expect(find.byKey(const ValueKey('creation-icon-frame-2')), findsOneWidget);
+
+    await tester.pump(const Duration(milliseconds: 210));
+    expect(find.byKey(const ValueKey('creation-icon-frame-3')), findsOneWidget);
+
+    await tester.pump(const Duration(milliseconds: 210));
+    expect(find.byKey(const ValueKey('creation-icon-frame-4')), findsOneWidget);
+
+    await tester.pump(const Duration(milliseconds: 210));
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(find.byKey(const ValueKey('creation-icon-frame-0')), findsOneWidget);
+    expect(find.byKey(const ValueKey('creation-icon-frame-4')), findsNothing);
+  });
+
+  testWidgets('reward tile owns UI-kit confetti and plays on tap', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _OnboardingHost(
+        repository: _FakeOnboardingRepository(),
+        onFinished: (_) {},
+      ),
+    );
+
+    expect(find.byKey(const ValueKey('reward-confetti')), findsOneWidget);
+
+    final rewardTile = find.ancestor(
+      of: find.text('REWARD'),
+      matching: find.byType(GestureDetector),
+    );
+    await tester.tapAt(tester.getTopLeft(rewardTile) + const Offset(24, 24));
+    await tester.pump();
+
+    expect(find.byType(DopConfetti), findsOneWidget);
+  });
+
   testWidgets('navigates through readiness and requests both permissions', (
     tester,
   ) async {
@@ -35,19 +163,20 @@ void main() {
       ),
     );
 
-    expect(find.text('Teach your brain a new reward.'), findsOneWidget);
+    expect(find.text('How to train your brain'), findsOneWidget);
+    expect(find.text('DEPRIVATION'), findsOneWidget);
 
-    await tester.ensureVisible(find.text('continue'));
-    await tester.tap(find.text('continue'));
+    await tester.ensureVisible(find.text('next'));
+    await tester.tap(find.text('next'));
     await tester.pumpAndSettle();
     expect(find.text('Where are you starting from?'), findsOneWidget);
 
     await tester.tap(find.byType(DopBackButton));
     await tester.pumpAndSettle();
-    expect(find.text('Teach your brain a new reward.'), findsOneWidget);
+    expect(find.text('How to train your brain'), findsOneWidget);
 
-    await tester.ensureVisible(find.text('continue'));
-    await tester.tap(find.text('continue'));
+    await tester.ensureVisible(find.text('next'));
+    await tester.tap(find.text('next'));
     await tester.pumpAndSettle();
 
     final scaleBox = tester.renderObject<RenderBox>(
@@ -112,8 +241,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.ensureVisible(find.text('continue'));
-    await tester.tap(find.text('continue'));
+    await tester.ensureVisible(find.text('next'));
+    await tester.tap(find.text('next'));
     await tester.pumpAndSettle();
     await tester.ensureVisible(find.text('continue'));
     await tester.tap(find.text('continue'));

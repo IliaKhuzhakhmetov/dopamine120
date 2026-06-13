@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/onboarding/domain/entities/onboarding_result.dart';
-import '../../features/onboarding/presentation/onboarding_screen.dart';
+import '../../features/onboarding/presentation/onboarding_screen/onboarding_screen.dart';
 
 part 'app_router.gr.dart';
 

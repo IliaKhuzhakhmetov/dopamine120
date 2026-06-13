@@ -1,0 +1,15 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>Imagination blob — frame_04_wide_bloom</title>
+  <defs>
+    <radialGradient id="blobGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(29 26) rotate(50) scale(30 24)">
+      <stop offset="0" stop-color="currentColor" stop-opacity="0.06"/>
+      <stop offset="0.52" stop-color="currentColor" stop-opacity="0.42"/>
+      <stop offset="1" stop-color="currentColor"/>
+    </radialGradient>
+  </defs>
+  <g transform="rotate(4 32 32)">
+    <path d="M15.9 46.8C8.5 39.9 10.8 29.6 18.5 20.9C25.4 13.1 36.0 14.2 44.9 17.3C53.2 20.2 51.7 33.8 45.2 42.7C38.9 51.4 24.5 54.8 15.9 46.8Z" fill="url(#blobGlow)"/>
+    <path d="M0 -3.3L0.92 -0.92L3.3 0L0.92 0.92L0 3.3L-0.92 0.92L-3.3 0L-0.92 -0.92Z" fill="currentColor" fill-opacity="0.34" transform="translate(46 20) scale(1)"/>
+    <circle cx="0" cy="0" r="2" fill="currentColor" fill-opacity="0.18" transform="translate(18 45) scale(1.03)"/>
+  </g>
+</svg>

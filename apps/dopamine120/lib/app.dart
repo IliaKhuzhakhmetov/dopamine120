@@ -5,6 +5,14 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:platform_bridge/platform_bridge.dart';
 
 import 'core/router/app_router.dart';
+import 'core/theme/data/datasources/theme_local_ds.dart';
+import 'core/theme/data/repositories/theme_repository_impl.dart';
+import 'core/theme/domain/entities/app_theme.dart';
+import 'core/theme/domain/repositories/theme_repository.dart';
+import 'core/theme/domain/usecases/get_theme.dart';
+import 'core/theme/domain/usecases/save_theme.dart';
+import 'core/theme/presentation/theme_controller.dart';
+import 'core/theme/presentation/theme_provider.dart';
 import 'features/onboarding/data/datasources/blocking_ds.dart';
 import 'features/onboarding/data/datasources/health_ds.dart';
 import 'features/onboarding/data/datasources/onboarding_local_ds.dart';
@@ -28,6 +36,22 @@ Injector createAppInjector({KeyValueStore? keyValueStore}) {
       (_) => keyValueStore ?? InMemoryKeyValueStore(),
     )
     ..registerLazySingleton<PlatformBridge>((_) => PlatformBridge())
+    ..registerLazySingleton<ThemeLocalDs>(
+      (i) => ThemeLocalDs(i.get<KeyValueStore>()),
+    )
+    ..registerLazySingleton<ThemeRepository>(
+      (i) => ThemeRepositoryImpl(i.get<ThemeLocalDs>()),
+    )
+    ..registerLazySingleton<GetTheme>((i) => GetTheme(i.get<ThemeRepository>()))
+    ..registerLazySingleton<SaveTheme>(
+      (i) => SaveTheme(i.get<ThemeRepository>()),
+    )
+    ..registerLazySingleton<ThemeController>(
+      (i) => ThemeController(
+        initialTheme: i.get<ThemeRepository>().currentTheme,
+        saveTheme: i.get<SaveTheme>(),
+      ),
+    )
     ..registerLazySingleton<OnboardingLocalDs>(
       (i) => OnboardingLocalDs(i.get<KeyValueStore>()),
     )
@@ -89,18 +113,32 @@ class _DopamineAppState extends State<DopamineApp> {
   Widget build(BuildContext context) {
     return DependencyScope(
       injector: widget.injector,
-      child: MaterialApp.router(
-        title: 'DOPAMINE120',
-        debugShowCheckedModeBanner: false,
-        theme: DopTheme.light(),
-        localizationsDelegates: const [
-          AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-        ],
-        supportedLocales: AppLocalizations.supportedLocales,
-        routerConfig: _router.config(),
+      child: ThemeProvider(
+        controller: widget.injector.get<ThemeController>(),
+        child: Builder(
+          builder: (context) {
+            final theme = context.appTheme;
+
+            return MaterialApp.router(
+              title: 'DOPAMINE120',
+              debugShowCheckedModeBanner: false,
+              theme: DopTheme.light(),
+              darkTheme: DopTheme.dark(),
+              themeMode: switch (theme) {
+                AppTheme.light => ThemeMode.light,
+                AppTheme.dark => ThemeMode.dark,
+              },
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+              ],
+              supportedLocales: AppLocalizations.supportedLocales,
+              routerConfig: _router.config(),
+            );
+          },
+        ),
       ),
     );
   }

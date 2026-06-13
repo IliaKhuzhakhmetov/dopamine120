@@ -16,7 +16,7 @@ class DopColors extends ThemeExtension<DopColors> {
     required this.accent,
   });
 
-  /// The single light palette.
+  /// The light palette.
   const DopColors.light()
     : wall = const Color(0xFFE9E9E5),
       paper = const Color(0xFFF4F4F1),
@@ -28,6 +28,19 @@ class DopColors extends ThemeExtension<DopColors> {
       onVoid = const Color(0xFFE9E9E2),
       onVoidSoft = const Color(0xFF75746C),
       accent = const Color(0xFFE8512D);
+
+  /// The dark palette.
+  const DopColors.dark()
+    : wall = const Color(0xFF10100F),
+      paper = const Color(0xFF191917),
+      ink = const Color(0xFFEAEAE4),
+      inkSoft = const Color(0xFFB7B6AD),
+      inkFaint = const Color(0xFF74736D),
+      line = const Color(0xFF2D2D29),
+      voidBlack = const Color(0xFFEAEAE4),
+      onVoid = const Color(0xFF10100F),
+      onVoidSoft = const Color(0xFF65645F),
+      accent = const Color(0xFFFF6A3D);
 
   /// Background.
   final Color wall;

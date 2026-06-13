@@ -10,6 +10,8 @@ export 'src/theme/dop_typography.dart';
 export 'src/widgets/dop_back_button.dart';
 export 'src/widgets/dop_button.dart';
 export 'src/widgets/dop_checkbox.dart';
+export 'src/widgets/dop_confetti.dart';
+export 'src/widgets/dop_header_widget.dart';
 export 'src/widgets/dop_input.dart';
 export 'src/widgets/dop_list_tile.dart';
 export 'src/widgets/dop_scale_selector.dart';

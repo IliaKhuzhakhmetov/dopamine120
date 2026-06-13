@@ -12,7 +12,9 @@ void main() {
   GoogleFonts.config.allowRuntimeFetching = false;
 
   late ThemeData theme;
+  late ThemeData darkTheme;
   late DopTypography typo;
+  late DopTypography darkTypo;
 
   setUpAll(() {
     // Every google_fonts style kicks off a fire-and-forget font load that
@@ -20,7 +22,9 @@ void main() {
     // in a guarded zone so they cannot fail the tests below.
     runZonedGuarded(() {
       theme = DopTheme.light();
+      darkTheme = DopTheme.dark();
       typo = DopTypography.light();
+      darkTypo = DopTypography.dark();
     }, (_, _) {});
   });
 
@@ -73,6 +77,32 @@ void main() {
       expectStyle(theme.textTheme.bodyMedium, typo.body);
       expectStyle(theme.textTheme.bodySmall, typo.caption);
       expectStyle(theme.textTheme.labelSmall, typo.label);
+    });
+  });
+
+  group('DopTheme.dark', () {
+    test('registers both token extensions', () {
+      expect(darkTheme.extension<DopColors>(), isNotNull);
+      expect(darkTheme.extension<DopTypography>(), isNotNull);
+    });
+
+    test('maps surfaces, text, and icons onto the dark palette', () {
+      const colors = DopColors.dark();
+      expect(darkTheme.brightness, Brightness.dark);
+      expect(darkTheme.scaffoldBackgroundColor, colors.wall);
+      expect(darkTheme.colorScheme.primary, colors.ink);
+      expect(darkTheme.colorScheme.onPrimary, colors.wall);
+      expect(darkTheme.colorScheme.secondary, colors.accent);
+      expect(darkTheme.colorScheme.outline, colors.line);
+      expect(darkTheme.iconTheme.color, colors.ink);
+      expect(darkTheme.primaryIconTheme.color, colors.ink);
+    });
+
+    test('fills the text theme from dark typography tokens', () {
+      expect(darkTheme.textTheme.displayLarge?.color, darkTypo.giant.color);
+      expect(darkTheme.textTheme.titleLarge?.color, darkTypo.title.color);
+      expect(darkTheme.textTheme.bodyMedium?.color, darkTypo.body.color);
+      expect(darkTheme.textTheme.labelSmall?.color, darkTypo.label.color);
     });
   });
 }

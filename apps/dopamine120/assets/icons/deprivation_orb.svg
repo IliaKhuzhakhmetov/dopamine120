@@ -1,0 +1,5 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>Deprivation orb</title>
+  <circle cx="32" cy="25" r="13.5" fill="currentColor"/>
+  <ellipse cx="32" cy="47" rx="17" ry="3.2" fill="currentColor" opacity="0.28"/>
+</svg>

@@ -13,14 +13,28 @@ import 'dop_typography.dart';
 /// corners ([DopRadius.none]), hairline dividers, and errors set in ink with
 /// no alarm color, because the app never shames the user.
 abstract final class DopTheme {
-  /// The single light theme with [DopColors] and [DopTypography] registered
-  /// and every common Material component mapped onto the tokens.
+  /// The light theme with [DopColors] and [DopTypography] registered and every
+  /// common Material component mapped onto the tokens.
   static ThemeData light() {
     const colors = DopColors.light();
     final typo = DopTypography.light();
+    return _build(colors: colors, typo: typo, brightness: Brightness.light);
+  }
 
+  /// The dark theme with the same Material mappings as [light].
+  static ThemeData dark() {
+    const colors = DopColors.dark();
+    final typo = DopTypography.dark();
+    return _build(colors: colors, typo: typo, brightness: Brightness.dark);
+  }
+
+  static ThemeData _build({
+    required DopColors colors,
+    required DopTypography typo,
+    required Brightness brightness,
+  }) {
     final colorScheme = ColorScheme(
-      brightness: Brightness.light,
+      brightness: brightness,
       primary: colors.ink,
       onPrimary: colors.wall,
       secondary: colors.accent,
@@ -42,7 +56,7 @@ abstract final class DopTheme {
       onInverseSurface: colors.onVoid,
       inversePrimary: colors.onVoid,
       shadow: Colors.transparent,
-      scrim: colors.voidBlack,
+      scrim: Colors.black,
     );
 
     // DM Mono 13 w500 — the style boxed controls use for their labels.
@@ -83,6 +97,15 @@ abstract final class DopTheme {
       highlightColor: Colors.transparent,
       hoverColor: Colors.transparent,
       iconTheme: IconThemeData(color: colors.ink),
+      primaryIconTheme: IconThemeData(color: colors.ink),
+      iconButtonTheme: IconButtonThemeData(
+        style: IconButton.styleFrom(
+          foregroundColor: colors.ink,
+          disabledForegroundColor: colors.inkFaint,
+          shape: squareBorder,
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        ),
+      ),
       appBarTheme: AppBarTheme(
         backgroundColor: colors.wall,
         foregroundColor: colors.ink,

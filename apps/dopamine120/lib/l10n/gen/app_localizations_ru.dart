@@ -9,18 +9,34 @@ class AppLocalizationsRu extends AppLocalizations {
   AppLocalizationsRu([String locale = 'ru']) : super(locale);
 
   @override
-  String get onboardingIntroSignal => 'тренажер, а не трекер вины';
+  String get onboardingIntroTitle => 'Как натренировать *мозг*';
 
   @override
-  String get onboardingIntroTitle => 'Научи мозг новой награде.';
+  String get onboardingIntroSubtitle => 'легко делать сложную работу';
 
   @override
-  String get onboardingIntroBody =>
-      'DOPAMINE120 соединяет осознанное усилие с наградой, которую выбираешь ты. Убери шум, сфокусируйся на задаче, которую избегаешь, а затем сделай что-то приятное — осознанно. Каждое повторение учит мозг, что хорошие ощущения приходят после усилия.';
+  String get onboardingStepDeprivationTitle => 'Депривация';
 
   @override
-  String get onboardingIntroChoice =>
-      'удовольствие остается разрешенным — оно становится выбором';
+  String get onboardingStepDeprivationBody => 'ничего не делай 30 минут';
+
+  @override
+  String get onboardingStepImaginationTitle => 'Воображение';
+
+  @override
+  String get onboardingStepImaginationBody => 'планируй 2 минуты';
+
+  @override
+  String get onboardingStepCreationTitle => 'Созидание';
+
+  @override
+  String get onboardingStepCreationBody => '25 минут работы';
+
+  @override
+  String get onboardingStepRewardTitle => 'Награда';
+
+  @override
+  String get onboardingStepRewardBody => 'любая дофаминовая активность';
 
   @override
   String get onboardingReadinessTitle => 'С какой точки ты начинаешь?';
@@ -94,6 +110,9 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get setupAccessUnsupported =>
       'На этом устройстве доступ пока не поддерживается. Тренировка все равно работает.';
+
+  @override
+  String get nextLabel => 'дальше';
 
   @override
   String get continueLabel => 'дальше';

@@ -9,6 +9,7 @@ environment:
   flutter: ">=1.17.0"
 
 dependencies:
+  confetti: ^0.8.0
   flutter:
     sdk: flutter
   google_fonts: ^8.1.0
