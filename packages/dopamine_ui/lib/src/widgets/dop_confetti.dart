@@ -25,18 +25,26 @@ class DopConfetti extends StatelessWidget {
     required this.controller,
     required this.child,
     this.size = 92,
+    this.height,
   });
 
   final DopConfettiController controller;
   final Widget child;
+
+  /// Width of the burst box (and its height when [height] is omitted).
   final double size;
+
+  /// Optional explicit height; defaults to [size] for a square box. Particles
+  /// overflow the box unclipped, so a short box still bursts upward freely.
+  final double? height;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
 
-    return SizedBox.square(
-      dimension: size,
+    return SizedBox(
+      width: size,
+      height: height ?? size,
       child: Stack(
         clipBehavior: Clip.none,
         alignment: Alignment.center,

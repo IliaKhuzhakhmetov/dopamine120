@@ -11,6 +11,7 @@ import '../../../../../l10n/l10n.dart';
 import '../../../../../core/theme/presentation/theme_provider.dart';
 import '../widgets/creation_icon_animation.dart';
 import '../widgets/imagination_icon_animation.dart';
+import '../widgets/onboarding_eyebrow.dart';
 import '../widgets/onboarding_motion.dart';
 
 enum _IntroStepKind { deprivation, imagination, creation, reward }
@@ -137,6 +138,12 @@ class _IntroStepState extends State<IntroStep>
         StaggeredText(
           animation: _controller,
           start: 0,
+          child: OnboardingEyebrow(label: l10n.onboardingIntroEyebrow, step: 1),
+        ),
+        SizedBox(height: DopSpacing.md),
+        StaggeredText(
+          animation: _controller,
+          start: 0.06,
           child: DopHeaderWidget(
             title: l10n.onboardingIntroTitle,
             subtitle: l10n.onboardingIntroSubtitle,

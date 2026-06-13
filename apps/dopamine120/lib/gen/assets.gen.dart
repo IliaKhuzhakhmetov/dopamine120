@@ -17,6 +17,14 @@ import 'package:vector_graphics/vector_graphics.dart' as _vg;
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
+  /// File path: assets/icons/attention_aura.svg
+  SvgGenImage get attentionAura =>
+      const SvgGenImage('assets/icons/attention_aura.svg');
+
+  /// File path: assets/icons/attention_ripple.svg
+  SvgGenImage get attentionRipple =>
+      const SvgGenImage('assets/icons/attention_ripple.svg');
+
   /// File path: assets/icons/brains.svg
   SvgGenImage get brains => const SvgGenImage('assets/icons/brains.svg');
 
@@ -65,6 +73,8 @@ class $AssetsIconsGen {
 
   /// List of all assets
   List<SvgGenImage> get values => [
+    attentionAura,
+    attentionRipple,
     brains,
     creation,
     creationSpark,

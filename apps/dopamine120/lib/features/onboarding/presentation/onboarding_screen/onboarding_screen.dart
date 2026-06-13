@@ -14,7 +14,7 @@ import '../../domain/usecases/save_action_readiness.dart';
 import '../controller/onboarding_controller.dart';
 import 'steps/access_step.dart';
 import 'steps/intro_step.dart';
-import 'steps/readiness_step.dart';
+import 'steps/attention_step.dart';
 import 'widgets/onboarding_page.dart';
 
 @RoutePage()
@@ -35,6 +35,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   late final OnboardingController _controller;
   final PageController _pageController = PageController();
   int _page = 0;
+  bool _attentionGathered = false;
+  bool _rewardReady = false;
 
   @override
   void initState() {
@@ -116,17 +118,29 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 Expanded(
                   child: PageView(
                     controller: _pageController,
-                    // Swiping would fight the readiness scale's horizontal
-                    // drag, so pages advance only through the buttons.
+                    // Swiping would fight the attention field gesture, so
+                    // pages advance only through the buttons.
                     physics: const NeverScrollableScrollPhysics(),
                     onPageChanged: (page) => setState(() => _page = page),
                     children: [
                       const OnboardingPage(child: IntroStep()),
                       OnboardingPage(
-                        child: ReadinessStep(controller: _controller),
+                        child: AttentionStep(
+                          active: _page == 1,
+                          onGathered: () {
+                            if (_attentionGathered) return;
+                            setState(() => _attentionGathered = true);
+                          },
+                        ),
                       ),
                       OnboardingPage(
-                        child: AccessStep(controller: _controller),
+                        child: AccessStep(
+                          active: _page == 2,
+                          onRewardReady: () {
+                            if (_rewardReady) return;
+                            setState(() => _rewardReady = true);
+                          },
+                        ),
                       ),
                     ],
                   ),
@@ -167,7 +181,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         children: [
           DopButton.primary(
             label: l10n.continueLabel,
-            onPressed: () => _showPage(2),
+            onPressed: _attentionGathered ? () => _showPage(2) : null,
           ),
           const SizedBox(height: 12),
           DopButton.link(label: l10n.skipLabel, onPressed: _finish),
@@ -177,8 +191,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         key: const ValueKey(2),
         children: [
           DopButton.primary(
-            label: l10n.finishLabel,
-            onPressed: loading ? null : _finish,
+            label: l10n.beginLabel,
+            onPressed: loading || !_rewardReady ? null : _finish,
           ),
           const SizedBox(height: 12),
           DopButton.link(

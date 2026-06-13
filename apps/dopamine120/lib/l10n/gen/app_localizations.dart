@@ -98,6 +98,12 @@ abstract class AppLocalizations {
     Locale('ru'),
   ];
 
+  /// No description provided for @onboardingIntroEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'the loop'**
+  String get onboardingIntroEyebrow;
+
   /// No description provided for @onboardingIntroTitle.
   ///
   /// In en, this message translates to:
@@ -158,35 +164,59 @@ abstract class AppLocalizations {
   /// **'any dopamine activity'**
   String get onboardingStepRewardBody;
 
-  /// No description provided for @onboardingReadinessTitle.
+  /// No description provided for @onboardingAttentionEyebrow.
   ///
   /// In en, this message translates to:
-  /// **'Where are you starting from?'**
-  String get onboardingReadinessTitle;
+  /// **'the focus'**
+  String get onboardingAttentionEyebrow;
 
-  /// No description provided for @onboardingReadinessBody.
+  /// No description provided for @onboardingAttentionTitleFirstPrefix.
   ///
   /// In en, this message translates to:
-  /// **'Set your own mark. The app does not score or diagnose you. 0 means pleasure mostly runs on autopilot. 10 means you mostly choose it. Any starting point trains the same loop.'**
-  String get onboardingReadinessBody;
+  /// **'It\'s not'**
+  String get onboardingAttentionTitleFirstPrefix;
 
-  /// No description provided for @onboardingReadinessMin.
+  /// No description provided for @onboardingAttentionTitleFirstAccent.
   ///
   /// In en, this message translates to:
-  /// **'on autopilot'**
-  String get onboardingReadinessMin;
+  /// **'gone.'**
+  String get onboardingAttentionTitleFirstAccent;
 
-  /// No description provided for @onboardingReadinessMax.
+  /// No description provided for @onboardingAttentionTitleSecondPrefix.
   ///
   /// In en, this message translates to:
-  /// **'chosen deliberately'**
-  String get onboardingReadinessMax;
+  /// **'just'**
+  String get onboardingAttentionTitleSecondPrefix;
 
-  /// No description provided for @onboardingReadinessSemantic.
+  /// No description provided for @onboardingAttentionTitleSecondAccent.
   ///
   /// In en, this message translates to:
-  /// **'Starting point'**
-  String get onboardingReadinessSemantic;
+  /// **'scattered.'**
+  String get onboardingAttentionTitleSecondAccent;
+
+  /// No description provided for @onboardingAttentionBody.
+  ///
+  /// In en, this message translates to:
+  /// **'drag to gather it into one place\n— and feel it come back'**
+  String get onboardingAttentionBody;
+
+  /// No description provided for @onboardingAttentionGatheredBody.
+  ///
+  /// In en, this message translates to:
+  /// **'effort first, then the color.\nthat\'s the whole deal.'**
+  String get onboardingAttentionGatheredBody;
+
+  /// No description provided for @onboardingAttentionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'drag & hold'**
+  String get onboardingAttentionHint;
+
+  /// No description provided for @onboardingAttentionSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Drag and hold to gather the scattered attention dots.'**
+  String get onboardingAttentionSemantic;
 
   /// No description provided for @onboardingSetupTitle.
   ///
@@ -199,6 +229,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Health signals help you notice how training lands. Setup access lets DOPAMINE120 quiet chosen apps during focus — only when you ask. Both are optional, and nothing is blocked now.'**
   String get onboardingSetupBody;
+
+  /// No description provided for @onboardingRewardEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'the reward'**
+  String get onboardingRewardEyebrow;
+
+  /// No description provided for @onboardingRewardTitleFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Pleasure comes'**
+  String get onboardingRewardTitleFirst;
+
+  /// No description provided for @onboardingRewardTitleAccent.
+  ///
+  /// In en, this message translates to:
+  /// **'after the work.'**
+  String get onboardingRewardTitleAccent;
+
+  /// No description provided for @onboardingRewardBody.
+  ///
+  /// In en, this message translates to:
+  /// **'rub the square to warm it up. ease off and it cools right back.'**
+  String get onboardingRewardBody;
+
+  /// No description provided for @onboardingRewardReadyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'work first. reward after.'**
+  String get onboardingRewardReadyBody;
+
+  /// No description provided for @onboardingRewardPadLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'rub to warm it'**
+  String get onboardingRewardPadLabel;
+
+  /// No description provided for @onboardingRewardHintIdle.
+  ///
+  /// In en, this message translates to:
+  /// **'rub back & forth — don\'t stop'**
+  String get onboardingRewardHintIdle;
+
+  /// No description provided for @onboardingRewardHintActive.
+  ///
+  /// In en, this message translates to:
+  /// **'keep going'**
+  String get onboardingRewardHintActive;
+
+  /// No description provided for @onboardingRewardHintSlow.
+  ///
+  /// In en, this message translates to:
+  /// **'too slow — it cools.'**
+  String get onboardingRewardHintSlow;
+
+  /// No description provided for @onboardingRewardHintStopped.
+  ///
+  /// In en, this message translates to:
+  /// **'you stopped — it cools.'**
+  String get onboardingRewardHintStopped;
+
+  /// No description provided for @onboardingRewardSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Rub back and forth to warm up the reward square.'**
+  String get onboardingRewardSemantic;
 
   /// No description provided for @healthAccessLabel.
   ///
@@ -301,6 +397,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'finish'**
   String get finishLabel;
+
+  /// No description provided for @beginLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'begin'**
+  String get beginLabel;
 
   /// No description provided for @backLabel.
   ///

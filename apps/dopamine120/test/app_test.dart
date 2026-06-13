@@ -60,7 +60,7 @@ void main() {
         Brightness.dark,
       );
 
-      await tester.pump(const Duration(milliseconds: 640));
+      await tester.pump(const Duration(milliseconds: 1840));
       expect(injector.get<ThemeController>().isDark, isFalse);
 
       await tester.pump(const Duration(milliseconds: 220));

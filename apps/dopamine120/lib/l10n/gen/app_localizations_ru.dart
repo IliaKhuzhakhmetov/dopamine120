@@ -9,6 +9,9 @@ class AppLocalizationsRu extends AppLocalizations {
   AppLocalizationsRu([String locale = 'ru']) : super(locale);
 
   @override
+  String get onboardingIntroEyebrow => 'цикл';
+
+  @override
   String get onboardingIntroTitle => 'Как натренировать *мозг*';
 
   @override
@@ -39,20 +42,34 @@ class AppLocalizationsRu extends AppLocalizations {
   String get onboardingStepRewardBody => 'любая дофаминовая активность';
 
   @override
-  String get onboardingReadinessTitle => 'С какой точки ты начинаешь?';
+  String get onboardingAttentionEyebrow => 'фокус';
 
   @override
-  String get onboardingReadinessBody =>
-      'Поставь свою отметку. Приложение не оценивает и не ставит диагнозов. 0 — удовольствие чаще на автопилоте. 10 — ты чаще выбираешь его сам. Любая точка подходит для тренировки.';
+  String get onboardingAttentionTitleFirstPrefix => 'Оно не';
 
   @override
-  String get onboardingReadinessMin => 'на автопилоте';
+  String get onboardingAttentionTitleFirstAccent => 'пропало.';
 
   @override
-  String get onboardingReadinessMax => 'по выбору';
+  String get onboardingAttentionTitleSecondPrefix => 'просто';
 
   @override
-  String get onboardingReadinessSemantic => 'Точка старта';
+  String get onboardingAttentionTitleSecondAccent => 'рассыпалось.';
+
+  @override
+  String get onboardingAttentionBody =>
+      'собери его в одно место\n— и почувствуй, как оно возвращается';
+
+  @override
+  String get onboardingAttentionGatheredBody =>
+      'сначала усилие, потом цвет.\nв этом весь смысл.';
+
+  @override
+  String get onboardingAttentionHint => 'тяни и держи';
+
+  @override
+  String get onboardingAttentionSemantic =>
+      'Потяни и удерживай, чтобы собрать рассыпанные точки внимания.';
 
   @override
   String get onboardingSetupTitle => 'Поддержка, а не клетка.';
@@ -60,6 +77,41 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get onboardingSetupBody =>
       'Сигналы здоровья помогают замечать, как идет тренировка. Доступ к настройке позволит DOPAMINE120 приглушать выбранные приложения во время фокуса — только если ты попросишь. Оба необязательны, сейчас ничего не блокируется.';
+
+  @override
+  String get onboardingRewardEyebrow => 'награда';
+
+  @override
+  String get onboardingRewardTitleFirst => 'Удовольствие приходит';
+
+  @override
+  String get onboardingRewardTitleAccent => 'после работы.';
+
+  @override
+  String get onboardingRewardBody =>
+      'разотри квадрат, чтобы согреть его. отпустишь — он быстро остынет.';
+
+  @override
+  String get onboardingRewardReadyBody => 'сначала работа. награда после.';
+
+  @override
+  String get onboardingRewardPadLabel => 'разотри, чтобы согреть';
+
+  @override
+  String get onboardingRewardHintIdle => 'три туда-сюда — не останавливайся';
+
+  @override
+  String get onboardingRewardHintActive => 'продолжай';
+
+  @override
+  String get onboardingRewardHintSlow => 'слишком медленно — он остывает.';
+
+  @override
+  String get onboardingRewardHintStopped => 'ты остановился — он остывает.';
+
+  @override
+  String get onboardingRewardSemantic =>
+      'Три туда-сюда, чтобы согреть квадрат награды.';
 
   @override
   String get healthAccessLabel => 'сигналы здоровья';
@@ -119,6 +171,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get finishLabel => 'завершить';
+
+  @override
+  String get beginLabel => 'начать';
 
   @override
   String get backLabel => 'назад';

@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:core/core.dart';
 import 'package:dopamine120/features/onboarding/domain/entities/action_readiness.dart';
 import 'package:dopamine120/features/onboarding/domain/entities/blockable_app.dart';
@@ -16,6 +14,7 @@ import 'package:dopamine120/l10n/l10n.dart';
 import 'package:dopamine_ui/dopamine_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -110,16 +109,16 @@ void main() {
     await tester.pump();
     expect(find.byKey(const ValueKey('creation-icon-frame-1')), findsOneWidget);
 
-    await tester.pump(const Duration(milliseconds: 210));
+    await tester.pump(const Duration(milliseconds: 370));
     expect(find.byKey(const ValueKey('creation-icon-frame-2')), findsOneWidget);
 
-    await tester.pump(const Duration(milliseconds: 210));
+    await tester.pump(const Duration(milliseconds: 370));
     expect(find.byKey(const ValueKey('creation-icon-frame-3')), findsOneWidget);
 
-    await tester.pump(const Duration(milliseconds: 210));
+    await tester.pump(const Duration(milliseconds: 370));
     expect(find.byKey(const ValueKey('creation-icon-frame-4')), findsOneWidget);
 
-    await tester.pump(const Duration(milliseconds: 210));
+    await tester.pump(const Duration(milliseconds: 370));
     await tester.pump(const Duration(milliseconds: 200));
     expect(find.byKey(const ValueKey('creation-icon-frame-0')), findsOneWidget);
     expect(find.byKey(const ValueKey('creation-icon-frame-4')), findsNothing);
@@ -147,14 +146,21 @@ void main() {
     expect(find.byType(DopConfetti), findsOneWidget);
   });
 
-  testWidgets('navigates through readiness and requests both permissions', (
+  testWidgets('gathers attention and warms the reward before begin', (
     tester,
   ) async {
-    final permission = Completer<PermissionStatus>();
-    final repository = _FakeOnboardingRepository(
-      setupPermission: permission.future,
-    );
+    final repository = _FakeOnboardingRepository();
     OnboardingResult? result;
+    final haptics = <MethodCall>[];
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(SystemChannels.platform, (call) async {
+          if (call.method == 'HapticFeedback.vibrate') haptics.add(call);
+          return null;
+        });
+    addTearDown(() {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(SystemChannels.platform, null);
+    });
 
     await tester.pumpWidget(
       _OnboardingHost(
@@ -168,94 +174,75 @@ void main() {
 
     await tester.ensureVisible(find.text('next'));
     await tester.tap(find.text('next'));
-    await tester.pumpAndSettle();
-    expect(find.text('Where are you starting from?'), findsOneWidget);
+    await _pumpPageTransition(tester);
+    expect(
+      find.textContaining('scattered.', findRichText: true),
+      findsOneWidget,
+    );
+    expect(
+      tester
+          .widget<DopButton>(find.widgetWithText(DopButton, 'continue'))
+          .onPressed,
+      isNull,
+    );
 
     await tester.tap(find.byType(DopBackButton));
-    await tester.pumpAndSettle();
+    await _pumpPageTransition(tester);
     expect(find.text('How to train your brain'), findsOneWidget);
 
     await tester.ensureVisible(find.text('next'));
     await tester.tap(find.text('next'));
-    await tester.pumpAndSettle();
+    await _pumpPageTransition(tester);
 
-    final scaleBox = tester.renderObject<RenderBox>(
-      find.byType(DopScaleSelector),
+    await _gatherAttention(tester);
+    expect(find.textContaining("that's the whole deal"), findsOneWidget);
+    expect(
+      tester
+          .widget<DopButton>(find.widgetWithText(DopButton, 'continue'))
+          .onPressed,
+      isNotNull,
     );
-    final scaleOrigin = scaleBox.localToGlobal(Offset.zero);
-    await tester.tapAt(scaleOrigin + Offset(scaleBox.size.width - 1, 12));
-    await tester.pumpAndSettle();
 
     await tester.ensureVisible(find.text('continue'));
     await tester.tap(find.text('continue'));
     await tester.pumpAndSettle();
-    expect(find.text('Support, not a cage.'), findsOneWidget);
+    expect(find.text('Pleasure comes'), findsOneWidget);
     expect(
-      find.text('Ready to ask. The app will open the system health screen.'),
-      findsOneWidget,
-    );
-    expect(
-      find.text('Ready to ask. The app will open the system access screen.'),
-      findsOneWidget,
+      tester
+          .widget<DopButton>(find.widgetWithText(DopButton, 'begin'))
+          .onPressed,
+      isNull,
     );
 
-    await tester.ensureVisible(find.text('allow health access'));
-    await tester.tap(find.text('allow health access'));
+    await _warmReward(tester);
     await tester.pumpAndSettle();
+    expect(find.text('work first. reward after.'), findsOneWidget);
+    expect(find.byKey(const ValueKey('reward-rub-confetti')), findsOneWidget);
     expect(
-      find.text('Health signals connected. They only help tune your training.'),
-      findsOneWidget,
+      haptics.map((call) => call.arguments),
+      contains('HapticFeedbackType.selectionClick'),
+    );
+    expect(
+      haptics.map((call) => call.arguments),
+      contains('HapticFeedbackType.mediumImpact'),
+    );
+    expect(
+      tester
+          .widget<DopButton>(find.widgetWithText(DopButton, 'begin'))
+          .onPressed,
+      isNotNull,
     );
 
-    await tester.ensureVisible(find.text('allow setup access'));
-    await tester.tap(find.text('allow setup access'));
-    await tester.pump();
-    expect(find.text('Waiting for the system response...'), findsOneWidget);
-
-    permission.complete(PermissionStatus.unsupported);
-    await tester.pumpAndSettle();
-    expect(
-      find.text(
-        'This device does not support setup access yet. Training still works.',
-      ),
-      findsOneWidget,
-    );
-
-    await tester.ensureVisible(find.text('finish'));
-    await tester.tap(find.text('finish'));
+    await tester.ensureVisible(find.text('begin'));
+    await tester.tap(find.text('begin'));
     await tester.pumpAndSettle();
 
-    expect(result?.readiness.score, 10);
-    expect(result?.setupAccessStatus, PermissionStatus.unsupported);
-    expect(result?.healthAccessStatus, PermissionStatus.granted);
+    expect(result?.readiness.score, ActionReadiness.neutralScore);
+    expect(result?.setupAccessStatus, PermissionStatus.idle);
+    expect(result?.healthAccessStatus, PermissionStatus.idle);
+    expect(repository.setupRequests, 0);
+    expect(repository.healthRequests, 0);
     expect(repository.completed, isTrue);
-  });
-
-  testWidgets('hides the grant action when health data is unsupported', (
-    tester,
-  ) async {
-    final repository = _FakeOnboardingRepository(supportsHealth: false);
-
-    await tester.pumpWidget(
-      _OnboardingHost(repository: repository, onFinished: (_) {}),
-    );
-    await tester.pumpAndSettle();
-
-    await tester.ensureVisible(find.text('next'));
-    await tester.tap(find.text('next'));
-    await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('continue'));
-    await tester.tap(find.text('continue'));
-    await tester.pumpAndSettle();
-
-    expect(
-      find.text(
-        'This device does not provide health data. Training still works.',
-      ),
-      findsOneWidget,
-    );
-    expect(find.text('allow health access'), findsNothing);
-    expect(find.text('allow setup access'), findsOneWidget);
   });
 
   testWidgets('skip completes onboarding without requesting permissions', (
@@ -282,6 +269,41 @@ void main() {
     expect(repository.healthRequests, 0);
     expect(repository.completed, isTrue);
   });
+}
+
+Future<void> _gatherAttention(WidgetTester tester) async {
+  final fieldBox = tester.renderObject<RenderBox>(
+    find.byKey(const ValueKey('attention-field')),
+  );
+  final fieldCenter = fieldBox.localToGlobal(fieldBox.size.center(Offset.zero));
+  final gesture = await tester.startGesture(fieldCenter);
+  for (var i = 0; i < 360; i++) {
+    await tester.pump(const Duration(milliseconds: 16));
+  }
+  await gesture.up();
+  await tester.pump(const Duration(milliseconds: 420));
+}
+
+Future<void> _warmReward(WidgetTester tester) async {
+  final padBox = tester.renderObject<RenderBox>(
+    find.byKey(const ValueKey('reward-rub-pad')),
+  );
+  final left = padBox.localToGlobal(Offset(16, padBox.size.height / 2));
+  final right = padBox.localToGlobal(
+    Offset(padBox.size.width - 16, padBox.size.height / 2),
+  );
+  final gesture = await tester.startGesture(left);
+  for (var i = 0; i < 130; i++) {
+    await gesture.moveTo(i.isEven ? right : left);
+    await tester.pump(const Duration(milliseconds: 16));
+  }
+  await gesture.up();
+  await tester.pump(const Duration(milliseconds: 420));
+}
+
+Future<void> _pumpPageTransition(WidgetTester tester) async {
+  await tester.pump();
+  await tester.pump(const Duration(milliseconds: 620));
 }
 
 class _OnboardingHost extends StatelessWidget {
@@ -330,7 +352,6 @@ class _FakeOnboardingRepository implements OnboardingRepository {
   _FakeOnboardingRepository({
     Future<PermissionStatus>? setupPermission,
     Future<PermissionStatus>? healthPermission,
-    this.supportsHealth = true,
   }) : _setupPermission =
            setupPermission ?? Future.value(PermissionStatus.denied),
        _healthPermission =
@@ -338,7 +359,6 @@ class _FakeOnboardingRepository implements OnboardingRepository {
 
   final Future<PermissionStatus> _setupPermission;
   final Future<PermissionStatus> _healthPermission;
-  final bool supportsHealth;
 
   ActionReadiness? savedReadiness;
   List<BlockableApp> savedApps = const [];
@@ -367,8 +387,7 @@ class _FakeOnboardingRepository implements OnboardingRepository {
   }
 
   @override
-  Future<PermissionStatus> healthAccessStatus() async =>
-      supportsHealth ? PermissionStatus.idle : PermissionStatus.unsupported;
+  Future<PermissionStatus> healthAccessStatus() async => PermissionStatus.idle;
 
   @override
   Future<PermissionStatus> requestHealthAccess() {

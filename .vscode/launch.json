@@ -9,6 +9,14 @@
       "program": "lib/main.dart"
     },
     {
+      "name": "DOPAMINE120 (profile)",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "${workspaceFolder}/apps/dopamine120",
+      "program": "lib/main.dart",
+      "flutterMode": "profile"
+    },
+    {
       "name": "UI Kit Widgetbook (macOS)",
       "request": "launch",
       "type": "dart",

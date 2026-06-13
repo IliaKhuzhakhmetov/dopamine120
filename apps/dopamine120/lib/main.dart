@@ -7,7 +7,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app.dart';
 import 'core/stores/shared_preferences_key_value_store.dart';
-import 'core/theme/data/datasources/theme_local_ds.dart';
 import 'features/onboarding/data/datasources/onboarding_local_ds.dart';
 
 Future<void> main() async {
@@ -31,10 +30,7 @@ Future<void> main() async {
 
       final preferences = await SharedPreferencesWithCache.create(
         cacheOptions: const SharedPreferencesWithCacheOptions(
-          allowList: {
-            ...OnboardingLocalDs.storageKeys,
-            ...ThemeLocalDs.storageKeys,
-          },
+          allowList: OnboardingLocalDs.storageKeys,
         ),
       );
 

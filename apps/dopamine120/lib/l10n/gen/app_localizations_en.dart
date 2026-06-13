@@ -9,6 +9,9 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get onboardingIntroEyebrow => 'the loop';
+
+  @override
   String get onboardingIntroTitle => 'How to train *your brain*';
 
   @override
@@ -39,20 +42,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingStepRewardBody => 'any dopamine activity';
 
   @override
-  String get onboardingReadinessTitle => 'Where are you starting from?';
+  String get onboardingAttentionEyebrow => 'the focus';
 
   @override
-  String get onboardingReadinessBody =>
-      'Set your own mark. The app does not score or diagnose you. 0 means pleasure mostly runs on autopilot. 10 means you mostly choose it. Any starting point trains the same loop.';
+  String get onboardingAttentionTitleFirstPrefix => 'It\'s not';
 
   @override
-  String get onboardingReadinessMin => 'on autopilot';
+  String get onboardingAttentionTitleFirstAccent => 'gone.';
 
   @override
-  String get onboardingReadinessMax => 'chosen deliberately';
+  String get onboardingAttentionTitleSecondPrefix => 'just';
 
   @override
-  String get onboardingReadinessSemantic => 'Starting point';
+  String get onboardingAttentionTitleSecondAccent => 'scattered.';
+
+  @override
+  String get onboardingAttentionBody =>
+      'drag to gather it into one place\n— and feel it come back';
+
+  @override
+  String get onboardingAttentionGatheredBody =>
+      'effort first, then the color.\nthat\'s the whole deal.';
+
+  @override
+  String get onboardingAttentionHint => 'drag & hold';
+
+  @override
+  String get onboardingAttentionSemantic =>
+      'Drag and hold to gather the scattered attention dots.';
 
   @override
   String get onboardingSetupTitle => 'Support, not a cage.';
@@ -60,6 +77,41 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get onboardingSetupBody =>
       'Health signals help you notice how training lands. Setup access lets DOPAMINE120 quiet chosen apps during focus — only when you ask. Both are optional, and nothing is blocked now.';
+
+  @override
+  String get onboardingRewardEyebrow => 'the reward';
+
+  @override
+  String get onboardingRewardTitleFirst => 'Pleasure comes';
+
+  @override
+  String get onboardingRewardTitleAccent => 'after the work.';
+
+  @override
+  String get onboardingRewardBody =>
+      'rub the square to warm it up. ease off and it cools right back.';
+
+  @override
+  String get onboardingRewardReadyBody => 'work first. reward after.';
+
+  @override
+  String get onboardingRewardPadLabel => 'rub to warm it';
+
+  @override
+  String get onboardingRewardHintIdle => 'rub back & forth — don\'t stop';
+
+  @override
+  String get onboardingRewardHintActive => 'keep going';
+
+  @override
+  String get onboardingRewardHintSlow => 'too slow — it cools.';
+
+  @override
+  String get onboardingRewardHintStopped => 'you stopped — it cools.';
+
+  @override
+  String get onboardingRewardSemantic =>
+      'Rub back and forth to warm up the reward square.';
 
   @override
   String get healthAccessLabel => 'health signals';
@@ -119,6 +171,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get finishLabel => 'finish';
+
+  @override
+  String get beginLabel => 'begin';
 
   @override
   String get backLabel => 'back';
