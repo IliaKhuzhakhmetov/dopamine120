@@ -6,8 +6,8 @@ import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app.dart';
+import 'core/stores/app_preferences_allowlist.dart';
 import 'core/stores/shared_preferences_key_value_store.dart';
-import 'features/onboarding/data/datasources/onboarding_local_ds.dart';
 
 Future<void> main() async {
   await runZonedGuarded<Future<void>>(
@@ -30,7 +30,7 @@ Future<void> main() async {
 
       final preferences = await SharedPreferencesWithCache.create(
         cacheOptions: const SharedPreferencesWithCacheOptions(
-          allowList: OnboardingLocalDs.storageKeys,
+          allowList: AppPreferencesAllowlist.keys,
         ),
       );
 
