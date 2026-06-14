@@ -1,0 +1,41 @@
+instructions:
+  - android:androidManifest
+  - android:flavorizrGradle
+  - android:buildGradle
+  - ios:podfile
+  - ios:xcconfig
+  - ios:buildTargets
+  - ios:schema
+  - ios:plist
+  - ide:config
+
+flavors:
+  dev:
+    app:
+      name: "DOPAMINE120 Dev"
+    android:
+      applicationId: "com.example.dopamine120.dev"
+      resValues:
+        app_name:
+          type: "string"
+          value: "DOPAMINE120 Dev"
+    ios:
+      bundleId: "com.example.dopamine120.dev"
+      variables:
+        APP_ENV:
+          value: "dev"
+
+  prod:
+    app:
+      name: "DOPAMINE120"
+    android:
+      applicationId: "com.example.dopamine120"
+      resValues:
+        app_name:
+          type: "string"
+          value: "DOPAMINE120"
+    ios:
+      bundleId: "com.example.dopamine120"
+      variables:
+        APP_ENV:
+          value: "prod"

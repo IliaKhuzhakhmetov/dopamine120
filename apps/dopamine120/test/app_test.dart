@@ -1,5 +1,5 @@
-import 'package:dopamine120/app.dart';
 import 'package:dopamine120/core/theme/presentation/theme_controller.dart';
+import 'package:dopamine120/features/application/application.dart';
 import 'package:dopamine120/features/onboarding/data/datasources/onboarding_local_ds.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

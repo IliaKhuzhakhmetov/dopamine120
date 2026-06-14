@@ -6,7 +6,20 @@
       "request": "launch",
       "type": "dart",
       "cwd": "${workspaceFolder}/apps/dopamine120",
-      "program": "lib/main.dart"
+      "program": "lib/main.dart",
+      "toolArgs": [
+        "--dart-define=APP_ENV=prod"
+      ]
+    },
+    {
+      "name": "DOPAMINE120 Dev (memory prefs)",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "${workspaceFolder}/apps/dopamine120",
+      "program": "lib/main.dart",
+      "toolArgs": [
+        "--dart-define=APP_ENV=dev"
+      ]
     },
     {
       "name": "DOPAMINE120 (profile)",
@@ -14,7 +27,10 @@
       "type": "dart",
       "cwd": "${workspaceFolder}/apps/dopamine120",
       "program": "lib/main.dart",
-      "flutterMode": "profile"
+      "flutterMode": "profile",
+      "toolArgs": [
+        "--dart-define=APP_ENV=prod"
+      ]
     },
     {
       "name": "UI Kit Widgetbook (macOS)",

@@ -1,9 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:core/core.dart';
+import 'package:dopamine120/features/application/presentation/router/app_router.dart';
 import 'package:dopamine_ui/dopamine_ui.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/router/app_router.dart';
 import '../../../../l10n/l10n.dart';
 import '../../domain/entities/onboarding_result.dart';
 import '../../domain/usecases/complete_onboarding.dart';
@@ -12,9 +12,9 @@ import '../../domain/usecases/request_health_access.dart';
 import '../../domain/usecases/request_setup_access.dart';
 import '../../domain/usecases/save_action_readiness.dart';
 import '../controller/onboarding_controller.dart';
-import 'steps/access_step.dart';
-import 'steps/intro_step.dart';
 import 'steps/attention_step.dart';
+import 'steps/intro_step.dart';
+import 'steps/reward_step.dart';
 import 'widgets/onboarding_page.dart';
 
 @RoutePage()
@@ -33,7 +33,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   static const _pageCount = 3;
 
   late final OnboardingController _controller;
-  final PageController _pageController = PageController();
+  late final PageController _pageController;
   int _page = 0;
   bool _attentionGathered = false;
   bool _rewardReady = false;
@@ -51,16 +51,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       completeOnboarding: injector.get<CompleteOnboarding>(),
     );
     _controller.init();
+    _pageController = PageController();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
     _pageController.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
   void _showPage(int page) {
+    setState(() => _page = page);
     _pageController.animateToPage(
       page,
       duration: const Duration(milliseconds: 480),
@@ -86,6 +88,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         child: AnimatedBuilder(
           animation: _controller,
           builder: (context, _) {
+            final page = _page;
+
             return Column(
               children: [
                 Padding(
@@ -93,24 +97,21 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   child: Row(
                     children: [
                       AnimatedOpacity(
-                        opacity: _page > 0 ? 1 : 0,
+                        opacity: page > 0 ? 1 : 0,
                         duration: const Duration(milliseconds: 150),
                         child: IgnorePointer(
-                          ignoring: _page == 0,
+                          ignoring: page == 0,
                           child: DopBackButton(
                             semanticLabel: context.l10n.backLabel,
                             onPressed: _controller.loading
                                 ? null
-                                : () => _showPage(_page - 1),
+                                : () => _showPage(page - 1),
                           ),
                         ),
                       ),
                       const SizedBox(width: 20),
                       Expanded(
-                        child: DopStepIndicator(
-                          count: _pageCount,
-                          index: _page,
-                        ),
+                        child: DopStepIndicator(count: _pageCount, index: page),
                       ),
                     ],
                   ),
@@ -118,15 +119,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 Expanded(
                   child: PageView(
                     controller: _pageController,
-                    // Swiping would fight the attention field gesture, so
-                    // pages advance only through the buttons.
+                    onPageChanged: (value) {
+                      if (_page != value) setState(() => _page = value);
+                    },
+                    // Swiping would fight the attention field gesture, so pages
+                    // advance only through the buttons.
                     physics: const NeverScrollableScrollPhysics(),
-                    onPageChanged: (page) => setState(() => _page = page),
                     children: [
                       const OnboardingPage(child: IntroStep()),
                       OnboardingPage(
                         child: AttentionStep(
-                          active: _page == 1,
+                          active: page == 1,
                           onGathered: () {
                             if (_attentionGathered) return;
                             setState(() => _attentionGathered = true);
@@ -134,8 +137,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         ),
                       ),
                       OnboardingPage(
-                        child: AccessStep(
-                          active: _page == 2,
+                        child: RewardStep(
+                          active: page == 2,
                           onRewardReady: () {
                             if (_rewardReady) return;
                             setState(() => _rewardReady = true);
@@ -149,7 +152,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   padding: const EdgeInsets.fromLTRB(24, 12, 24, 16),
                   child: AnimatedSwitcher(
                     duration: const Duration(milliseconds: 240),
-                    child: _footer(context.l10n),
+                    child: _footer(context.l10n, page),
                   ),
                 ),
               ],
@@ -162,9 +165,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   /// Pinned action bar under the pages; keyed so the switcher cross-fades it
   /// between steps.
-  Widget _footer(AppLocalizations l10n) {
+  Widget _footer(AppLocalizations l10n, int page) {
     final loading = _controller.loading;
-    return switch (_page) {
+    return switch (page) {
       0 => Column(
         key: const ValueKey(0),
         children: [

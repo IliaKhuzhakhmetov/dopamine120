@@ -13,8 +13,8 @@ import '../widgets/onboarding_motion.dart';
 class AttentionStep extends StatefulWidget {
   const AttentionStep({
     super.key,
-    required this.active,
-    required this.onGathered,
+    this.active = true,
+    this.onGathered = _noopAttentionStepCallback,
   });
 
   final bool active;
@@ -23,6 +23,8 @@ class AttentionStep extends StatefulWidget {
   @override
   State<AttentionStep> createState() => _AttentionStepState();
 }
+
+void _noopAttentionStepCallback() {}
 
 class _AttentionStepState extends State<AttentionStep>
     with TickerProviderStateMixin {

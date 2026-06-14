@@ -9,21 +9,21 @@ import '../../../../../l10n/l10n.dart';
 import '../widgets/onboarding_eyebrow.dart';
 import '../widgets/onboarding_motion.dart';
 
-class AccessStep extends StatefulWidget {
-  const AccessStep({
+class RewardStep extends StatefulWidget {
+  const RewardStep({
     super.key,
-    required this.active,
-    required this.onRewardReady,
+    this.active = true,
+    this.onRewardReady = _noopRewardStepCallback,
   });
 
   final bool active;
   final VoidCallback onRewardReady;
 
   @override
-  State<AccessStep> createState() => _AccessStepState();
+  State<RewardStep> createState() => _RewardStepState();
 }
 
-class _AccessStepState extends State<AccessStep> with TickerProviderStateMixin {
+class _RewardStepState extends State<RewardStep> with TickerProviderStateMixin {
   static const _ignite = 100.0;
   static const _gainPerPx = 0.034;
   static const _gainCap = 1.1;
@@ -66,7 +66,7 @@ class _AccessStepState extends State<AccessStep> with TickerProviderStateMixin {
   }
 
   @override
-  void didUpdateWidget(covariant AccessStep oldWidget) {
+  void didUpdateWidget(covariant RewardStep oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.active == oldWidget.active) return;
     if (widget.active && !_done) {
@@ -343,6 +343,8 @@ class _AccessStepState extends State<AccessStep> with TickerProviderStateMixin {
     );
   }
 }
+
+void _noopRewardStepCallback() {}
 
 class _RewardHeatPainter extends CustomPainter {
   _RewardHeatPainter({

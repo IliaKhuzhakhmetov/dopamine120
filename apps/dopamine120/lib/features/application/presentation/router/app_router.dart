@@ -1,9 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 
-import '../../features/home/presentation/home_screen.dart';
-import '../../features/onboarding/domain/entities/onboarding_result.dart';
-import '../../features/onboarding/presentation/onboarding_screen/onboarding_screen.dart';
+import '../../../home/presentation/home_screen.dart';
+import '../../../onboarding/domain/entities/onboarding_result.dart';
+import '../../../onboarding/presentation/onboarding_screen/onboarding_screen.dart';
 
 part 'app_router.gr.dart';
 
@@ -21,7 +21,7 @@ class AppRouter extends RootStackRouter {
       initial: true,
       guards: [_OnboardingGuard(_isOnboardingComplete)],
     ),
-    AutoRoute(page: OnboardingRoute.page),
+    AutoRoute(page: OnboardingRoute.page, path: '/onboarding'),
   ];
 }
 

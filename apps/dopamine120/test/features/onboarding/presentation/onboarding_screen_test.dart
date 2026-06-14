@@ -1,4 +1,6 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:core/core.dart';
+import 'package:dopamine120/features/application/presentation/router/app_router.dart';
 import 'package:dopamine120/features/onboarding/domain/entities/action_readiness.dart';
 import 'package:dopamine120/features/onboarding/domain/entities/blockable_app.dart';
 import 'package:dopamine120/features/onboarding/domain/entities/onboarding_result.dart';
@@ -9,7 +11,6 @@ import 'package:dopamine120/features/onboarding/domain/usecases/get_health_acces
 import 'package:dopamine120/features/onboarding/domain/usecases/request_health_access.dart';
 import 'package:dopamine120/features/onboarding/domain/usecases/request_setup_access.dart';
 import 'package:dopamine120/features/onboarding/domain/usecases/save_action_readiness.dart';
-import 'package:dopamine120/features/onboarding/presentation/onboarding_screen/onboarding_screen.dart';
 import 'package:dopamine120/l10n/l10n.dart';
 import 'package:dopamine_ui/dopamine_ui.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +33,7 @@ void main() {
         onFinished: (_) {},
       ),
     );
+    await tester.pumpAndSettle();
 
     final rewardBottom = tester.getBottomLeft(find.text('REWARD')).dy;
     final nextTop = tester
@@ -50,14 +52,14 @@ void main() {
         onFinished: (_) {},
       ),
     );
+    await tester.pumpAndSettle();
 
     expect(
       find.byKey(const ValueKey('imagination-icon-frame-0')),
       findsOneWidget,
     );
 
-    await tester.tap(find.text('IMAGINATION'));
-    await tester.pump();
+    await _tapIntroTile(tester, 'IMAGINATION');
     expect(
       find.byKey(const ValueKey('imagination-icon-frame-1')),
       findsOneWidget,
@@ -102,11 +104,11 @@ void main() {
         onFinished: (_) {},
       ),
     );
+    await tester.pumpAndSettle();
 
     expect(find.byKey(const ValueKey('creation-icon-frame-0')), findsOneWidget);
 
-    await tester.tap(find.text('CREATION'));
-    await tester.pump();
+    await _tapIntroTile(tester, 'CREATION');
     expect(find.byKey(const ValueKey('creation-icon-frame-1')), findsOneWidget);
 
     await tester.pump(const Duration(milliseconds: 370));
@@ -133,6 +135,7 @@ void main() {
         onFinished: (_) {},
       ),
     );
+    await tester.pumpAndSettle();
 
     expect(find.byKey(const ValueKey('reward-confetti')), findsOneWidget);
 
@@ -168,6 +171,7 @@ void main() {
         onFinished: (value) => result = value,
       ),
     );
+    await tester.pumpAndSettle();
 
     expect(find.text('How to train your brain'), findsOneWidget);
     expect(find.text('DEPRIVATION'), findsOneWidget);
@@ -204,9 +208,12 @@ void main() {
     );
 
     await tester.ensureVisible(find.text('continue'));
-    await tester.tap(find.text('continue'));
-    await tester.pumpAndSettle();
-    expect(find.text('Pleasure comes'), findsOneWidget);
+    await tester.tap(find.widgetWithText(DopButton, 'continue'));
+    await _pumpPageTransition(tester);
+    expect(
+      find.textContaining('Pleasure comes', findRichText: true),
+      findsOneWidget,
+    );
     expect(
       tester
           .widget<DopButton>(find.widgetWithText(DopButton, 'begin'))
@@ -215,7 +222,7 @@ void main() {
     );
 
     await _warmReward(tester);
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 1000));
     expect(find.text('work first. reward after.'), findsOneWidget);
     expect(find.byKey(const ValueKey('reward-rub-confetti')), findsOneWidget);
     expect(
@@ -234,8 +241,8 @@ void main() {
     );
 
     await tester.ensureVisible(find.text('begin'));
-    await tester.tap(find.text('begin'));
-    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(DopButton, 'begin'));
+    await tester.pump();
 
     expect(result?.readiness.score, ActionReadiness.neutralScore);
     expect(result?.setupAccessStatus, PermissionStatus.idle);
@@ -257,6 +264,7 @@ void main() {
         onFinished: (value) => result = value,
       ),
     );
+    await tester.pumpAndSettle();
 
     await tester.ensureVisible(find.text('skip'));
     await tester.tap(find.text('skip'));
@@ -301,6 +309,18 @@ Future<void> _warmReward(WidgetTester tester) async {
   await tester.pump(const Duration(milliseconds: 420));
 }
 
+Future<void> _tapIntroTile(WidgetTester tester, String title) async {
+  await tester.ensureVisible(find.text(title));
+  await tester.pumpAndSettle();
+
+  final tile = find.ancestor(
+    of: find.text(title),
+    matching: find.byType(GestureDetector),
+  );
+  await tester.tap(tile);
+  await tester.pump();
+}
+
 Future<void> _pumpPageTransition(WidgetTester tester) async {
   await tester.pump();
   await tester.pump(const Duration(milliseconds: 620));
@@ -314,6 +334,7 @@ class _OnboardingHost extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final router = AppRouter(isOnboardingComplete: () => false);
     final injector = Injector()
       ..registerLazySingleton<SaveActionReadiness>(
         (_) => SaveActionReadiness(repository),
@@ -333,7 +354,7 @@ class _OnboardingHost extends StatelessWidget {
 
     return DependencyScope(
       injector: injector,
-      child: MaterialApp(
+      child: MaterialApp.router(
         theme: DopTheme.light(),
         localizationsDelegates: const [
           AppLocalizations.delegate,
@@ -342,7 +363,10 @@ class _OnboardingHost extends StatelessWidget {
           GlobalWidgetsLocalizations.delegate,
         ],
         supportedLocales: AppLocalizations.supportedLocales,
-        home: OnboardingScreen(onFinished: onFinished),
+        routerConfig: router.config(
+          deepLinkBuilder: (_) =>
+              DeepLink([OnboardingRoute(onFinished: onFinished)]),
+        ),
       ),
     );
   }
