@@ -17,4 +17,4 @@ paths:
 - Widgets are prefixed `Dop` and live in `lib/src/widgets/`; variants are named constructors (e.g. `DopButton.primary` / `.outline` / `.link`), not separate classes or enum parameters.
 - Every new public file must be exported from the barrel `lib/dopamine_ui.dart`; consumers import only `package:dopamine_ui/dopamine_ui.dart`, never `src/` paths.
 - All public members carry `///` doc comments — match the existing terse one-line style.
-- Register every new widget/variant as a `WidgetbookComponent`/`WidgetbookUseCase` in `example/lib/main.dart` so it appears in the catalog.
+- Give every new widget its own catalog file at `example/lib/src/book/<widget>.book.dart` exposing a single `WidgetbookComponent get <widget>Book` getter (keep its private playground/gallery helpers in that same file). Then add the getter to the list in `example/lib/src/widgetbook_catalog.dart` — the catalog is only the final composition, so adding a widget never edits an existing entry.

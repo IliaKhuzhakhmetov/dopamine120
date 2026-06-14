@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'dop_colors.dart';
+import 'dop_knob_theme.dart';
 import 'dop_radius.dart';
 import 'dop_spacing.dart';
 import 'dop_typography.dart';
@@ -81,6 +82,8 @@ abstract final class DopTheme {
     );
 
     final squareBorder = RoundedRectangleBorder(borderRadius: DopRadius.none);
+
+    final knobTheme = DopKnobTheme.from(colors: colors, typo: typo);
 
     return ThemeData(
       useMaterial3: true,
@@ -223,7 +226,7 @@ abstract final class DopTheme {
         linearTrackColor: colors.line,
         circularTrackColor: colors.line,
       ),
-      extensions: [colors, typo],
+      extensions: [colors, typo, knobTheme],
     );
   }
 }

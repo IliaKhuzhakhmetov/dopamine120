@@ -15,6 +15,8 @@ class DopTypography extends ThemeExtension<DopTypography> {
     required this.bodyBold,
     required this.caption,
     required this.label,
+    required this.control,
+    required this.controlSecondary,
   });
 
   /// The light type scale (Urbanist display, Instrument Serif accents,
@@ -82,6 +84,19 @@ class DopTypography extends ThemeExtension<DopTypography> {
         letterSpacing: 3,
         color: colors.inkFaint,
       ),
+      control: GoogleFonts.spaceMono(
+        fontSize: 14,
+        fontWeight: FontWeight.w700,
+        height: 1.2,
+        color: colors.ink,
+      ),
+      controlSecondary: GoogleFonts.spaceMono(
+        fontSize: 13,
+        fontWeight: FontWeight.w400,
+        height: 1.25,
+        letterSpacing: 0.5,
+        color: colors.inkFaint,
+      ),
     );
   }
 
@@ -109,6 +124,12 @@ class DopTypography extends ThemeExtension<DopTypography> {
   /// DM Mono 10.5 w400, wide tracking, rendered uppercase — labels.
   final TextStyle label;
 
+  /// Space Mono 14 w700 — compact control values and option titles.
+  final TextStyle control;
+
+  /// Space Mono 13 w400 — compact control secondary text.
+  final TextStyle controlSecondary;
+
   @override
   DopTypography copyWith({
     TextStyle? giant,
@@ -119,6 +140,8 @@ class DopTypography extends ThemeExtension<DopTypography> {
     TextStyle? bodyBold,
     TextStyle? caption,
     TextStyle? label,
+    TextStyle? control,
+    TextStyle? controlSecondary,
   }) {
     return DopTypography(
       giant: giant ?? this.giant,
@@ -129,6 +152,8 @@ class DopTypography extends ThemeExtension<DopTypography> {
       bodyBold: bodyBold ?? this.bodyBold,
       caption: caption ?? this.caption,
       label: label ?? this.label,
+      control: control ?? this.control,
+      controlSecondary: controlSecondary ?? this.controlSecondary,
     );
   }
 
@@ -144,6 +169,12 @@ class DopTypography extends ThemeExtension<DopTypography> {
       bodyBold: TextStyle.lerp(bodyBold, other.bodyBold, t)!,
       caption: TextStyle.lerp(caption, other.caption, t)!,
       label: TextStyle.lerp(label, other.label, t)!,
+      control: TextStyle.lerp(control, other.control, t)!,
+      controlSecondary: TextStyle.lerp(
+        controlSecondary,
+        other.controlSecondary,
+        t,
+      )!,
     );
   }
 }
