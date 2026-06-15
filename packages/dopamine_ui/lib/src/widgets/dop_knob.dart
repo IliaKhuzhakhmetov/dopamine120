@@ -4,7 +4,6 @@ import 'package:flutter/gestures.dart' show DragStartBehavior;
 import 'package:flutter/material.dart';
 
 import '../theme/context_ext.dart';
-import '../theme/dop_radius.dart';
 
 /// Circular DOPAMINE120 knob with a custom icon slot.
 class DopKnob extends StatelessWidget {
@@ -138,7 +137,7 @@ class DopKnob extends StatelessWidget {
                   height: theme.indicatorHeight,
                   decoration: BoxDecoration(
                     color: theme.foregroundColor,
-                    borderRadius: DopRadius.full,
+                    borderRadius: context.radius.fullGeometry,
                   ),
                 ),
               ),

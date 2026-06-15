@@ -81,9 +81,8 @@ class _KnobBankState extends State<_KnobBank> {
             icon: Icon(entry.value.$1),
             label: entry.key,
             semanticLabel: '${entry.key} level',
-            onChange: (value) => setState(
-              () => _channels[entry.key] = (entry.value.$1, value),
-            ),
+            onChange: (value) =>
+                setState(() => _channels[entry.key] = (entry.value.$1, value)),
           ),
       ],
     );

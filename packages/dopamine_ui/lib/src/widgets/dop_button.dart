@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../theme/context_ext.dart';
-import '../theme/dop_spacing.dart';
 
 enum _DopButtonVariant { primary, outline, link }
 
@@ -79,6 +78,9 @@ class _DopButtonState extends State<DopButton> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final spacing = context.spacing;
+    final radius = context.radius;
+    final stroke = context.stroke;
     final isLink = widget._variant == _DopButtonVariant.link;
     final foreground = switch (widget._variant) {
       _DopButtonVariant.primary => colors.wall,
@@ -103,11 +105,12 @@ class _DopButtonState extends State<DopButton> {
 
     final box = Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(DopSpacing.control),
+      padding: EdgeInsets.all(spacing.control),
       decoration: BoxDecoration(
         color: widget._variant == _DopButtonVariant.primary ? colors.ink : null,
+        borderRadius: isLink ? null : radius.controlGeometry,
         border: widget._variant == _DopButtonVariant.outline
-            ? Border.all(color: colors.ink)
+            ? Border.all(color: colors.ink, width: stroke.outline)
             : null,
       ),
       child: row,

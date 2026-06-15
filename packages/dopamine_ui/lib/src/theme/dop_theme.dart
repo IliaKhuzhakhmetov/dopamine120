@@ -1,41 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'dop_colors.dart';
 import 'dop_knob_theme.dart';
-import 'dop_radius.dart';
-import 'dop_spacing.dart';
-import 'dop_typography.dart';
+import 'dop_theme_spec.dart';
+import 'dop_themes.dart';
 
 /// Builds the DOPAMINE120 [ThemeData].
 ///
 /// The theme renders the PHYLOSOPHY.md tone — a calm training partner — as
-/// visual rules: flat surfaces with no elevation or ink splashes, square
-/// corners ([DopRadius.none]), hairline dividers, and errors set in ink with
+/// visual rules: flat surfaces with no elevation or ink splashes, corners and
+/// hairlines driven by the active [DopThemeSpec], and errors set in ink with
 /// no alarm color, because the app never shames the user.
+///
+/// Every theme flows through [fromSpec]; it never reads the concrete spec type,
+/// so adding a theme never touches this file.
 abstract final class DopTheme {
-  /// The light theme with [DopColors] and [DopTypography] registered and every
-  /// common Material component mapped onto the tokens.
-  static ThemeData light() {
-    const colors = DopColors.light();
-    final typo = DopTypography.light();
-    return _build(colors: colors, typo: typo, brightness: Brightness.light);
-  }
+  /// The light theme.
+  static ThemeData light() => fromSpec(DopThemes.light);
 
-  /// The dark theme with the same Material mappings as [light].
-  static ThemeData dark() {
-    const colors = DopColors.dark();
-    final typo = DopTypography.dark();
-    return _build(colors: colors, typo: typo, brightness: Brightness.dark);
-  }
+  /// The dark theme.
+  static ThemeData dark() => fromSpec(DopThemes.dark);
 
-  static ThemeData _build({
-    required DopColors colors,
-    required DopTypography typo,
-    required Brightness brightness,
-  }) {
+  /// Builds the [ThemeData] for [spec], registering every token group as a
+  /// [ThemeExtension] and mapping the common Material components onto them.
+  static ThemeData fromSpec(DopThemeSpec spec) {
+    final colors = spec.colors;
+    final typo = spec.typography;
+    final spacing = spec.spacing;
+    final radius = spec.radius;
+    final stroke = spec.stroke;
+
     final colorScheme = ColorScheme(
-      brightness: brightness,
+      brightness: spec.brightness,
       primary: colors.ink,
       onPrimary: colors.wall,
       secondary: colors.accent,
@@ -81,9 +77,20 @@ abstract final class DopTheme {
       labelSmall: typo.label,
     );
 
-    final squareBorder = RoundedRectangleBorder(borderRadius: DopRadius.none);
+    final controlBorder = RoundedRectangleBorder(
+      borderRadius: radius.controlGeometry,
+    );
+    final cardBorder = RoundedRectangleBorder(
+      borderRadius: radius.cardGeometry,
+    );
+    final controlInset = EdgeInsets.all(spacing.control);
 
-    final knobTheme = DopKnobTheme.from(colors: colors, typo: typo);
+    final knobTheme = DopKnobTheme.from(
+      colors: colors,
+      typo: typo,
+      spacing: spacing,
+      stroke: stroke,
+    );
 
     return ThemeData(
       useMaterial3: true,
@@ -105,7 +112,7 @@ abstract final class DopTheme {
         style: IconButton.styleFrom(
           foregroundColor: colors.ink,
           disabledForegroundColor: colors.inkFaint,
-          shape: squareBorder,
+          shape: controlBorder,
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
       ),
@@ -119,26 +126,29 @@ abstract final class DopTheme {
       ),
       dividerTheme: DividerThemeData(
         color: colors.line,
-        thickness: 1,
-        space: 1,
+        thickness: stroke.hairline,
+        space: stroke.hairline,
       ),
       inputDecorationTheme: InputDecorationTheme(
         isDense: true,
-        contentPadding: const EdgeInsets.symmetric(vertical: DopSpacing.sm),
+        contentPadding: EdgeInsets.symmetric(vertical: spacing.sm),
         hintStyle: typo.body.copyWith(color: colors.inkFaint),
         labelStyle: typo.label,
         errorStyle: typo.caption.copyWith(color: colors.ink),
         enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: colors.line),
+          borderSide: BorderSide(color: colors.line, width: stroke.hairline),
         ),
         focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: colors.ink),
+          borderSide: BorderSide(color: colors.ink, width: stroke.outline),
         ),
         errorBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: colors.ink),
+          borderSide: BorderSide(color: colors.ink, width: stroke.outline),
         ),
         focusedErrorBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: colors.ink, width: 1.5),
+          borderSide: BorderSide(
+            color: colors.ink,
+            width: stroke.outline + 0.5,
+          ),
         ),
       ),
       textSelectionTheme: TextSelectionThemeData(
@@ -147,7 +157,7 @@ abstract final class DopTheme {
         selectionHandleColor: colors.ink,
       ),
       checkboxTheme: CheckboxThemeData(
-        shape: squareBorder,
+        shape: controlBorder,
         side: BorderSide(color: colors.inkSoft, width: 1.5),
         fillColor: WidgetStateProperty.resolveWith(
           (states) => states.contains(WidgetState.selected)
@@ -163,8 +173,8 @@ abstract final class DopTheme {
           disabledBackgroundColor: colors.inkFaint,
           disabledForegroundColor: colors.wall,
           elevation: 0,
-          shape: squareBorder,
-          padding: const EdgeInsets.all(DopSpacing.control),
+          shape: controlBorder,
+          padding: controlInset,
           textStyle: controlLabel,
         ),
       ),
@@ -172,24 +182,24 @@ abstract final class DopTheme {
         style: FilledButton.styleFrom(
           backgroundColor: colors.ink,
           foregroundColor: colors.wall,
-          shape: squareBorder,
-          padding: const EdgeInsets.all(DopSpacing.control),
+          shape: controlBorder,
+          padding: controlInset,
           textStyle: controlLabel,
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: colors.ink,
-          side: BorderSide(color: colors.ink),
-          shape: squareBorder,
-          padding: const EdgeInsets.all(DopSpacing.control),
+          side: BorderSide(color: colors.ink, width: stroke.outline),
+          shape: controlBorder,
+          padding: controlInset,
           textStyle: controlLabel,
         ),
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: colors.ink,
-          shape: squareBorder,
+          shape: controlBorder,
           textStyle: controlLabel,
         ),
       ),
@@ -198,13 +208,13 @@ abstract final class DopTheme {
         tileColor: Colors.transparent,
         textColor: colors.ink,
         iconColor: colors.ink,
-        shape: squareBorder,
+        shape: controlBorder,
       ),
       dialogTheme: DialogThemeData(
         backgroundColor: colors.paper,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        shape: squareBorder,
+        shape: cardBorder,
         titleTextStyle: typo.title,
         contentTextStyle: typo.body,
       ),
@@ -212,13 +222,13 @@ abstract final class DopTheme {
         backgroundColor: colors.paper,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        shape: squareBorder,
+        shape: cardBorder,
       ),
       snackBarTheme: SnackBarThemeData(
         backgroundColor: colors.voidBlack,
         contentTextStyle: typo.body.copyWith(color: colors.onVoid),
         elevation: 0,
-        shape: squareBorder,
+        shape: cardBorder,
         behavior: SnackBarBehavior.fixed,
       ),
       progressIndicatorTheme: ProgressIndicatorThemeData(
@@ -226,7 +236,14 @@ abstract final class DopTheme {
         linearTrackColor: colors.line,
         circularTrackColor: colors.line,
       ),
-      extensions: [colors, typo, knobTheme],
+      extensions: <ThemeExtension>[
+        colors,
+        typo,
+        spacing,
+        radius,
+        stroke,
+        knobTheme,
+      ],
     );
   }
 }

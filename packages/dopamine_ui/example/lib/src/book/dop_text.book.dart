@@ -6,10 +6,7 @@ import 'package:widgetbook/widgetbook.dart';
 WidgetbookComponent get dopTextBook => WidgetbookComponent(
   name: 'DopText',
   useCases: [
-    WidgetbookUseCase(
-      name: 'All styles',
-      builder: (_) => const _TextGallery(),
-    ),
+    WidgetbookUseCase(name: 'All styles', builder: (_) => const _TextGallery()),
   ],
 );
 

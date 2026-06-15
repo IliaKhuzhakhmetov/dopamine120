@@ -1,20 +1,49 @@
+import 'dart:ui' show lerpDouble;
+
 import 'package:flutter/material.dart';
 
 /// Stroke widths and border helpers for the DOPAMINE120 hard-edged UI.
-abstract final class DopStroke {
-  /// 1px divider or hairline.
-  static const double hairline = 1;
+///
+/// A [ThemeExtension] so a theme can run heavier or finer lines — `cathedral`
+/// thickens its stone outlines, `underwater` thins them into a muffled blur.
+/// Read via `context.stroke`; build sides with [hairlineSide] / [outlineSide].
+class DopStroke extends ThemeExtension<DopStroke> {
+  /// Creates the stroke token set.
+  const DopStroke({required this.hairline, required this.outline});
 
-  /// 1px control/window outline.
-  static const double outline = 1;
+  /// The default 1px hairline / 1px outline.
+  const DopStroke.base() : hairline = 1, outline = 1;
 
-  /// Creates a hairline border side.
-  static BorderSide hairlineSide(Color color) {
+  /// Divider / hairline width.
+  final double hairline;
+
+  /// Control / window outline width.
+  final double outline;
+
+  /// A hairline border side in [color].
+  BorderSide hairlineSide(Color color) {
     return BorderSide(color: color, width: hairline);
   }
 
-  /// Creates a control/window outline border side.
-  static BorderSide outlineSide(Color color) {
+  /// A control / window outline border side in [color].
+  BorderSide outlineSide(Color color) {
     return BorderSide(color: color, width: outline);
+  }
+
+  @override
+  DopStroke copyWith({double? hairline, double? outline}) {
+    return DopStroke(
+      hairline: hairline ?? this.hairline,
+      outline: outline ?? this.outline,
+    );
+  }
+
+  @override
+  DopStroke lerp(DopStroke? other, double t) {
+    if (other == null) return this;
+    return DopStroke(
+      hairline: lerpDouble(hairline, other.hairline, t)!,
+      outline: lerpDouble(outline, other.outline, t)!,
+    );
   }
 }

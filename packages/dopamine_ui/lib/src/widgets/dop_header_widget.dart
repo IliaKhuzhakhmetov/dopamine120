@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../theme/context_ext.dart';
-import '../theme/dop_spacing.dart';
 import '../theme/dop_typography.dart';
 import 'dop_text.dart';
 
@@ -30,6 +29,7 @@ class DopHeaderWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final spacing = context.spacing;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -46,10 +46,10 @@ class DopHeaderWidget extends StatelessWidget {
           ),
         ),
         if (trailing != null) ...[
-          const SizedBox(width: DopSpacing.lg),
+          SizedBox(width: spacing.lg),
           // Top padding optically centers the slot against the 34px title line.
           Padding(
-            padding: const EdgeInsets.only(top: DopSpacing.xxs),
+            padding: EdgeInsets.only(top: spacing.xxs),
             child: trailing!,
           ),
         ],

@@ -3,7 +3,6 @@ import 'package:dopamine_ui/dopamine_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-import '../../../core/theme/domain/entities/app_theme.dart';
 import '../../../core/theme/presentation/theme_controller.dart';
 import '../../../core/theme/presentation/theme_provider.dart';
 import '../../../l10n/l10n.dart';
@@ -43,12 +42,9 @@ class _DopamineAppState extends State<DopamineApp> {
             return MaterialApp.router(
               title: _environment.title,
               debugShowCheckedModeBanner: false,
-              theme: DopTheme.light(),
-              darkTheme: DopTheme.dark(),
-              themeMode: switch (theme) {
-                AppTheme.light => ThemeMode.light,
-                AppTheme.dark => ThemeMode.dark,
-              },
+              // Every theme is one spec; resolve it from the registry by id so
+              // adding a theme never touches this widget.
+              theme: DopTheme.fromSpec(DopThemes.byId(theme.storageValue)),
               localizationsDelegates: const [
                 AppLocalizations.delegate,
                 GlobalMaterialLocalizations.delegate,

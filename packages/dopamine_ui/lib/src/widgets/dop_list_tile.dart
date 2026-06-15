@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../theme/context_ext.dart';
-import '../theme/dop_spacing.dart';
 import 'dop_text.dart';
 
 /// Ledger-style DOPAMINE120 row with Material-like leading/trailing slots.
@@ -16,7 +15,7 @@ class DopListTile extends StatefulWidget {
     this.trailingText,
     this.dimmed = false,
     this.divider = true,
-    this.verticalPadding = DopSpacing.xl,
+    this.verticalPadding,
     this.animateTitleOnTap = false,
     this.animateLeadingOnTap = false,
     this.onTap,
@@ -53,9 +52,10 @@ class DopListTile extends StatefulWidget {
   /// Draws the hairline under the row.
   final bool divider;
 
-  /// Vertical row inset. Defaults to the roomy ledger rhythm; compact surfaces
-  /// can opt into a tighter value without changing all list tiles.
-  final double verticalPadding;
+  /// Vertical row inset. Defaults to the theme's roomy ledger rhythm
+  /// (`context.spacing.xl`); compact surfaces can opt into a tighter value
+  /// without changing all list tiles.
+  final double? verticalPadding;
 
   /// Pulses the title when a tappable row is activated.
   final bool animateTitleOnTap;
@@ -131,13 +131,16 @@ class _DopListTileState extends State<DopListTile>
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final spacing = context.spacing;
     final ink = widget.dimmed ? colors.inkFaint : colors.ink;
     final soft = widget.dimmed ? colors.inkFaint : colors.inkSoft;
     final leading = _leading();
     final trailing = _trailing(soft);
 
     final row = Container(
-      padding: EdgeInsets.symmetric(vertical: widget.verticalPadding),
+      padding: EdgeInsets.symmetric(
+        vertical: widget.verticalPadding ?? spacing.xl,
+      ),
       decoration: BoxDecoration(
         border: widget.divider
             ? Border(bottom: BorderSide(color: colors.line))
@@ -146,10 +149,7 @@ class _DopListTileState extends State<DopListTile>
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (leading != null) ...[
-            leading,
-            const SizedBox(width: DopSpacing.lg),
-          ],
+          if (leading != null) ...[leading, SizedBox(width: spacing.lg)],
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -165,16 +165,13 @@ class _DopListTileState extends State<DopListTile>
                   enabled: widget.animateTitleOnTap && _tappable,
                 ),
                 if (widget.subtitle != null) ...[
-                  const SizedBox(height: DopSpacing.xxs),
+                  SizedBox(height: spacing.xxs),
                   DopText.body(widget.subtitle!, color: soft),
                 ],
               ],
             ),
           ),
-          if (trailing != null) ...[
-            const SizedBox(width: DopSpacing.lg),
-            trailing,
-          ],
+          if (trailing != null) ...[SizedBox(width: spacing.lg), trailing],
         ],
       ),
     );
@@ -204,7 +201,7 @@ class _DopListTileState extends State<DopListTile>
   Widget? _leading() {
     if (widget.leading != null) {
       return Padding(
-        padding: const EdgeInsets.only(top: DopSpacing.xxs),
+        padding: EdgeInsets.only(top: context.spacing.xxs),
         child: _LeadingPulse(
           animation: _tapPulseController,
           scale: _leadingScale,
@@ -229,7 +226,7 @@ class _DopListTileState extends State<DopListTile>
   Widget? _trailing(Color color) {
     if (widget.trailing != null) {
       return Padding(
-        padding: const EdgeInsets.only(top: DopSpacing.xxs),
+        padding: EdgeInsets.only(top: context.spacing.xxs),
         child: widget.trailing!,
       );
     }

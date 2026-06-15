@@ -29,19 +29,21 @@ class DopKnobTheme extends ThemeExtension<DopKnobTheme> {
     required this.labelStyle,
   });
 
-  /// Creates knob tokens from the global DOPAMINE120 theme extensions.
+  /// Creates knob tokens from the active DOPAMINE120 token groups.
   factory DopKnobTheme.from({
     required DopColors colors,
     required DopTypography typo,
+    required DopSpacing spacing,
+    required DopStroke stroke,
   }) {
     return DopKnobTheme(
       size: 56,
-      gap: DopSpacing.xs,
-      borderWidth: DopStroke.outline + 0.5,
+      gap: spacing.xs,
+      borderWidth: stroke.outline + 0.5,
       liveRingWidth: 4,
       indicatorWidth: 2.5,
       indicatorHeight: 13,
-      indicatorTop: DopSpacing.xxs,
+      indicatorTop: spacing.xxs,
       indicatorRadius: 2,
       iconSize: 19,
       iconInactiveOpacity: 0.35,

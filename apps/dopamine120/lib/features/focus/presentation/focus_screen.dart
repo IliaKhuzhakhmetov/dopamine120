@@ -200,6 +200,7 @@ class _TimerChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final stroke = context.stroke;
     return Semantics(
       button: true,
       label: semanticLabel,
@@ -209,7 +210,7 @@ class _TimerChip extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
           decoration: BoxDecoration(
-            border: Border.fromBorderSide(DopStroke.hairlineSide(colors.line)),
+            border: Border.fromBorderSide(stroke.hairlineSide(colors.line)),
             borderRadius: BorderRadius.circular(30),
           ),
           child: Text(

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../theme/context_ext.dart';
-import '../theme/dop_spacing.dart';
 import 'dop_text.dart';
 
 /// Segmented DOPAMINE120 scale for choosing an integer value.
@@ -67,6 +66,7 @@ class DopScaleSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final spacing = context.spacing;
     final span = max - min;
 
     return Semantics(
@@ -122,9 +122,9 @@ class DopScaleSelector extends StatelessWidget {
                       Expanded(
                         child: DopText.caption(minLabel, color: colors.inkSoft),
                       ),
-                      const SizedBox(width: DopSpacing.md),
+                      SizedBox(width: spacing.md),
                       DopText.bodyBold('$value', color: colors.accent),
-                      const SizedBox(width: DopSpacing.md),
+                      SizedBox(width: spacing.md),
                       Expanded(
                         child: DopText.caption(
                           maxLabel,

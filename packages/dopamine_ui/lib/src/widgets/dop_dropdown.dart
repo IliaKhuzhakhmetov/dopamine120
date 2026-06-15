@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../theme/context_ext.dart';
-import '../theme/dop_spacing.dart';
-import '../theme/dop_stroke.dart';
 import 'dop_text.dart';
 
 /// Direction used by [DopDropdown] when opening its option panel.
@@ -118,6 +116,8 @@ class _DopDropdownState<T> extends State<DopDropdown<T>> {
       'DopDropdown requires at least one option.',
     );
     final colors = context.colors;
+    final spacing = context.spacing;
+    final stroke = context.stroke;
     final selected = _selectedOption;
 
     return CompositedTransformTarget(
@@ -143,20 +143,19 @@ class _DopDropdownState<T> extends State<DopDropdown<T>> {
                 ? 0.72
                 : 1,
             child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: DopSpacing.lg,
-                vertical: DopSpacing.sm,
+              padding: EdgeInsets.symmetric(
+                horizontal: spacing.lg,
+                vertical: spacing.sm,
               ),
               decoration: BoxDecoration(
                 color: colors.paper,
-                border: Border.fromBorderSide(
-                  DopStroke.outlineSide(colors.ink),
-                ),
+                borderRadius: context.radius.controlGeometry,
+                border: Border.fromBorderSide(stroke.outlineSide(colors.ink)),
               ),
               child: Row(
                 children: [
                   DopText.label(widget.label),
-                  const SizedBox(width: DopSpacing.md),
+                  SizedBox(width: spacing.md),
                   Expanded(
                     child: Text(
                       selected.label,
@@ -165,7 +164,7 @@ class _DopDropdownState<T> extends State<DopDropdown<T>> {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  const SizedBox(width: DopSpacing.sm),
+                  SizedBox(width: spacing.sm),
                   AnimatedRotation(
                     turns: _open ? 0.5 : 0,
                     duration: const Duration(milliseconds: 160),
@@ -213,6 +212,11 @@ class _DopDropdownState<T> extends State<DopDropdown<T>> {
     final followerAnchor = opensUp ? Alignment.bottomLeft : Alignment.topLeft;
     final offset = Offset(0, opensUp ? -widget.menuGap : widget.menuGap);
 
+    // The entry renders under the root Overlay, above the Theme that carries
+    // the DOPAMINE120 token extensions. Re-apply the control's theme so the
+    // menu keeps the active tokens (and `context.colors` never sees a null).
+    final controlTheme = Theme.of(context);
+
     return Stack(
       children: [
         Positioned.fill(
@@ -227,14 +231,17 @@ class _DopDropdownState<T> extends State<DopDropdown<T>> {
           targetAnchor: targetAnchor,
           followerAnchor: followerAnchor,
           offset: offset,
-          child: Material(
-            color: Colors.transparent,
-            child: _DopDropdownMenu<T>(
-              width: _controlSize.width,
-              maxHeight: _effectiveMenuMaxHeight(),
-              value: widget.value,
-              options: widget.options,
-              onSelected: _select,
+          child: Theme(
+            data: controlTheme,
+            child: Material(
+              color: Colors.transparent,
+              child: _DopDropdownMenu<T>(
+                width: _controlSize.width,
+                maxHeight: _effectiveMenuMaxHeight(),
+                value: widget.value,
+                options: widget.options,
+                onSelected: _select,
+              ),
             ),
           ),
         ),
@@ -282,6 +289,7 @@ class _DopDropdownMenu<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final stroke = context.stroke;
     final rows = Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -302,7 +310,8 @@ class _DopDropdownMenu<T> extends StatelessWidget {
           : BoxConstraints(maxHeight: maxHeight!),
       decoration: BoxDecoration(
         color: colors.paper,
-        border: Border.fromBorderSide(DopStroke.outlineSide(colors.ink)),
+        borderRadius: context.radius.cardGeometry,
+        border: Border.fromBorderSide(stroke.outlineSide(colors.ink)),
         boxShadow: const [
           BoxShadow(
             color: Color(0x24000000),
@@ -335,6 +344,8 @@ class _DopDropdownOptionRow<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final spacing = context.spacing;
+    final stroke = context.stroke;
     final foreground = selected ? colors.onVoid : colors.ink;
     final secondary = selected ? colors.onVoidSoft : colors.inkFaint;
     final enabledOpacity = option.enabled ? 1.0 : 0.42;
@@ -353,14 +364,14 @@ class _DopDropdownOptionRow<T> extends StatelessWidget {
           opacity: enabledOpacity,
           child: Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(
-              horizontal: DopSpacing.lg,
-              vertical: DopSpacing.sm,
+            padding: EdgeInsets.symmetric(
+              horizontal: spacing.lg,
+              vertical: spacing.sm,
             ),
             decoration: BoxDecoration(
               color: selected ? colors.ink : colors.paper,
               border: divider
-                  ? Border(bottom: DopStroke.hairlineSide(colors.line))
+                  ? Border(bottom: stroke.hairlineSide(colors.line))
                   : null,
             ),
             child: Column(
@@ -373,7 +384,7 @@ class _DopDropdownOptionRow<T> extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 if (option.subtitle != null) ...[
-                  const SizedBox(height: DopSpacing.xxs),
+                  SizedBox(height: spacing.xxs),
                   Text(
                     option.subtitle!,
                     style: context.typo.controlSecondary.copyWith(

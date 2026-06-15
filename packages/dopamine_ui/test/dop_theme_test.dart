@@ -53,11 +53,11 @@ void main() {
       expect(theme.dialogTheme.elevation, 0);
       expect(
         theme.dialogTheme.shape,
-        const RoundedRectangleBorder(borderRadius: DopRadius.none),
+        RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
       );
       expect(
         theme.checkboxTheme.shape,
-        const RoundedRectangleBorder(borderRadius: DopRadius.none),
+        RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
       );
     });
 
@@ -77,6 +77,50 @@ void main() {
       expectStyle(theme.textTheme.bodyMedium, typo.body);
       expectStyle(theme.textTheme.bodySmall, typo.caption);
       expectStyle(theme.textTheme.labelSmall, typo.label);
+    });
+  });
+
+  group('DopThemes registry', () {
+    test('exposes the eight named themes', () {
+      expect(DopThemes.all, hasLength(8));
+      expect(
+        DopThemes.all.map((spec) => spec.id),
+        containsAll(<String>[
+          'light',
+          'dark',
+          'room',
+          'cathedral',
+          'underwater',
+          'cosmos',
+          'jungle',
+          'cave',
+        ]),
+      );
+    });
+
+    test('byId falls back to light for an unknown id', () {
+      expect(DopThemes.byId('cathedral'), same(DopThemes.cathedral));
+      expect(DopThemes.byId('nope'), same(DopThemes.light));
+    });
+
+    test('every theme builds and registers all token groups', () {
+      late final List<ThemeData> built;
+      runZonedGuarded(() {
+        built = DopThemes.all.map(DopTheme.fromSpec).toList();
+      }, (_, _) {});
+      for (final data in built) {
+        expect(data.extension<DopColors>(), isNotNull);
+        expect(data.extension<DopTypography>(), isNotNull);
+        expect(data.extension<DopSpacing>(), isNotNull);
+        expect(data.extension<DopRadius>(), isNotNull);
+        expect(data.extension<DopStroke>(), isNotNull);
+      }
+    });
+
+    test('a soft theme rounds its control corners', () {
+      expect(DopThemes.cave.radius.control, 0);
+      expect(DopThemes.underwater.radius.control, greaterThan(0));
+      expect(DopThemes.jungle.radius.card, greaterThan(0));
     });
   });
 

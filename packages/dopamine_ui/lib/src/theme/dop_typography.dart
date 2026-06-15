@@ -3,6 +3,10 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'dop_colors.dart';
 
+/// Remaps a base [TextStyle] onto a different font family while keeping its
+/// size, weight, and color — e.g. `(s) => GoogleFonts.instrumentSerif(textStyle: s)`.
+typedef DopFontMapper = TextStyle Function(TextStyle base);
+
 /// Typography tokens of the DOPAMINE120 design language.
 class DopTypography extends ThemeExtension<DopTypography> {
   /// Creates the typography token set.
@@ -33,69 +37,100 @@ class DopTypography extends ThemeExtension<DopTypography> {
   }
 
   /// Creates the type scale from a token palette.
-  factory DopTypography.fromColors(DopColors colors) {
+  ///
+  /// [scale] multiplies every font size so a vast theme can run larger type;
+  /// [display] remaps the display family (giant/header/title) and [body] the
+  /// UI family (body/caption/label/control), letting a theme swap fonts while
+  /// reusing this single scale. Passing nothing reproduces the default scale.
+  factory DopTypography.fromColors(
+    DopColors colors, {
+    double scale = 1.0,
+    DopFontMapper? display,
+    DopFontMapper? body,
+  }) {
+    TextStyle disp(TextStyle base) => display?.call(base) ?? base;
+    TextStyle ui(TextStyle base) => body?.call(base) ?? base;
+
     return DopTypography(
-      giant: GoogleFonts.archivo(
-        fontSize: 96,
-        fontWeight: FontWeight.w900,
-        letterSpacing: -4,
-        height: 0.8,
-        color: colors.ink,
+      giant: disp(
+        GoogleFonts.archivo(
+          fontSize: 96 * scale,
+          fontWeight: FontWeight.w900,
+          letterSpacing: -4,
+          height: 0.8,
+          color: colors.ink,
+        ),
       ),
-      header: GoogleFonts.urbanist(
-        fontSize: 34,
-        fontWeight: FontWeight.w800,
-        letterSpacing: -0.5,
-        color: colors.ink,
+      header: disp(
+        GoogleFonts.urbanist(
+          fontSize: 34 * scale,
+          fontWeight: FontWeight.w800,
+          letterSpacing: -0.5,
+          color: colors.ink,
+        ),
       ),
       // 38 instead of 34: the serif italic needs the bump to optically match
       // the heavy sans it sits next to.
       headerAccent: GoogleFonts.instrumentSerif(
-        fontSize: 38,
+        fontSize: 38 * scale,
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.italic,
         letterSpacing: -0.5,
         color: colors.ink,
       ),
-      title: GoogleFonts.archivo(
-        fontSize: 21,
-        fontWeight: FontWeight.w800,
-        color: colors.ink,
+      title: disp(
+        GoogleFonts.archivo(
+          fontSize: 21 * scale,
+          fontWeight: FontWeight.w800,
+          color: colors.ink,
+        ),
       ),
-      body: GoogleFonts.dmMono(
-        fontSize: 14,
-        fontWeight: FontWeight.w300,
-        height: 1.65,
-        color: colors.inkSoft,
+      body: ui(
+        GoogleFonts.dmMono(
+          fontSize: 14 * scale,
+          fontWeight: FontWeight.w300,
+          height: 1.65,
+          color: colors.inkSoft,
+        ),
       ),
-      bodyBold: GoogleFonts.dmMono(
-        fontSize: 14,
-        fontWeight: FontWeight.w500,
-        color: colors.ink,
+      bodyBold: ui(
+        GoogleFonts.dmMono(
+          fontSize: 14 * scale,
+          fontWeight: FontWeight.w500,
+          color: colors.ink,
+        ),
       ),
-      caption: GoogleFonts.dmMono(
-        fontSize: 11.5,
-        fontWeight: FontWeight.w300,
-        color: colors.inkFaint,
+      caption: ui(
+        GoogleFonts.dmMono(
+          fontSize: 11.5 * scale,
+          fontWeight: FontWeight.w300,
+          color: colors.inkFaint,
+        ),
       ),
-      label: GoogleFonts.dmMono(
-        fontSize: 10.5,
-        fontWeight: FontWeight.w400,
-        letterSpacing: 3,
-        color: colors.inkFaint,
+      label: ui(
+        GoogleFonts.dmMono(
+          fontSize: 10.5 * scale,
+          fontWeight: FontWeight.w400,
+          letterSpacing: 3,
+          color: colors.inkFaint,
+        ),
       ),
-      control: GoogleFonts.spaceMono(
-        fontSize: 14,
-        fontWeight: FontWeight.w700,
-        height: 1.2,
-        color: colors.ink,
+      control: ui(
+        GoogleFonts.spaceMono(
+          fontSize: 14 * scale,
+          fontWeight: FontWeight.w700,
+          height: 1.2,
+          color: colors.ink,
+        ),
       ),
-      controlSecondary: GoogleFonts.spaceMono(
-        fontSize: 13,
-        fontWeight: FontWeight.w400,
-        height: 1.25,
-        letterSpacing: 0.5,
-        color: colors.inkFaint,
+      controlSecondary: ui(
+        GoogleFonts.spaceMono(
+          fontSize: 13 * scale,
+          fontWeight: FontWeight.w400,
+          height: 1.25,
+          letterSpacing: 0.5,
+          color: colors.inkFaint,
+        ),
       ),
     );
   }

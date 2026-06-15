@@ -95,6 +95,7 @@ class _IntroStepState extends State<IntroStep>
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final spacing = context.spacing;
     final sounds = Assets.sound.dopamine120Op1Pack;
 
     final steps = <OnboardingStep>[
@@ -140,7 +141,7 @@ class _IntroStepState extends State<IntroStep>
           start: 0,
           child: OnboardingEyebrow(label: l10n.onboardingIntroEyebrow, step: 1),
         ),
-        SizedBox(height: DopSpacing.md),
+        SizedBox(height: spacing.md),
         StaggeredText(
           animation: _controller,
           start: 0.06,
@@ -155,7 +156,7 @@ class _IntroStepState extends State<IntroStep>
             ),
           ),
         ),
-        SizedBox(height: DopSpacing.xl),
+        SizedBox(height: spacing.xl),
         for (final (index, step) in steps.indexed)
           StaggeredText(
             animation: _controller,
@@ -169,13 +170,13 @@ class _IntroStepState extends State<IntroStep>
               title: step.title,
               subtitle: step.body,
               divider: index < steps.length - 1,
-              verticalPadding: DopSpacing.md,
+              verticalPadding: spacing.md,
               animateTitleOnTap: true,
               animateLeadingOnTap: true,
               onTap: () => _handleTileTap(step),
             ),
           ),
-        SizedBox(height: DopSpacing.xl),
+        SizedBox(height: spacing.xl),
       ],
     );
   }

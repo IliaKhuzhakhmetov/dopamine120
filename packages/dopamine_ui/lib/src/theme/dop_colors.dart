@@ -42,6 +42,84 @@ class DopColors extends ThemeExtension<DopColors> {
       onVoidSoft = const Color(0xFF65645F),
       accent = const Color(0xFFFF6A3D);
 
+  /// `room` — dry & near: a warm, intimate light palette with terracotta.
+  const DopColors.room()
+    : wall = const Color(0xFFEFEDE6),
+      paper = const Color(0xFFF7F5EE),
+      ink = const Color(0xFF1A1814),
+      inkSoft = const Color(0xFF6B665C),
+      inkFaint = const Color(0xFFA8A296),
+      line = const Color(0xFFDAD6CB),
+      voidBlack = const Color(0xFF14110C),
+      onVoid = const Color(0xFFEFEDE6),
+      onVoidSoft = const Color(0xFF7A746A),
+      accent = const Color(0xFFC8643C);
+
+  /// `cathedral` — vast stone: cool grey light palette, stained-glass violet.
+  const DopColors.cathedral()
+    : wall = const Color(0xFFE4E5E7),
+      paper = const Color(0xFFEFEFF1),
+      ink = const Color(0xFF1C1F24),
+      inkSoft = const Color(0xFF5E646E),
+      inkFaint = const Color(0xFF9AA0AB),
+      line = const Color(0xFFCBCDD2),
+      voidBlack = const Color(0xFF14171C),
+      onVoid = const Color(0xFFE4E5E7),
+      onVoidSoft = const Color(0xFF6E747E),
+      accent = const Color(0xFF7C6FA6);
+
+  /// `underwater` — muffled deep: a low-contrast deep-teal dark palette.
+  const DopColors.underwater()
+    : wall = const Color(0xFF0E2A33),
+      paper = const Color(0xFF143842),
+      ink = const Color(0xFFCFE6E8),
+      inkSoft = const Color(0xFF7FAAB0),
+      inkFaint = const Color(0xFF4E7A82),
+      line = const Color(0xFF1E4A55),
+      voidBlack = const Color(0xFFCFE6E8),
+      onVoid = const Color(0xFF0E2A33),
+      onVoidSoft = const Color(0xFF4E7A82),
+      accent = const Color(0xFF2FB6C4);
+
+  /// `cosmos` — long orbit echo: a near-black space palette with violet.
+  const DopColors.cosmos()
+    : wall = const Color(0xFF0A0A12),
+      paper = const Color(0xFF12121E),
+      ink = const Color(0xFFE6E4F2),
+      inkSoft = const Color(0xFFA6A2C4),
+      inkFaint = const Color(0xFF5E5A82),
+      line = const Color(0xFF1F1D33),
+      voidBlack = const Color(0xFFE6E4F2),
+      onVoid = const Color(0xFF0A0A12),
+      onVoidSoft = const Color(0xFF5E5A82),
+      accent = const Color(0xFF8B6CFF);
+
+  /// `jungle` — humid canopy: a deep-forest dark palette with leaf green.
+  const DopColors.jungle()
+    : wall = const Color(0xFF0F1E12),
+      paper = const Color(0xFF15291A),
+      ink = const Color(0xFFDDEBD8),
+      inkSoft = const Color(0xFF8FB089),
+      inkFaint = const Color(0xFF5A7A55),
+      line = const Color(0xFF234029),
+      voidBlack = const Color(0xFFDDEBD8),
+      onVoid = const Color(0xFF0F1E12),
+      onVoidSoft = const Color(0xFF5A7A55),
+      accent = const Color(0xFF6FC74E);
+
+  /// `cave` — wet slap-back: a dark-earth palette with a torch-amber accent.
+  const DopColors.cave()
+    : wall = const Color(0xFF16120F),
+      paper = const Color(0xFF1F1A15),
+      ink = const Color(0xFFE7DDD0),
+      inkSoft = const Color(0xFFA89683),
+      inkFaint = const Color(0xFF6E5F4F),
+      line = const Color(0xFF2E261E),
+      voidBlack = const Color(0xFFE7DDD0),
+      onVoid = const Color(0xFF16120F),
+      onVoidSoft = const Color(0xFF6E5F4F),
+      accent = const Color(0xFFC77A3C);
+
   /// Background.
   final Color wall;
 

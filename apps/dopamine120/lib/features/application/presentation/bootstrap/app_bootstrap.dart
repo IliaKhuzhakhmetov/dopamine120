@@ -14,7 +14,7 @@ Future<void> runDopamineApplication({AppEnvironment? environment}) {
       final resolvedEnvironment = environment ?? AppEnvironment.current;
 
       WidgetsFlutterBinding.ensureInitialized();
-      
+
       _configureErrorReporting();
 
       final injector = await createRuntimeInjector(

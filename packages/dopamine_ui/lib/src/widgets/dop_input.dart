@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../theme/context_ext.dart';
-import '../theme/dop_spacing.dart';
 import 'dop_text.dart';
 
 /// Transparent DOPAMINE120 text field with a bottom hairline and a label above.
@@ -39,6 +38,8 @@ class DopInput extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final typo = context.typo;
+    final spacing = context.spacing;
+    final stroke = context.stroke;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -53,17 +54,20 @@ class DopInput extends StatelessWidget {
             hintText: hint,
             hintStyle: typo.body.copyWith(color: colors.inkFaint),
             isDense: true,
-            contentPadding: const EdgeInsets.symmetric(vertical: DopSpacing.sm),
+            contentPadding: EdgeInsets.symmetric(vertical: spacing.sm),
             enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: colors.line),
+              borderSide: BorderSide(
+                color: colors.line,
+                width: stroke.hairline,
+              ),
             ),
             focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: colors.ink),
+              borderSide: BorderSide(color: colors.ink, width: stroke.outline),
             ),
           ),
         ),
         if (errorText != null) ...[
-          const SizedBox(height: DopSpacing.xs),
+          SizedBox(height: spacing.xs),
           DopText.caption('! $errorText', color: colors.ink),
         ],
       ],
