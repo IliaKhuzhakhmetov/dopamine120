@@ -1,0 +1,79 @@
+import 'dart:typed_data';
+
+import 'package:flutter_soloud/flutter_soloud.dart' show WaveForm;
+
+import 'audio_backend.dart';
+import 'wav_codec.dart';
+
+/// Starts the engine's always-on looping voices, isolating the one place where
+/// web and native diverge.
+///
+/// Every loop is created once at zero (or a tiny web-unlock) volume and kept
+/// alive by the mixer, so mixing a layer later is just a volume nudge. On web,
+/// in-memory WAVs are pushed through a PCM stream instead of [AudioBackend.loadNoise].
+class LoopPlayer {
+  /// Wires the player to [_backend]; [isWeb] selects the streaming fallback.
+  LoopPlayer(
+    this._backend, {
+    required this.isWeb,
+    this.sampleRate = 44100,
+    this.unlockVolume = 0.0001,
+  });
+
+  final AudioBackend _backend;
+
+  /// Whether to use the web PCM-stream fallback instead of in-memory loading.
+  final bool isWeb;
+
+  /// Sample rate of the supplied WAV buffers, in Hz.
+  final int sampleRate;
+
+  /// Tiny non-zero start volume that satisfies the browser autoplay unlock.
+  final double unlockVolume;
+
+  double get _startVolume => isWeb ? unlockVolume : 0;
+
+  /// Starts a looping oscillator [waveform] tuned to [freq] Hz.
+  Future<VoiceHandle> oscillator(WaveForm waveform, double freq) async {
+    final source = await _backend.loadWaveform(waveform);
+    _backend.setWaveformFreq(source, freq);
+    return _startLoop(source);
+  }
+
+  /// Starts a looping voice from an in-memory [wav] noise buffer.
+  Future<VoiceHandle> noise(Uint8List wav) async {
+    if (isWeb) return _pcmStream(WavCodec.pcmFromWav(wav));
+
+    final source = await _backend.loadNoise(
+      'focus_noise_${wav.hashCode}.wav',
+      wav,
+    );
+    return _startLoop(source);
+  }
+
+  VoiceHandle _pcmStream(Uint8List pcm) {
+    // SoLoud stores stream samples as f32 internally (4 bytes/sample), so the
+    // buffer ceiling must be sized against the decoded float length, not the
+    // incoming s16le bytes. Our PCM is 2 bytes/sample, so the float buffer needs
+    // ~2x the byte count; under-sizing it makes the stream overflow mid-add.
+    final sampleCount = pcm.length ~/ 2;
+    final source = _backend.openPcmStream(
+      maxBufferSizeBytes: sampleCount * 4 + 1024,
+      bufferingTimeNeeds: 0.05,
+      sampleRate: sampleRate,
+    );
+    _backend.pushPcm(source, pcm);
+    _backend.endPcm(source);
+    return _startLoop(source, volume: unlockVolume);
+  }
+
+  VoiceHandle _startLoop(VoiceSource source, {double? volume}) {
+    final handle = _backend.play(
+      source,
+      volume: volume ?? _startVolume,
+      looping: true,
+    );
+    _backend.keepLoopAlive(handle);
+    return handle;
+  }
+}
