@@ -117,6 +117,13 @@ class FakeAudioBackend implements AudioBackend {
   @override
   void endPcm(VoiceSource source) {}
 
+  /// Source ids released via [disposeSource], in order.
+  final List<int> disposedSources = [];
+
+  @override
+  void disposeSource(VoiceSource source) =>
+      disposedSources.add(source.raw as int);
+
   @override
   VoiceHandle play(
     VoiceSource source, {

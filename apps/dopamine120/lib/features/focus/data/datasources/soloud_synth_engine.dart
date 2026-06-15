@@ -5,7 +5,9 @@ import 'package:app_logger/app_logger.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../domain/entities/acoustic_profile.dart';
+import '../../domain/entities/bell_strike.dart';
 import '../../domain/entities/sound_layer.dart';
+import '../../domain/entities/voice_timbre.dart';
 import 'audio/acoustic_bus_mapper.dart';
 import 'audio/ambient_voice.dart';
 import 'audio/audio_backend.dart';
@@ -61,15 +63,26 @@ class SoloudSynthEngine {
     PulseVoice(),
     CicadaVoice(),
   ];
-  late final BellScheduler _bell = BellScheduler(_backend, random: _random);
+  final StreamController<BellStrike> _bellStrikes =
+      StreamController<BellStrike>.broadcast();
+  late final BellScheduler _bell = BellScheduler(
+    _backend,
+    random: _random,
+    onStrike: _bellStrikes.add,
+  );
 
   bool _ready = false;
   Future<void>? _buildOp;
+  VoiceBuildContext? _context;
   AcousticProfile _currentProfile = _defaultProfile;
+  VoiceTimbre _currentTimbre = VoiceTimbre.standard;
   double _temporalDistortion = 0;
 
   /// Whether the engine has finished wiring its voices.
   bool get isReady => _ready;
+
+  /// Bell chimes emitted by the scheduler.
+  Stream<BellStrike> get bellStrikes => _bellStrikes.stream;
 
   /// Boots the engine (once) and resumes all voices and the bell scheduler.
   Future<void> start() async {
@@ -109,6 +122,20 @@ class SoloudSynthEngine {
     _applyBus();
   }
 
+  /// Re-renders the voices for [timbre], so the rain/pulse/bell/cicada/drone
+  /// themselves change with the dimension, not just the bus filter. Voices
+  /// crossfade to the new sound and keep their current mix level.
+  Future<void> applyTimbre(VoiceTimbre timbre) async {
+    await _ensureBuilt();
+    _bell.transpose = timbre.bellTranspose;
+    if (timbre == _currentTimbre) return;
+    _currentTimbre = timbre;
+    final context = _context!;
+    for (final voice in _voices) {
+      await voice.retimbre(context, timbre, _backend);
+    }
+  }
+
   /// Temporarily bends the shared bus while the orb is pressed.
   Future<void> setTemporalDistortion(double amount) async {
     await _ensureBuilt();
@@ -119,6 +146,7 @@ class SoloudSynthEngine {
   /// Tears the engine down and releases native resources.
   Future<void> dispose() async {
     _bell.dispose();
+    await _bellStrikes.close();
     _backend.dispose();
     for (final voice in _voices) {
       voice.handles.clear();
@@ -141,10 +169,12 @@ class SoloudSynthEngine {
         synth: const SampleSynth(sampleRate: _sampleRate),
         random: _random,
       );
+      _context = context;
       for (final voice in _voices) {
-        await voice.build(context);
+        await voice.build(context, _currentTimbre);
       }
       await _bell.build();
+      _bell.transpose = _currentTimbre.bellTranspose;
 
       _backend.activateBus();
       _ready = true;

@@ -8,6 +8,7 @@ import '../../focus/domain/usecases/set_layer_level.dart';
 import '../../focus/domain/usecases/set_temporal_distortion.dart';
 import '../../focus/domain/usecases/start_ambience.dart';
 import '../../focus/domain/usecases/stop_ambience.dart';
+import '../../focus/domain/usecases/watch_bell_strikes.dart';
 
 void registerFocusModule(Injector injector) {
   injector
@@ -29,5 +30,8 @@ void registerFocusModule(Injector injector) {
     )
     ..registerFactory<StopAmbience>(
       (i) => StopAmbience(i.get<AmbienceRepository>()),
+    )
+    ..registerFactory<WatchBellStrikes>(
+      (i) => WatchBellStrikes(i.get<AmbienceRepository>()),
     );
 }

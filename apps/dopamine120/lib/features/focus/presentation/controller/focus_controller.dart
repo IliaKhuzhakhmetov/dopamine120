@@ -5,12 +5,14 @@ import 'package:dopamine_ui/dopamine_ui.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../domain/entities/focus_dimension.dart';
+import '../../domain/entities/bell_strike.dart';
 import '../../domain/entities/sound_layer.dart';
 import '../../domain/usecases/select_dimension.dart';
 import '../../domain/usecases/set_layer_level.dart';
 import '../../domain/usecases/set_temporal_distortion.dart';
 import '../../domain/usecases/start_ambience.dart';
 import '../../domain/usecases/stop_ambience.dart';
+import '../../domain/usecases/watch_bell_strikes.dart';
 
 /// Drives the focus screen: the orb knobs, the active dimension, the task line
 /// and the session timer, all backed by the ambient sound engine.
@@ -24,33 +26,44 @@ class FocusController extends ChangeNotifier {
     required SetTemporalDistortion setTemporalDistortion,
     required SelectDimension selectDimension,
     required StopAmbience stopAmbience,
+    required WatchBellStrikes watchBellStrikes,
     Duration sessionLength = const Duration(minutes: 25),
   }) : _startAmbience = startAmbience,
        _setLayerLevel = setLayerLevel,
        _setTemporalDistortion = setTemporalDistortion,
        _selectDimension = selectDimension,
        _stopAmbience = stopAmbience,
-       _sessionLength = sessionLength;
+       _watchBellStrikes = watchBellStrikes,
+       _sessionLength = sessionLength {
+    unawaited(_bindBellStrikes());
+  }
 
   final StartAmbience _startAmbience;
   final SetLayerLevel _setLayerLevel;
   final SetTemporalDistortion _setTemporalDistortion;
   final SelectDimension _selectDimension;
   final StopAmbience _stopAmbience;
+  final WatchBellStrikes _watchBellStrikes;
   final Duration _sessionLength;
 
   DopFocusOrbKnobs _knobs = const DopFocusOrbKnobs();
+  final DopFocusOrbController _orbController = DopFocusOrbController();
   FocusDimension _dimension = FocusDimension.room;
   String _task = '';
   bool _muted = false;
   late final ValueNotifier<Duration> _remaining = ValueNotifier(_sessionLength);
   Timer? _timer;
+  StreamSubscription<BellStrike>? _bellStrikes;
   bool _started = false;
+  bool _disposed = false;
   Future<void>? _startOp;
   Future<void> _distortionOp = Future.value();
 
   /// Normalized knob levels that warp the orb.
   DopFocusOrbKnobs get knobs => _knobs;
+
+  /// Event controller that syncs orb particles to real bell chimes.
+  DopFocusOrbController get orbController => _orbController;
 
   /// The active acoustic dimension.
   FocusDimension get dimension => _dimension;
@@ -160,7 +173,10 @@ class FocusController extends ChangeNotifier {
 
   @override
   void dispose() {
+    _disposed = true;
     _timer?.cancel();
+    unawaited(_bellStrikes?.cancel());
+    _orbController.dispose();
     _remaining.dispose();
     unawaited(_setTemporalDistortion(0));
     unawaited(_stopAmbience(const NoParams()));
@@ -183,5 +199,14 @@ class FocusController extends ChangeNotifier {
     await _startAmbience(const NoParams());
     await _selectDimension(_dimension);
     _started = true;
+  }
+
+  Future<void> _bindBellStrikes() async {
+    final strikes = await _watchBellStrikes(const NoParams());
+    if (_disposed) return;
+    _bellStrikes = strikes.listen((strike) {
+      if (_disposed) return;
+      _orbController.strikeBell(intensity: strike.intensity);
+    });
   }
 }

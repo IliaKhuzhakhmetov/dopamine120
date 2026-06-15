@@ -1,4 +1,5 @@
 import 'package:dopamine120/features/focus/data/repositories/silent_ambience_repository.dart';
+import 'package:dopamine120/features/focus/domain/entities/bell_strike.dart';
 import 'package:dopamine120/features/focus/domain/entities/focus_dimension.dart';
 import 'package:dopamine120/features/focus/domain/entities/sound_layer.dart';
 import 'package:dopamine120/features/focus/domain/repositories/ambience_repository.dart';
@@ -7,6 +8,7 @@ import 'package:dopamine120/features/focus/domain/usecases/set_layer_level.dart'
 import 'package:dopamine120/features/focus/domain/usecases/set_temporal_distortion.dart';
 import 'package:dopamine120/features/focus/domain/usecases/start_ambience.dart';
 import 'package:dopamine120/features/focus/domain/usecases/stop_ambience.dart';
+import 'package:dopamine120/features/focus/domain/usecases/watch_bell_strikes.dart';
 import 'package:dopamine120/features/focus/presentation/controller/focus_controller.dart';
 import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -21,6 +23,7 @@ void main() {
       setTemporalDistortion: SetTemporalDistortion(repository),
       selectDimension: SelectDimension(repository),
       stopAmbience: StopAmbience(repository),
+      watchBellStrikes: WatchBellStrikes(repository),
       sessionLength: const Duration(seconds: 3),
     );
 
@@ -114,6 +117,19 @@ void main() {
       expect(repository.temporalDistortion, 0);
     });
 
+    test('bell strikes pulse the orb controller', () async {
+      final controller = build();
+
+      await Future<void>.delayed(Duration.zero);
+      repository.emitBellStrike(
+        const BellStrike(intensity: 0.7, frequency: 440),
+      );
+      await Future<void>.delayed(Duration.zero);
+
+      expect(controller.orbController.bellStrikeSequence, 1);
+      expect(controller.orbController.bellStrikeIntensity, 0.7);
+    });
+
     test('ignores re-selecting the active dimension', () async {
       final controller = build();
 
@@ -172,6 +188,9 @@ class _FlakyAmbienceRepository implements AmbienceRepository {
   FocusDimension? dimension;
   final Map<SoundLayer, double> levels = {};
   double temporalDistortion = 0;
+
+  @override
+  Stream<BellStrike> get bellStrikes => const Stream.empty();
 
   @override
   Future<void> start() async {

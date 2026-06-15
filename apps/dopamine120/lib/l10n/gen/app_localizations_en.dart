@@ -203,10 +203,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get focusTaskHint => 'the thing you\'re avoiding…';
 
   @override
-  String get focusKnobHint =>
-      'turn the knobs — they bend the loop & warp the orb. cicada is the strange one.';
-
-  @override
   String get focusDimensionLabel => 'dimension';
 
   @override

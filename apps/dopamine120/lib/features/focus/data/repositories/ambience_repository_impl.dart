@@ -1,4 +1,5 @@
 import '../../domain/entities/focus_dimension.dart';
+import '../../domain/entities/bell_strike.dart';
 import '../../domain/entities/sound_layer.dart';
 import '../../domain/repositories/ambience_repository.dart';
 import '../datasources/soloud_synth_engine.dart';
@@ -10,6 +11,9 @@ class AmbienceRepositoryImpl implements AmbienceRepository {
   final SoloudSynthEngine _engine;
 
   @override
+  Stream<BellStrike> get bellStrikes => _engine.bellStrikes;
+
+  @override
   Future<void> start() => _engine.start();
 
   @override
@@ -17,8 +21,10 @@ class AmbienceRepositoryImpl implements AmbienceRepository {
       _engine.setLayer(layer, level);
 
   @override
-  Future<void> selectDimension(FocusDimension dimension) =>
-      _engine.applyProfile(dimension.profile);
+  Future<void> selectDimension(FocusDimension dimension) async {
+    await _engine.applyProfile(dimension.profile);
+    await _engine.applyTimbre(dimension.timbre);
+  }
 
   @override
   Future<void> setTemporalDistortion(double amount) =>

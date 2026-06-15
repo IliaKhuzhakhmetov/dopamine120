@@ -5,6 +5,21 @@ import 'package:flutter_soloud/flutter_soloud.dart' show WaveForm;
 import 'audio_backend.dart';
 import 'wav_codec.dart';
 
+/// A started looping voice: its playing [handle] plus the [source] it came from.
+///
+/// The source is retained so the voice can be disposed when a dimension swap
+/// re-renders it, instead of leaking a buffer per switch.
+class LoopVoice {
+  /// Bundles the playing [handle] with its backing [source].
+  const LoopVoice(this.handle, this.source);
+
+  /// The playing, looping voice handle.
+  final VoiceHandle handle;
+
+  /// The source the handle was started from.
+  final VoiceSource source;
+}
+
 /// Starts the engine's always-on looping voices, isolating the one place where
 /// web and native diverge.
 ///
@@ -34,14 +49,14 @@ class LoopPlayer {
   double get _startVolume => isWeb ? unlockVolume : 0;
 
   /// Starts a looping oscillator [waveform] tuned to [freq] Hz.
-  Future<VoiceHandle> oscillator(WaveForm waveform, double freq) async {
+  Future<LoopVoice> oscillator(WaveForm waveform, double freq) async {
     final source = await _backend.loadWaveform(waveform);
     _backend.setWaveformFreq(source, freq);
     return _startLoop(source);
   }
 
   /// Starts a looping voice from an in-memory [wav] noise buffer.
-  Future<VoiceHandle> noise(Uint8List wav) async {
+  Future<LoopVoice> noise(Uint8List wav) async {
     if (isWeb) return _pcmStream(WavCodec.pcmFromWav(wav));
 
     final source = await _backend.loadNoise(
@@ -51,7 +66,7 @@ class LoopPlayer {
     return _startLoop(source);
   }
 
-  VoiceHandle _pcmStream(Uint8List pcm) {
+  LoopVoice _pcmStream(Uint8List pcm) {
     // SoLoud stores stream samples as f32 internally (4 bytes/sample), so the
     // buffer ceiling must be sized against the decoded float length, not the
     // incoming s16le bytes. Our PCM is 2 bytes/sample, so the float buffer needs
@@ -67,13 +82,13 @@ class LoopPlayer {
     return _startLoop(source, volume: unlockVolume);
   }
 
-  VoiceHandle _startLoop(VoiceSource source, {double? volume}) {
+  LoopVoice _startLoop(VoiceSource source, {double? volume}) {
     final handle = _backend.play(
       source,
       volume: volume ?? _startVolume,
       looping: true,
     );
     _backend.keepLoopAlive(handle);
-    return handle;
+    return LoopVoice(handle, source);
   }
 }

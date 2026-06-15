@@ -90,4 +90,35 @@ void main() {
     expect(levels, [1, 0]);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('paints controller-driven bell strikes without exceptions', (
+    tester,
+  ) async {
+    final controller = DopFocusOrbController();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: DopTheme.dark(),
+        home: Scaffold(
+          body: Center(
+            child: DopFocusOrb(
+              animate: false,
+              controller: controller,
+              knobs: const DopFocusOrbKnobs(bell: 1),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    controller.strikeBell(intensity: 0.7);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(controller.bellStrikeSequence, 1);
+    expect(tester.takeException(), isNull);
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    controller.dispose();
+  });
 }

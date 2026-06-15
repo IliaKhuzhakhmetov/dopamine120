@@ -3,6 +3,7 @@ import 'dart:math' as math;
 
 import 'package:flutter_soloud/flutter_soloud.dart' show WaveForm;
 
+import '../../../domain/entities/bell_strike.dart';
 import 'audio_backend.dart';
 
 /// Schedules the bell layer's sparse, randomly-timed pings.
@@ -17,12 +18,15 @@ class BellScheduler {
     this._backend, {
     required math.Random random,
     Duration tick = const Duration(milliseconds: 430),
+    void Function(BellStrike strike)? onStrike,
   }) : _random = random,
-       _tick = tick;
+       _tick = tick,
+       _onStrike = onStrike;
 
   final AudioBackend _backend;
   final math.Random _random;
   final Duration _tick;
+  final void Function(BellStrike strike)? _onStrike;
 
   /// Notes the bell arpeggiates through (a warm major pentatonic, an octave
   /// below the reference so pings read as mellow chimes, not shrill plinks).
@@ -36,12 +40,16 @@ class BellScheduler {
   VoiceSource? _partialSource;
   Timer? _timer;
   double _level = 0;
+  double _transpose = 1;
 
   /// Whether the two bell voices have been loaded.
   bool get isReady => _strikeSource != null;
 
   /// Sets the bell layer's `0..1` mix level (probability and volume of pings).
   set level(double value) => _level = value;
+
+  /// Multiplies every struck note, transposing the chimes for the dimension.
+  set transpose(double value) => _transpose = value;
 
   /// Loads the strike and shimmer voices (idempotent per engine build).
   Future<void> build() async {
@@ -68,6 +76,7 @@ class BellScheduler {
     _strikeSource = null;
     _partialSource = null;
     _level = 0;
+    _transpose = 1;
   }
 
   void _maybeRing() {
@@ -76,7 +85,8 @@ class BellScheduler {
     if (strikeSource == null || partialSource == null || _level <= 0) return;
     if (_random.nextDouble() >= _level * 0.6) return;
 
-    final note = _notes[_random.nextInt(_notes.length)];
+    final note = _notes[_random.nextInt(_notes.length)] * _transpose;
+    _onStrike?.call(BellStrike(intensity: _level, frequency: note));
 
     // Strike tone: instant attack, long soft tail.
     _backend.setWaveformFreq(strikeSource, note);

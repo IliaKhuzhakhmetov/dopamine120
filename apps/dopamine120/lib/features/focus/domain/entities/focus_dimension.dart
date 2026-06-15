@@ -1,6 +1,7 @@
 import 'package:dopamine_ui/dopamine_ui.dart';
 
 import 'acoustic_profile.dart';
+import 'voice_timbre.dart';
 
 /// The acoustic spaces the focus session can inhabit. Each one warps both the
 /// orb visuals ([orbDimension]) and the sound mix ([profile]).
@@ -114,6 +115,57 @@ extension FocusDimensionX on FocusDimension {
       delayDecay: 0.45,
       delayWet: 0.3,
       masterGain: 0.52,
+    ),
+  };
+
+  /// The voice signature applied to the rain/pulse/bell/cicada/drone voices, so
+  /// the actual sounds — not just the bus filter — change with the space.
+  VoiceTimbre get timbre => switch (this) {
+    // Dry and near: the baseline every other space deviates from.
+    FocusDimension.room => VoiceTimbre.standard,
+    // Vast stone halo: octave-down bed, soft low rain, bright struck chimes.
+    FocusDimension.cathedral => const VoiceTimbre(
+      droneRatio: 0.5,
+      rainCentreHz: 650,
+      rainQ: 0.4,
+      pulseHz: 41.2,
+      cicadaCentreHz: 6200,
+      bellTranspose: 2.0,
+    ),
+    // Muffled deep wobble: everything pulled low and dark.
+    FocusDimension.underwater => const VoiceTimbre(
+      droneRatio: 0.75,
+      rainCentreHz: 400,
+      rainQ: 0.35,
+      pulseHz: 36.7,
+      cicadaCentreHz: 1500,
+      cicadaQ: 6,
+      bellTranspose: 0.5,
+    ),
+    // Long orbit echo: airy, lifted, shimmering.
+    FocusDimension.cosmos => const VoiceTimbre(
+      droneRatio: 1.5,
+      rainCentreHz: 1800,
+      rainQ: 0.6,
+      pulseHz: 65.4,
+      cicadaCentreHz: 7200,
+      bellTranspose: 1.5,
+    ),
+    // Humid canopy: midrange rain, loud real insects.
+    FocusDimension.jungle => const VoiceTimbre(
+      rainCentreHz: 1400,
+      rainQ: 0.7,
+      cicadaCentreHz: 5200,
+      cicadaQ: 11,
+      bellTranspose: 1.25,
+    ),
+    // Wet slap-back ghosting: dark drips and low chimes.
+    FocusDimension.cave => const VoiceTimbre(
+      droneRatio: 0.75,
+      rainCentreHz: 850,
+      pulseHz: 49,
+      cicadaCentreHz: 3600,
+      bellTranspose: 0.75,
     ),
   };
 }

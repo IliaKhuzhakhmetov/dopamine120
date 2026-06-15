@@ -458,12 +458,6 @@ abstract class AppLocalizations {
   /// **'the thing you\'re avoiding…'**
   String get focusTaskHint;
 
-  /// No description provided for @focusKnobHint.
-  ///
-  /// In en, this message translates to:
-  /// **'turn the knobs — they bend the loop & warp the orb. cicada is the strange one.'**
-  String get focusKnobHint;
-
   /// No description provided for @focusDimensionLabel.
   ///
   /// In en, this message translates to:

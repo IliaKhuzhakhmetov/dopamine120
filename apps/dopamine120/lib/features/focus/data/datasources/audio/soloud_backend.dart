@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:app_logger/app_logger.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/foundation.dart';
@@ -71,6 +73,13 @@ class SoLoudBackend implements AudioBackend {
 
   @override
   void endPcm(VoiceSource source) => _soloud.setDataIsEnded(_source(source));
+
+  @override
+  void disposeSource(VoiceSource source) {
+    // Fire-and-forget: the swap already crossfaded the old voice to silence, so
+    // we only need the buffer freed, not to await it.
+    unawaited(_soloud.disposeSource(_source(source)));
+  }
 
   @override
   VoiceHandle play(

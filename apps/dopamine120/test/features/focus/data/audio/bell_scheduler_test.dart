@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:dopamine120/features/focus/data/datasources/audio/bell_scheduler.dart';
+import 'package:dopamine120/features/focus/domain/entities/bell_strike.dart';
 import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -29,8 +30,13 @@ void main() {
   test('rings both bell voices on a tick when the probability passes', () {
     fakeAsync((async) {
       final backend = FakeAudioBackend();
+      final strikes = <BellStrike>[];
       // 0.1 < level*0.6, so the ping fires; note index 0 is selected.
-      final bell = BellScheduler(backend, random: _ScriptedRandom([0.1]));
+      final bell = BellScheduler(
+        backend,
+        random: _ScriptedRandom([0.1]),
+        onStrike: strikes.add,
+      );
 
       bell.build();
       async.flushMicrotasks();
@@ -40,6 +46,9 @@ void main() {
       async.elapse(_tick);
 
       expect(backend.plays, hasLength(2), reason: 'strike + shimmer');
+      expect(strikes, hasLength(1));
+      expect(strikes.single.intensity, 1);
+      expect(strikes.single.frequency, 261.63);
       expect(backend.plays[0].volume, closeTo(0.15, 1e-9), reason: 'strike');
       expect(backend.plays[1].volume, closeTo(0.05, 1e-9), reason: 'shimmer');
       expect(backend.fades, hasLength(2));

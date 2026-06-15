@@ -203,10 +203,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get focusTaskHint => 'то, чего ты избегаешь…';
 
   @override
-  String get focusKnobHint =>
-      'крути ручки — они гнут петлю и искажают сферу. цикады — самая странная.';
-
-  @override
   String get focusDimensionLabel => 'измерение';
 
   @override

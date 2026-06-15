@@ -1,5 +1,6 @@
 import '../entities/focus_dimension.dart';
 import '../entities/sound_layer.dart';
+import '../entities/bell_strike.dart';
 
 /// The focus-mode sound engine contract.
 ///
@@ -7,6 +8,9 @@ import '../entities/sound_layer.dart';
 /// bus) and translate domain intent — start, mix a layer, change space — into
 /// engine calls. The mix is continuous: callers nudge it in real time.
 abstract class AmbienceRepository {
+  /// Bell chimes emitted by the engine, after probability and note selection.
+  Stream<BellStrike> get bellStrikes;
+
   /// Boots the engine if needed and starts the (silent) layer voices.
   ///
   /// Idempotent: safe to call again after [stop].

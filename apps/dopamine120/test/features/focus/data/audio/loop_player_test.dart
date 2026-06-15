@@ -23,14 +23,14 @@ void main() {
     test(
       'oscillator loads a tuned, looping, protected voice at zero volume',
       () async {
-        final handle = await player.oscillator(WaveForm.triangle, 110);
+        final voice = await player.oscillator(WaveForm.triangle, 110);
 
         expect(backend.loadedWaveforms, [WaveForm.triangle]);
         expect(backend.waveformFreq.values, contains(110));
         final play = backend.plays.single;
         expect(play.looping, isTrue);
         expect(play.volume, 0, reason: 'native loops start silent');
-        expect(backend.isKeptAlive(handle), isTrue);
+        expect(backend.isKeptAlive(voice.handle), isTrue);
       },
     );
 

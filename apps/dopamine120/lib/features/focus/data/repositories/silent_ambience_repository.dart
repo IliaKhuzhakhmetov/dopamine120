@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import '../../domain/entities/bell_strike.dart';
 import '../../domain/entities/focus_dimension.dart';
 import '../../domain/entities/sound_layer.dart';
 import '../../domain/repositories/ambience_repository.dart';
@@ -7,6 +10,9 @@ import '../../domain/repositories/ambience_repository.dart';
 /// Records the last requested mix so callers can assert against it without a
 /// real audio engine. Mirrors `PlatformBridgeFake`.
 class SilentAmbienceRepository implements AmbienceRepository {
+  final StreamController<BellStrike> _bellStrikes =
+      StreamController<BellStrike>.broadcast();
+
   /// Whether [start] has been called and [stop] has not since.
   bool running = false;
 
@@ -18,6 +24,12 @@ class SilentAmbienceRepository implements AmbienceRepository {
 
   /// The last requested temporary distortion amount.
   double temporalDistortion = 0;
+
+  @override
+  Stream<BellStrike> get bellStrikes => _bellStrikes.stream;
+
+  /// Emits a fake bell strike for presentation tests.
+  void emitBellStrike(BellStrike strike) => _bellStrikes.add(strike);
 
   @override
   Future<void> start() async => running = true;
@@ -38,5 +50,8 @@ class SilentAmbienceRepository implements AmbienceRepository {
   Future<void> stop() async => running = false;
 
   @override
-  Future<void> dispose() async => running = false;
+  Future<void> dispose() async {
+    running = false;
+    await _bellStrikes.close();
+  }
 }

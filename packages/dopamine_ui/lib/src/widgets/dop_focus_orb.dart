@@ -5,6 +5,8 @@ import 'package:flutter/rendering.dart';
 
 import '../theme/context_ext.dart';
 
+const double _bellPulseLifetime = 0.8;
+
 /// Visual spaces from the focus-mode HTML reference.
 enum DopFocusOrbDimension {
   /// Dry and near.
@@ -141,12 +143,32 @@ class DopFocusOrbKnobs {
   int get hashCode => Object.hash(drone, rain, pulse, bell, cicada);
 }
 
+/// Event controller for synchronizing external focus-orb moments.
+class DopFocusOrbController extends ChangeNotifier {
+  int _bellStrikeSequence = 0;
+  double _bellStrikeIntensity = 0;
+
+  /// Monotonic id of the latest bell strike.
+  int get bellStrikeSequence => _bellStrikeSequence;
+
+  /// Normalized intensity of the latest bell strike.
+  double get bellStrikeIntensity => _bellStrikeIntensity;
+
+  /// Emits a visual bell particle burst from a real bell chime.
+  void strikeBell({double intensity = 1}) {
+    _bellStrikeIntensity = intensity.clamp(0.0, 1.0).toDouble();
+    _bellStrikeSequence++;
+    notifyListeners();
+  }
+}
+
 /// Animated focus-mode orb recreated from the HTML canvas reference.
 class DopFocusOrb extends StatefulWidget {
   const DopFocusOrb({
     super.key,
     this.size = 172,
     this.knobs = const DopFocusOrbKnobs(),
+    this.controller,
     this.dimension = DopFocusOrbDimension.room,
     this.color,
     this.animate = true,
@@ -160,6 +182,9 @@ class DopFocusOrb extends StatefulWidget {
 
   /// Normalized controls that bend the loop and warp the orb.
   final DopFocusOrbKnobs knobs;
+
+  /// Optional event controller for externally synchronized orb particles.
+  final DopFocusOrbController? controller;
 
   /// Visual dimension that changes motion space.
   final DopFocusOrbDimension dimension;
@@ -187,7 +212,9 @@ class _DopFocusOrbState extends State<DopFocusOrb>
     with TickerProviderStateMixin {
   late final AnimationController _ticker;
   late final AnimationController _distortionTicker;
+  final List<_OrbBellPulse> _bellPulses = [];
   bool _distorting = false;
+  int _observedBellStrikeSequence = 0;
 
   @override
   void initState() {
@@ -198,6 +225,7 @@ class _DopFocusOrbState extends State<DopFocusOrb>
       duration: const Duration(milliseconds: 140),
       reverseDuration: const Duration(milliseconds: 220),
     );
+    _attachController();
   }
 
   @override
@@ -209,6 +237,12 @@ class _DopFocusOrbState extends State<DopFocusOrb>
   @override
   void didUpdateWidget(covariant DopFocusOrb oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.controller != widget.controller) {
+      oldWidget.controller?.removeListener(_handleBellStrike);
+      _bellPulses.clear();
+      _observedBellStrikeSequence = widget.controller?.bellStrikeSequence ?? 0;
+      _attachController();
+    }
     if (oldWidget.animate != widget.animate) _syncTicker();
     if (oldWidget.distortionOnPress && !widget.distortionOnPress) {
       _setDistorting(false);
@@ -218,6 +252,7 @@ class _DopFocusOrbState extends State<DopFocusOrb>
   @override
   void dispose() {
     if (_distorting) widget.onDistortionChanged?.call(0);
+    widget.controller?.removeListener(_handleBellStrike);
     _distortionTicker.dispose();
     _ticker.dispose();
     super.dispose();
@@ -241,6 +276,8 @@ class _DopFocusOrbState extends State<DopFocusOrb>
               distortionTicker: _distortionTicker,
               preferredSize: widget.size,
               knobs: widget.knobs,
+              bellPulses: List<_OrbBellPulse>.unmodifiable(_bellPulses),
+              syncBellPulses: widget.controller != null,
               dimension: widget.dimension,
               color: color,
               seed: widget.seed,
@@ -262,6 +299,41 @@ class _DopFocusOrbState extends State<DopFocusOrb>
     } else {
       _ticker.stop();
     }
+  }
+
+  void _attachController() {
+    final controller = widget.controller;
+    if (controller == null) return;
+    _observedBellStrikeSequence = controller.bellStrikeSequence;
+    controller.addListener(_handleBellStrike);
+  }
+
+  void _handleBellStrike() {
+    final controller = widget.controller;
+    if (controller == null) return;
+    final sequence = controller.bellStrikeSequence;
+    if (sequence == _observedBellStrikeSequence) return;
+    _observedBellStrikeSequence = sequence;
+    final t = _elapsedSeconds;
+    setState(() {
+      _pruneBellPulses(t);
+      _bellPulses.add(
+        _OrbBellPulse(
+          start: t,
+          sequence: sequence,
+          intensity: controller.bellStrikeIntensity,
+        ),
+      );
+    });
+  }
+
+  double get _elapsedSeconds {
+    final elapsed = _ticker.lastElapsedDuration;
+    return elapsed == null ? 0.0 : elapsed.inMicroseconds / 1000000;
+  }
+
+  void _pruneBellPulses(double t) {
+    _bellPulses.removeWhere((pulse) => t - pulse.start > _bellPulseLifetime);
   }
 
   void _setDistorting(bool value) {
@@ -288,6 +360,8 @@ class _DopFocusOrbRenderWidget extends LeafRenderObjectWidget {
     required this.distortionTicker,
     required this.preferredSize,
     required this.knobs,
+    required this.bellPulses,
+    required this.syncBellPulses,
     required this.dimension,
     required this.color,
     required this.seed,
@@ -297,6 +371,8 @@ class _DopFocusOrbRenderWidget extends LeafRenderObjectWidget {
   final Animation<double> distortionTicker;
   final double preferredSize;
   final DopFocusOrbKnobs knobs;
+  final List<_OrbBellPulse> bellPulses;
+  final bool syncBellPulses;
   final DopFocusOrbDimension dimension;
   final Color color;
   final int seed;
@@ -308,6 +384,8 @@ class _DopFocusOrbRenderWidget extends LeafRenderObjectWidget {
       distortionTicker: distortionTicker,
       preferredSize: preferredSize,
       knobs: knobs,
+      bellPulses: bellPulses,
+      syncBellPulses: syncBellPulses,
       dimension: dimension,
       color: color,
       seed: seed,
@@ -324,6 +402,8 @@ class _DopFocusOrbRenderWidget extends LeafRenderObjectWidget {
       ..distortionTicker = distortionTicker
       ..preferredSize = preferredSize
       ..knobs = knobs
+      ..bellPulses = bellPulses
+      ..syncBellPulses = syncBellPulses
       ..dimension = dimension
       ..color = color
       ..seed = seed;
@@ -336,6 +416,8 @@ class _RenderDopFocusOrb extends RenderBox {
     required Animation<double> distortionTicker,
     required double preferredSize,
     required DopFocusOrbKnobs knobs,
+    required List<_OrbBellPulse> bellPulses,
+    required bool syncBellPulses,
     required DopFocusOrbDimension dimension,
     required Color color,
     required int seed,
@@ -343,6 +425,8 @@ class _RenderDopFocusOrb extends RenderBox {
        _distortionTicker = distortionTicker,
        _preferredSize = preferredSize,
        _knobs = knobs,
+       _bellPulses = bellPulses,
+       _syncBellPulses = syncBellPulses,
        _dimension = dimension,
        _color = color,
        _seed = seed;
@@ -359,6 +443,8 @@ class _RenderDopFocusOrb extends RenderBox {
   Animation<double> _distortionTicker;
   double _preferredSize;
   DopFocusOrbKnobs _knobs;
+  List<_OrbBellPulse> _bellPulses;
+  bool _syncBellPulses;
   DopFocusOrbDimension _dimension;
   Color _color;
   int _seed;
@@ -392,6 +478,20 @@ class _RenderDopFocusOrb extends RenderBox {
   set knobs(DopFocusOrbKnobs value) {
     if (value == _knobs) return;
     _knobs = value;
+    markNeedsPaint();
+  }
+
+  List<_OrbBellPulse> get bellPulses => _bellPulses;
+  set bellPulses(List<_OrbBellPulse> value) {
+    if (identical(value, _bellPulses)) return;
+    _bellPulses = value;
+    markNeedsPaint();
+  }
+
+  bool get syncBellPulses => _syncBellPulses;
+  set syncBellPulses(bool value) {
+    if (value == _syncBellPulses) return;
+    _syncBellPulses = value;
     markNeedsPaint();
   }
 
@@ -526,7 +626,11 @@ class _RenderDopFocusOrb extends RenderBox {
     canvas.drawCircle(center, coreRadius, _fillPaint);
 
     if (visual.orbit > 0) _paintOrbit(canvas, center, radius, t);
-    if (unit.bell > 0) _paintPings(canvas, center, radius, t, unit.bell);
+    if (_syncBellPulses) {
+      _paintSyncedPings(canvas, center, radius, t);
+    } else if (unit.bell > 0) {
+      _paintPings(canvas, center, radius, t, unit.bell);
+    }
 
     canvas.restore();
   }
@@ -696,10 +800,50 @@ class _RenderDopFocusOrb extends RenderBox {
     }
   }
 
+  void _paintSyncedPings(
+    Canvas canvas,
+    Offset center,
+    double radius,
+    double t,
+  ) {
+    for (final pulse in _bellPulses) {
+      final age = t - pulse.start;
+      if (age < 0 || age > _bellPulseLifetime) continue;
+
+      final life = 1 - age / _bellPulseLifetime;
+      final angle = _hashUnit(pulse.sequence, _seed, 29) * math.pi * 2;
+      final pingRadius =
+          radius * (1.15 + (1 - life) * (0.55 + pulse.intensity * 0.45));
+      _fillPaint.color = _color.withValues(
+        alpha: life * (0.35 + pulse.intensity * 0.45),
+      );
+      canvas.drawCircle(
+        Offset(
+          center.dx + math.cos(angle) * pingRadius,
+          center.dy + math.sin(angle) * pingRadius,
+        ),
+        2 + (1 - life) * (2 + pulse.intensity * 3),
+        _fillPaint,
+      );
+    }
+  }
+
   double _hashUnit(int a, int b, int c) {
     final value = math.sin(a * 12.9898 + b * 78.233 + c * 37.719) * 43758.5453;
     return value - value.floorToDouble();
   }
+}
+
+class _OrbBellPulse {
+  const _OrbBellPulse({
+    required this.start,
+    required this.sequence,
+    required this.intensity,
+  });
+
+  final double start;
+  final int sequence;
+  final double intensity;
 }
 
 class _UnitKnobs {

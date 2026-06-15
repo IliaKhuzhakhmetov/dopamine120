@@ -13,6 +13,7 @@ import '../domain/usecases/set_layer_level.dart';
 import '../domain/usecases/set_temporal_distortion.dart';
 import '../domain/usecases/start_ambience.dart';
 import '../domain/usecases/stop_ambience.dart';
+import '../domain/usecases/watch_bell_strikes.dart';
 import 'controller/focus_controller.dart';
 
 /// Focus mode: a reactive orb, five ambient-sound knobs, an acoustic dimension
@@ -39,6 +40,7 @@ class _FocusScreenState extends State<FocusScreen> {
       setTemporalDistortion: injector.get<SetTemporalDistortion>(),
       selectDimension: injector.get<SelectDimension>(),
       stopAmbience: injector.get<StopAmbience>(),
+      watchBellStrikes: injector.get<WatchBellStrikes>(),
     );
     _taskController = TextEditingController();
     _controller.startTimer();
@@ -76,11 +78,10 @@ class _FocusScreenState extends State<FocusScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      children: [
-                        DopText.label('DOPAMINE'),
-                        DopText.label('120', color: colors.accent),
-                      ],
+                    DopBackButton(
+                      onPressed: () {
+                        context.router.pop();
+                      },
                     ),
                     Row(
                       children: [
@@ -107,6 +108,7 @@ class _FocusScreenState extends State<FocusScreen> {
                         Center(
                           child: DopFocusOrb(
                             knobs: _controller.knobs,
+                            controller: _controller.orbController,
                             dimension: _controller.dimension.orbDimension,
                             onDistortionChanged:
                                 _controller.setTemporalDistortion,
@@ -126,13 +128,7 @@ class _FocusScreenState extends State<FocusScreen> {
                         ),
                         const SizedBox(height: 28),
                         _KnobRow(controller: _controller),
-                        const SizedBox(height: 16),
-                        DopText.caption(
-                          l10n.focusKnobHint,
-                          align: TextAlign.center,
-                          color: colors.inkFaint,
-                        ),
-                        const SizedBox(height: 24),
+                        SizedBox(height: context.spacing.lg),
                         DopDropdown<FocusDimension>(
                           label: l10n.focusDimensionLabel,
                           value: _controller.dimension,

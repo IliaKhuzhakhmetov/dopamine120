@@ -125,6 +125,9 @@ abstract class AudioBackend {
   /// Signals that no more PCM will be pushed to [source].
   void endPcm(VoiceSource source);
 
+  /// Releases [source] and stops any voices still playing from it.
+  void disposeSource(VoiceSource source);
+
   /// Starts [source] and returns its handle.
   VoiceHandle play(
     VoiceSource source, {
