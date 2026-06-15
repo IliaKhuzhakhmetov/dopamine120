@@ -42,6 +42,7 @@ class FocusController extends ChangeNotifier {
   DopFocusOrbKnobs _knobs = const DopFocusOrbKnobs();
   FocusDimension _dimension = FocusDimension.room;
   String _task = '';
+  bool _muted = false;
   late final ValueNotifier<Duration> _remaining = ValueNotifier(_sessionLength);
   Timer? _timer;
   bool _started = false;
@@ -56,6 +57,9 @@ class FocusController extends ChangeNotifier {
 
   /// The task the user is committing to.
   String get task => _task;
+
+  /// Whether the ambient mix is currently silenced.
+  bool get isMuted => _muted;
 
   /// Time left in the current session. Ticks every second on its own, so the
   /// timer chip can repaint without rebuilding the rest of the screen.
@@ -128,6 +132,21 @@ class FocusController extends ChangeNotifier {
 
   /// Records the task line text. Does not touch audio.
   void setTask(String task) => _task = task;
+
+  /// Silences or resumes the whole mix, keeping the engine warm.
+  ///
+  /// Muting pauses the voices via [StopAmbience]; unmuting boots the engine if
+  /// needed and resumes them. Knob levels survive, so the mix returns unchanged.
+  Future<void> toggleMute() async {
+    _muted = !_muted;
+    notifyListeners();
+    if (_muted) {
+      await _stopAmbience(const NoParams());
+    } else {
+      await _ensureStarted();
+      await _startAmbience(const NoParams());
+    }
+  }
 
   /// Temporarily bends the audio bus while the orb is being pressed.
   void setTemporalDistortion(double amount) {

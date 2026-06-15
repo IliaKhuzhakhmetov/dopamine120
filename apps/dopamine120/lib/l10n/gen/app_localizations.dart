@@ -475,6 +475,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reset the focus timer'**
   String get focusTimerReset;
+
+  /// No description provided for @focusMute.
+  ///
+  /// In en, this message translates to:
+  /// **'Mute the ambience'**
+  String get focusMute;
+
+  /// No description provided for @focusUnmute.
+  ///
+  /// In en, this message translates to:
+  /// **'Unmute the ambience'**
+  String get focusUnmute;
 }
 
 class _AppLocalizationsDelegate

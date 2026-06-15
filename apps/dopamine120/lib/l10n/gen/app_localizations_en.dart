@@ -211,4 +211,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get focusTimerReset => 'Reset the focus timer';
+
+  @override
+  String get focusMute => 'Mute the ambience';
+
+  @override
+  String get focusUnmute => 'Unmute the ambience';
 }

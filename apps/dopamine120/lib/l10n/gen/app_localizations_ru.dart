@@ -211,4 +211,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get focusTimerReset => 'Сбросить таймер фокуса';
+
+  @override
+  String get focusMute => 'Выключить звук';
+
+  @override
+  String get focusUnmute => 'Включить звук';
 }

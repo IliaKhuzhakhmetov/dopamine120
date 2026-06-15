@@ -3,6 +3,8 @@ import 'package:core/core.dart';
 import 'package:dopamine_ui/dopamine_ui.dart';
 import 'package:flutter/material.dart';
 
+import '../../../core/theme/domain/entities/app_theme.dart';
+import '../../../core/theme/presentation/theme_provider.dart';
 import '../../../l10n/l10n.dart';
 import '../domain/entities/focus_dimension.dart';
 import '../domain/entities/sound_layer.dart';
@@ -49,6 +51,13 @@ class _FocusScreenState extends State<FocusScreen> {
     super.dispose();
   }
 
+  /// Switches the acoustic dimension and dresses the whole app in its theme —
+  /// each dimension shares an id with its [AppTheme] (`room`, `cathedral`, …).
+  void _selectDimension(FocusDimension dimension) {
+    _controller.selectDimension(dimension);
+    context.themeController.setTheme(AppTheme.fromStorageValue(dimension.name));
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
@@ -73,7 +82,16 @@ class _FocusScreenState extends State<FocusScreen> {
                         DopText.label('120', color: colors.accent),
                       ],
                     ),
-                    DopText.label(l10n.focusEyebrow, color: colors.inkFaint),
+                    Row(
+                      children: [
+                        DopText.label(
+                          l10n.focusEyebrow,
+                          color: colors.inkFaint,
+                        ),
+                        const SizedBox(width: 16),
+                        _MuteButton(controller: _controller),
+                      ],
+                    ),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -118,7 +136,7 @@ class _FocusScreenState extends State<FocusScreen> {
                         DopDropdown<FocusDimension>(
                           label: l10n.focusDimensionLabel,
                           value: _controller.dimension,
-                          onChanged: _controller.selectDimension,
+                          onChanged: _selectDimension,
                           options: [
                             for (final dimension in FocusDimension.values)
                               DopDropdownOption(
@@ -150,6 +168,39 @@ class _FocusScreenState extends State<FocusScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Toggles the ambient mix between silent and audible, reflecting the
+/// controller's mute state with its icon.
+class _MuteButton extends StatelessWidget {
+  const _MuteButton({required this.controller});
+
+  final FocusController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final l10n = context.l10n;
+    return ListenableBuilder(
+      listenable: controller,
+      builder: (context, _) {
+        final muted = controller.isMuted;
+        return Semantics(
+          button: true,
+          label: muted ? l10n.focusUnmute : l10n.focusMute,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: controller.toggleMute,
+            child: Icon(
+              muted ? Icons.volume_off : Icons.volume_up,
+              size: 20,
+              color: muted ? colors.inkFaint : colors.ink,
+            ),
+          ),
+        );
+      },
     );
   }
 }

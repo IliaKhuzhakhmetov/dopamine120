@@ -123,6 +123,22 @@ void main() {
       expect(repository.running, isFalse);
     });
 
+    test('mute silences the running mix and unmute resumes it', () async {
+      final controller = build();
+      await controller.setLayer(SoundLayer.drone, 0.6);
+      expect(repository.running, isTrue);
+
+      await controller.toggleMute();
+      expect(controller.isMuted, isTrue);
+      expect(repository.running, isFalse);
+
+      await controller.toggleMute();
+      expect(controller.isMuted, isFalse);
+      expect(repository.running, isTrue);
+      // The mix returns unchanged.
+      expect(repository.levels[SoundLayer.drone], 0.6);
+    });
+
     test('timer counts down and resets on demand', () {
       fakeAsync((async) {
         final controller = build()..startTimer();
