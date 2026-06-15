@@ -1,12 +1,12 @@
 import 'package:core/core.dart';
 import 'package:dopamine120/features/focus/data/repositories/silent_ambience_repository.dart';
 import 'package:dopamine120/features/focus/domain/entities/focus_dimension.dart';
-import 'package:dopamine120/features/focus/domain/entities/sound_layer.dart';
 import 'package:dopamine120/features/focus/domain/usecases/select_dimension.dart';
 import 'package:dopamine120/features/focus/domain/usecases/set_layer_level.dart';
 import 'package:dopamine120/features/focus/domain/usecases/start_ambience.dart';
 import 'package:dopamine120/features/focus/domain/usecases/stop_ambience.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sound_framework/sound_framework.dart';
 
 void main() {
   late SilentAmbienceRepository repository;

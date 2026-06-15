@@ -1,7 +1,5 @@
 import 'package:dopamine120/features/focus/data/repositories/silent_ambience_repository.dart';
-import 'package:dopamine120/features/focus/domain/entities/bell_strike.dart';
 import 'package:dopamine120/features/focus/domain/entities/focus_dimension.dart';
-import 'package:dopamine120/features/focus/domain/entities/sound_layer.dart';
 import 'package:dopamine120/features/focus/domain/repositories/ambience_repository.dart';
 import 'package:dopamine120/features/focus/domain/usecases/select_dimension.dart';
 import 'package:dopamine120/features/focus/domain/usecases/set_layer_level.dart';
@@ -12,6 +10,7 @@ import 'package:dopamine120/features/focus/domain/usecases/watch_bell_strikes.da
 import 'package:dopamine120/features/focus/presentation/controller/focus_controller.dart';
 import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sound_framework/sound_framework.dart';
 
 void main() {
   group('FocusController', () {

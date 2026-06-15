@@ -1,6 +1,6 @@
 import 'package:core/core.dart';
+import 'package:sound_framework/sound_framework.dart';
 
-import '../../focus/data/datasources/soloud_synth_engine.dart';
 import '../../focus/data/repositories/ambience_repository_impl.dart';
 import '../../focus/domain/repositories/ambience_repository.dart';
 import '../../focus/domain/usecases/select_dimension.dart';
@@ -12,9 +12,11 @@ import '../../focus/domain/usecases/watch_bell_strikes.dart';
 
 void registerFocusModule(Injector injector) {
   injector
-    ..registerLazySingleton<SoloudSynthEngine>((i) => SoloudSynthEngine())
+    ..registerLazySingleton<ProceduralSoundEngine>(
+      (i) => ProceduralSoundEngine(),
+    )
     ..registerLazySingleton<AmbienceRepository>(
-      (i) => AmbienceRepositoryImpl(i.get<SoloudSynthEngine>()),
+      (i) => AmbienceRepositoryImpl(i.get<ProceduralSoundEngine>()),
     )
     ..registerFactory<StartAmbience>(
       (i) => StartAmbience(i.get<AmbienceRepository>()),

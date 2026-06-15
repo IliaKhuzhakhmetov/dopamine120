@@ -1,6 +1,6 @@
 import 'package:core/core.dart';
+import 'package:sound_framework/sound_framework.dart';
 
-import '../entities/sound_layer.dart';
 import '../repositories/ambience_repository.dart';
 
 /// Input for [SetLayerLevel]: which [layer] and its new `0..1` [level].

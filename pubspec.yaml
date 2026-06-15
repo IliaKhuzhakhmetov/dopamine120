@@ -14,6 +14,8 @@ workspace:
   - packages/logger
   - packages/platform_bridge
   - packages/platform_bridge/example
+  - packages/sound_framework
+  - packages/sound_framework/example
 
 dependencies:
   flutter:

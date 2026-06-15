@@ -1,7 +1,5 @@
 import 'package:dopamine_ui/dopamine_ui.dart';
-
-import 'acoustic_profile.dart';
-import 'voice_timbre.dart';
+import 'package:sound_framework/sound_framework.dart';
 
 /// The acoustic spaces the focus session can inhabit. Each one warps both the
 /// orb visuals ([orbDimension]) and the sound mix ([profile]).

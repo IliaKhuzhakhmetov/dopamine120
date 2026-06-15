@@ -3,10 +3,9 @@ import 'dart:async';
 import 'package:core/core.dart';
 import 'package:dopamine_ui/dopamine_ui.dart';
 import 'package:flutter/foundation.dart';
+import 'package:sound_framework/sound_framework.dart';
 
 import '../../domain/entities/focus_dimension.dart';
-import '../../domain/entities/bell_strike.dart';
-import '../../domain/entities/sound_layer.dart';
 import '../../domain/usecases/select_dimension.dart';
 import '../../domain/usecases/set_layer_level.dart';
 import '../../domain/usecases/set_temporal_distortion.dart';

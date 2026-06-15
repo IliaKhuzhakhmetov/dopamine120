@@ -1,6 +1,5 @@
 import '../entities/focus_dimension.dart';
-import '../entities/sound_layer.dart';
-import '../entities/bell_strike.dart';
+import 'package:sound_framework/sound_framework.dart';
 
 /// The focus-mode sound engine contract.
 ///

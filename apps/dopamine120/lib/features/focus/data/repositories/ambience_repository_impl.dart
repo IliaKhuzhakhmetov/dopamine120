@@ -1,14 +1,12 @@
 import '../../domain/entities/focus_dimension.dart';
-import '../../domain/entities/bell_strike.dart';
-import '../../domain/entities/sound_layer.dart';
 import '../../domain/repositories/ambience_repository.dart';
-import '../datasources/soloud_synth_engine.dart';
+import 'package:sound_framework/sound_framework.dart';
 
-/// Maps domain intent onto the procedural [SoloudSynthEngine].
+/// Maps domain intent onto the procedural [ProceduralSoundEngine].
 class AmbienceRepositoryImpl implements AmbienceRepository {
   AmbienceRepositoryImpl(this._engine);
 
-  final SoloudSynthEngine _engine;
+  final ProceduralSoundEngine _engine;
 
   @override
   Stream<BellStrike> get bellStrikes => _engine.bellStrikes;

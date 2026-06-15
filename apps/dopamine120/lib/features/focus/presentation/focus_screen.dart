@@ -2,12 +2,12 @@ import 'package:auto_route/auto_route.dart';
 import 'package:core/core.dart';
 import 'package:dopamine_ui/dopamine_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:sound_framework/sound_framework.dart';
 
 import '../../../core/theme/domain/entities/app_theme.dart';
 import '../../../core/theme/presentation/theme_provider.dart';
 import '../../../l10n/l10n.dart';
 import '../domain/entities/focus_dimension.dart';
-import '../domain/entities/sound_layer.dart';
 import '../domain/usecases/select_dimension.dart';
 import '../domain/usecases/set_layer_level.dart';
 import '../domain/usecases/set_temporal_distortion.dart';
