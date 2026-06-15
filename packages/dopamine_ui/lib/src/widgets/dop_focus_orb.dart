@@ -150,6 +150,8 @@ class DopFocusOrb extends StatefulWidget {
     this.dimension = DopFocusOrbDimension.room,
     this.color,
     this.animate = true,
+    this.distortionOnPress = true,
+    this.onDistortionChanged,
     this.seed = 120,
   }) : assert(size > 0);
 
@@ -168,6 +170,12 @@ class DopFocusOrb extends StatefulWidget {
   /// Whether the orb should tick. Platform reduced-motion settings still win.
   final bool animate;
 
+  /// Whether pressing the orb should bend it until the pointer is released.
+  final bool distortionOnPress;
+
+  /// Called with `1` on press and `0` on release/cancel.
+  final ValueChanged<double>? onDistortionChanged;
+
   /// Seed used for deterministic rain and bell pings.
   final int seed;
 
@@ -176,13 +184,20 @@ class DopFocusOrb extends StatefulWidget {
 }
 
 class _DopFocusOrbState extends State<DopFocusOrb>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late final AnimationController _ticker;
+  late final AnimationController _distortionTicker;
+  bool _distorting = false;
 
   @override
   void initState() {
     super.initState();
     _ticker = AnimationController(vsync: this);
+    _distortionTicker = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 140),
+      reverseDuration: const Duration(milliseconds: 220),
+    );
   }
 
   @override
@@ -195,10 +210,15 @@ class _DopFocusOrbState extends State<DopFocusOrb>
   void didUpdateWidget(covariant DopFocusOrb oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.animate != widget.animate) _syncTicker();
+    if (oldWidget.distortionOnPress && !widget.distortionOnPress) {
+      _setDistorting(false);
+    }
   }
 
   @override
   void dispose() {
+    if (_distorting) widget.onDistortionChanged?.call(0);
+    _distortionTicker.dispose();
     _ticker.dispose();
     super.dispose();
   }
@@ -207,17 +227,24 @@ class _DopFocusOrbState extends State<DopFocusOrb>
   Widget build(BuildContext context) {
     final color = widget.color ?? context.colors.ink;
 
-    return ExcludeSemantics(
-      child: SizedBox.square(
-        dimension: widget.size,
-        child: RepaintBoundary(
-          child: _DopFocusOrbRenderWidget(
-            ticker: _ticker,
-            preferredSize: widget.size,
-            knobs: widget.knobs,
-            dimension: widget.dimension,
-            color: color,
-            seed: widget.seed,
+    return Listener(
+      behavior: HitTestBehavior.translucent,
+      onPointerDown: (_) => _setDistorting(true),
+      onPointerUp: (_) => _setDistorting(false),
+      onPointerCancel: (_) => _setDistorting(false),
+      child: ExcludeSemantics(
+        child: SizedBox.square(
+          dimension: widget.size,
+          child: RepaintBoundary(
+            child: _DopFocusOrbRenderWidget(
+              ticker: _ticker,
+              distortionTicker: _distortionTicker,
+              preferredSize: widget.size,
+              knobs: widget.knobs,
+              dimension: widget.dimension,
+              color: color,
+              seed: widget.seed,
+            ),
           ),
         ),
       ),
@@ -236,11 +263,29 @@ class _DopFocusOrbState extends State<DopFocusOrb>
       _ticker.stop();
     }
   }
+
+  void _setDistorting(bool value) {
+    if (!widget.distortionOnPress && value) return;
+    if (value == _distorting) return;
+    _distorting = value;
+    widget.onDistortionChanged?.call(value ? 1 : 0);
+
+    final disableAnimations =
+        MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+    if (disableAnimations) {
+      _distortionTicker.value = value ? 1 : 0;
+    } else if (value) {
+      _distortionTicker.forward();
+    } else {
+      _distortionTicker.reverse();
+    }
+  }
 }
 
 class _DopFocusOrbRenderWidget extends LeafRenderObjectWidget {
   const _DopFocusOrbRenderWidget({
     required this.ticker,
+    required this.distortionTicker,
     required this.preferredSize,
     required this.knobs,
     required this.dimension,
@@ -249,6 +294,7 @@ class _DopFocusOrbRenderWidget extends LeafRenderObjectWidget {
   });
 
   final AnimationController ticker;
+  final Animation<double> distortionTicker;
   final double preferredSize;
   final DopFocusOrbKnobs knobs;
   final DopFocusOrbDimension dimension;
@@ -259,6 +305,7 @@ class _DopFocusOrbRenderWidget extends LeafRenderObjectWidget {
   RenderObject createRenderObject(BuildContext context) {
     return _RenderDopFocusOrb(
       ticker: ticker,
+      distortionTicker: distortionTicker,
       preferredSize: preferredSize,
       knobs: knobs,
       dimension: dimension,
@@ -274,6 +321,7 @@ class _DopFocusOrbRenderWidget extends LeafRenderObjectWidget {
   ) {
     renderObject
       ..ticker = ticker
+      ..distortionTicker = distortionTicker
       ..preferredSize = preferredSize
       ..knobs = knobs
       ..dimension = dimension
@@ -285,12 +333,14 @@ class _DopFocusOrbRenderWidget extends LeafRenderObjectWidget {
 class _RenderDopFocusOrb extends RenderBox {
   _RenderDopFocusOrb({
     required AnimationController ticker,
+    required Animation<double> distortionTicker,
     required double preferredSize,
     required DopFocusOrbKnobs knobs,
     required DopFocusOrbDimension dimension,
     required Color color,
     required int seed,
   }) : _ticker = ticker,
+       _distortionTicker = distortionTicker,
        _preferredSize = preferredSize,
        _knobs = knobs,
        _dimension = dimension,
@@ -306,6 +356,7 @@ class _RenderDopFocusOrb extends RenderBox {
     ..isAntiAlias = true;
 
   AnimationController _ticker;
+  Animation<double> _distortionTicker;
   double _preferredSize;
   DopFocusOrbKnobs _knobs;
   DopFocusOrbDimension _dimension;
@@ -318,6 +369,15 @@ class _RenderDopFocusOrb extends RenderBox {
     if (attached) _ticker.removeListener(markNeedsPaint);
     _ticker = value;
     if (attached) _ticker.addListener(markNeedsPaint);
+    markNeedsPaint();
+  }
+
+  Animation<double> get distortionTicker => _distortionTicker;
+  set distortionTicker(Animation<double> value) {
+    if (identical(value, _distortionTicker)) return;
+    if (attached) _distortionTicker.removeListener(markNeedsPaint);
+    _distortionTicker = value;
+    if (attached) _distortionTicker.addListener(markNeedsPaint);
     markNeedsPaint();
   }
 
@@ -363,10 +423,12 @@ class _RenderDopFocusOrb extends RenderBox {
   void attach(PipelineOwner owner) {
     super.attach(owner);
     _ticker.addListener(markNeedsPaint);
+    _distortionTicker.addListener(markNeedsPaint);
   }
 
   @override
   void detach() {
+    _distortionTicker.removeListener(markNeedsPaint);
     _ticker.removeListener(markNeedsPaint);
     super.detach();
   }
@@ -393,6 +455,7 @@ class _RenderDopFocusOrb extends RenderBox {
     final elapsed = _ticker.lastElapsedDuration;
     final t = elapsed == null ? 0.0 : elapsed.inMicroseconds / 1000000;
     final frame = (t * 60).floor();
+    final distortion = _distortionLevel;
     final visual = _dimension._visual;
     final unit = _UnitKnobs.from(_knobs);
     var center = Offset(size.width / 2, size.height / 2);
@@ -402,6 +465,13 @@ class _RenderDopFocusOrb extends RenderBox {
       center += Offset(
         math.sin(t * 0.5) * side * 0.04 * visual.drift,
         math.cos(t * 0.37) * side * 0.035 * visual.drift,
+      );
+    }
+
+    if (distortion > 0) {
+      center += Offset(
+        math.sin(t * 4.1) * side * 0.012 * distortion,
+        math.cos(t * 3.2) * side * 0.01 * distortion,
       );
     }
 
@@ -419,6 +489,7 @@ class _RenderDopFocusOrb extends RenderBox {
         alpha: 0.12,
         strokeWidth: 1,
         frame: frame,
+        distortion: 0,
       );
       _paintBlob(
         canvas,
@@ -430,6 +501,7 @@ class _RenderDopFocusOrb extends RenderBox {
         alpha: 0.2,
         strokeWidth: 1,
         frame: frame,
+        distortion: 0,
       );
     }
 
@@ -443,6 +515,7 @@ class _RenderDopFocusOrb extends RenderBox {
       alpha: 0.88,
       strokeWidth: 1.5 + unit.drone * 3.5,
       frame: frame,
+      distortion: distortion,
     );
 
     final coreRadius = math.max(
@@ -468,6 +541,7 @@ class _RenderDopFocusOrb extends RenderBox {
     required double alpha,
     required double strokeWidth,
     required int frame,
+    required double distortion,
   }) {
     const points = 150;
     final breath =
@@ -483,6 +557,14 @@ class _RenderDopFocusOrb extends RenderBox {
           knobs.bell * 0.16 * math.cos(lobes * theta) +
           knobs.cicada * 0.05 * math.sin(17 * theta + t * 9) +
           knobs.rain * (_hashUnit(i + frame * 17, _seed, 7) - 0.5) * 0.07;
+
+      if (distortion > 0) {
+        deform +=
+            distortion *
+            (0.12 * math.sin(3 * theta + t * 2.3) +
+                0.08 * math.cos(6 * theta - t * 1.7) +
+                0.035 * math.sin(11 * theta + t * 5.1));
+      }
 
       if (visual.wobble > 0) {
         deform +=
@@ -510,6 +592,9 @@ class _RenderDopFocusOrb extends RenderBox {
     canvas.drawPath(_blobPath, _strokePaint);
     return breath;
   }
+
+  double get _distortionLevel =>
+      Curves.easeOutCubic.transform(_distortionTicker.value);
 
   void _paintHalo(
     Canvas canvas,

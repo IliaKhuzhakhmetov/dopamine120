@@ -9,7 +9,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: DopTheme.dark(),
-        home: const Scaffold(
+        home: Scaffold(
           body: Center(
             child: DopFocusOrb(
               animate: false,
@@ -51,6 +51,43 @@ void main() {
     );
 
     expect(find.byType(DopFocusOrb), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('distorts while pressed and releases cleanly', (tester) async {
+    final levels = <double>[];
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: DopTheme.dark(),
+        home: Scaffold(
+          body: Center(
+            child: DopFocusOrb(
+              animate: false,
+              dimension: DopFocusOrbDimension.cave,
+              knobs: DopFocusOrbKnobs(
+                drone: 0.2,
+                rain: 0.4,
+                pulse: 0.3,
+                bell: 0.2,
+                cicada: 0.6,
+              ),
+              onDistortionChanged: levels.add,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final gesture = await tester.startGesture(
+      tester.getCenter(find.byType(DopFocusOrb)),
+    );
+    await tester.pump(const Duration(milliseconds: 120));
+
+    await gesture.up();
+    await tester.pump(const Duration(milliseconds: 260));
+
+    expect(levels, [1, 0]);
     expect(tester.takeException(), isNull);
   });
 }

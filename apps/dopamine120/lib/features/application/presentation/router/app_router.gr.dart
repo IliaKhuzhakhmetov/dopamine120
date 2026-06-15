@@ -11,6 +11,22 @@
 part of 'app_router.dart';
 
 /// generated route for
+/// [FocusScreen]
+class FocusRoute extends PageRouteInfo<void> {
+  const FocusRoute({List<PageRouteInfo>? children})
+    : super(FocusRoute.name, initialChildren: children);
+
+  static const String name = 'FocusRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const FocusScreen();
+    },
+  );
+}
+
+/// generated route for
 /// [HomeScreen]
 class HomeRoute extends PageRouteInfo<void> {
   const HomeRoute({List<PageRouteInfo>? children})

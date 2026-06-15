@@ -54,5 +54,13 @@
   "backLabel": "назад",
   "skipLabel": "пропустить",
   "homeTitle": "Это первый день.",
-  "homeBody": "Онбординг пройден. Продукт начинается здесь."
+  "homeBody": "Онбординг пройден. Продукт начинается здесь.",
+  "homeOpenFocus": "войти в фокус",
+  "focusEyebrow": "фокус",
+  "focusTitle": "сделай трудное",
+  "focusTaskLabel": "задача",
+  "focusTaskHint": "то, чего ты избегаешь…",
+  "focusKnobHint": "крути ручки — они гнут петлю и искажают сферу. цикады — самая странная.",
+  "focusDimensionLabel": "измерение",
+  "focusTimerReset": "Сбросить таймер фокуса"
 }

@@ -3,6 +3,7 @@ import 'package:platform_bridge/platform_bridge.dart';
 
 import '../data/stores/app_key_value_store_factory.dart';
 import '../domain/entities/app_environment.dart';
+import 'focus_module.dart';
 import 'onboarding_module.dart';
 import 'platform_module.dart';
 import 'storage_module.dart';
@@ -21,6 +22,7 @@ Injector createAppInjector({
   registerPlatformModule(injector, platformBridge: platformBridge);
   registerThemeModule(injector);
   registerOnboardingModule(injector);
+  registerFocusModule(injector);
 
   return injector;
 }

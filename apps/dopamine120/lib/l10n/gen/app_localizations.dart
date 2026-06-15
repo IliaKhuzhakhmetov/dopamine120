@@ -427,6 +427,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Onboarding complete. The product starts here.'**
   String get homeBody;
+
+  /// No description provided for @homeOpenFocus.
+  ///
+  /// In en, this message translates to:
+  /// **'enter focus'**
+  String get homeOpenFocus;
+
+  /// No description provided for @focusEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'focus'**
+  String get focusEyebrow;
+
+  /// No description provided for @focusTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'do the hard thing'**
+  String get focusTitle;
+
+  /// No description provided for @focusTaskLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'the task'**
+  String get focusTaskLabel;
+
+  /// No description provided for @focusTaskHint.
+  ///
+  /// In en, this message translates to:
+  /// **'the thing you\'re avoiding…'**
+  String get focusTaskHint;
+
+  /// No description provided for @focusKnobHint.
+  ///
+  /// In en, this message translates to:
+  /// **'turn the knobs — they bend the loop & warp the orb. cicada is the strange one.'**
+  String get focusKnobHint;
+
+  /// No description provided for @focusDimensionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'dimension'**
+  String get focusDimensionLabel;
+
+  /// No description provided for @focusTimerReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset the focus timer'**
+  String get focusTimerReset;
 }
 
 class _AppLocalizationsDelegate

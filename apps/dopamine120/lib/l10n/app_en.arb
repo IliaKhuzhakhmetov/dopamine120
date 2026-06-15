@@ -54,5 +54,13 @@
   "backLabel": "back",
   "skipLabel": "skip",
   "homeTitle": "This is day one.",
-  "homeBody": "Onboarding complete. The product starts here."
+  "homeBody": "Onboarding complete. The product starts here.",
+  "homeOpenFocus": "enter focus",
+  "focusEyebrow": "focus",
+  "focusTitle": "do the hard thing",
+  "focusTaskLabel": "the task",
+  "focusTaskHint": "the thing you're avoiding…",
+  "focusKnobHint": "turn the knobs — they bend the loop & warp the orb. cicada is the strange one.",
+  "focusDimensionLabel": "dimension",
+  "focusTimerReset": "Reset the focus timer"
 }

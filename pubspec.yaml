@@ -4,7 +4,7 @@ publish_to: 'none'
 version: 0.1.0
 
 environment:
-  sdk: ^3.10.7
+  sdk: ^3.11.5
 
 workspace:
   - apps/dopamine120
@@ -23,6 +23,29 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  melos: ^7.8.2
+
+melos:
+  scripts:
+    build_runner:
+      description: Run build_runner in workspace packages that depend on it.
+      run: melos exec --concurrency=1 --fail-fast --depends-on=build_runner -- dart run build_runner build
+    test:
+      description: Run Flutter tests in workspace packages that have tests.
+      run: melos exec --concurrency=1 --fail-fast --dir-exists=test --flutter --ignore=app_logger --ignore=dopamine_ui_widgetbook -- flutter test
+    pods:
+      description: Update CocoaPods repos and install pods for iOS and macOS workspace projects.
+      steps:
+        - melos run pods:ios
+        - melos run pods:macos
+    pods:ios:
+      description: Update CocoaPods repos and install iOS pods.
+      private: true
+      run: melos exec --concurrency=1 --fail-fast --file-exists=ios/Podfile -- "cd ios && pod install --repo-update"
+    pods:macos:
+      description: Update CocoaPods repos and install macOS pods.
+      private: true
+      run: melos exec --concurrency=1 --fail-fast --file-exists=macos/Podfile -- "cd macos && pod install --repo-update"
 
 flutter:
   uses-material-design: true

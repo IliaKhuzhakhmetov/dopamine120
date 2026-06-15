@@ -186,4 +186,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeBody => 'Onboarding complete. The product starts here.';
+
+  @override
+  String get homeOpenFocus => 'enter focus';
+
+  @override
+  String get focusEyebrow => 'focus';
+
+  @override
+  String get focusTitle => 'do the hard thing';
+
+  @override
+  String get focusTaskLabel => 'the task';
+
+  @override
+  String get focusTaskHint => 'the thing you\'re avoiding…';
+
+  @override
+  String get focusKnobHint =>
+      'turn the knobs — they bend the loop & warp the orb. cicada is the strange one.';
+
+  @override
+  String get focusDimensionLabel => 'dimension';
+
+  @override
+  String get focusTimerReset => 'Reset the focus timer';
 }

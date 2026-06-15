@@ -3,6 +3,7 @@ import 'package:dopamine_ui/dopamine_ui.dart';
 import 'package:flutter/material.dart';
 
 import '../../../l10n/l10n.dart';
+import '../../application/presentation/router/app_router.dart';
 
 @RoutePage()
 class HomeScreen extends StatelessWidget {
@@ -26,6 +27,11 @@ class HomeScreen extends StatelessWidget {
               DopText.header(l10n.homeTitle),
               const SizedBox(height: 16),
               DopText.body(l10n.homeBody, color: colors.inkSoft),
+              const SizedBox(height: 32),
+              DopButton.primary(
+                label: l10n.homeOpenFocus,
+                onPressed: () => context.router.push(const FocusRoute()),
+              ),
               const Spacer(flex: 2),
             ],
           ),

@@ -186,4 +186,29 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get homeBody => 'Онбординг пройден. Продукт начинается здесь.';
+
+  @override
+  String get homeOpenFocus => 'войти в фокус';
+
+  @override
+  String get focusEyebrow => 'фокус';
+
+  @override
+  String get focusTitle => 'сделай трудное';
+
+  @override
+  String get focusTaskLabel => 'задача';
+
+  @override
+  String get focusTaskHint => 'то, чего ты избегаешь…';
+
+  @override
+  String get focusKnobHint =>
+      'крути ручки — они гнут петлю и искажают сферу. цикады — самая странная.';
+
+  @override
+  String get focusDimensionLabel => 'измерение';
+
+  @override
+  String get focusTimerReset => 'Сбросить таймер фокуса';
 }
