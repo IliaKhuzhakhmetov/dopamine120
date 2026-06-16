@@ -1,6 +1,11 @@
 {
   "dart.flutterSdkPath": "/Users/iliakhuzhakhmetov/fvm/default",
   "editor.formatOnSave": true,
+  "editor.formatOnType": true,
+  "[json]": {
+    "prettier.printWidth": 80,
+    "prettier.tabWidth": 2
+  },
   "[dart]": {
     "editor.formatOnSave": true,
     "editor.formatOnType": true,

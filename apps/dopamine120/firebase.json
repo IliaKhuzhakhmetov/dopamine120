@@ -1,0 +1,55 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "dopamine-367fe",
+          "appId": "1:401631540355:android:6fff42d6a9cc65f01097b6",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "dopamine-367fe",
+          "appId": "1:401631540355:ios:4cce0fd37bc8f4f41097b6",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "macos": {
+        "default": {
+          "projectId": "dopamine-367fe",
+          "appId": "1:401631540355:ios:e4a7f68b9ddd01ee1097b6",
+          "uploadDebugSymbols": false,
+          "fileOutput": "macos/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "dopamine-367fe",
+          "configurations": {
+            "android": "1:401631540355:android:6fff42d6a9cc65f01097b6",
+            "ios": "1:401631540355:ios:4cce0fd37bc8f4f41097b6",
+            "macos": "1:401631540355:ios:e4a7f68b9ddd01ee1097b6",
+            "web": "1:401631540355:web:9397c439f8d47cae1097b6",
+            "windows": "1:401631540355:web:ec44cb27ec2964131097b6"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
