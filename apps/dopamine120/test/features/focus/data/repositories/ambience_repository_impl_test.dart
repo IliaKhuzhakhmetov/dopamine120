@@ -1,29 +1,37 @@
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:dopamine120/features/focus/data/scenes/focus_scene.dart';
+import 'package:dopamine120/features/focus/data/audio/focus_procedural_voices.dart';
 import 'package:dopamine120/features/focus/data/repositories/ambience_repository_impl.dart';
-import 'package:dopamine120/features/focus/domain/entities/focus_dimension.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sound_framework/sound_framework.dart';
 
 void main() {
   test(
-    'selectDimension maps app dimension profile and timbre to the engine',
+    'maps focus scene filter profile without retuning source sounds',
     () async {
       final backend = _RecordingAudioBackend();
       final engine = ProceduralSoundEngine(
         backend: backend,
         random: Random(1),
         isWeb: false,
+        voices: buildFocusProceduralVoices(),
       );
       final repository = AmbienceRepositoryImpl(engine);
 
-      await repository.selectDimension(FocusDimension.cathedral);
+      await repository.setDimensionValue('cathedral', 1);
 
+      expect(repository.scene.id, 'focus');
+      expect(repository.scene, same(focusScene));
       final bus = backend.busSettings.single;
       expect(bus.frequency, 9000);
       expect(bus.reverbWet, 0.55);
-      expect(backend.waveformFrequencies.values, contains(27.5));
+      expect(
+        focusScene.filters.every((filter) => filter.mappings.isEmpty),
+        isTrue,
+      );
+      expect(backend.waveformFrequencies.values, isNot(contains(27.5)));
 
       await repository.dispose();
     },
@@ -61,6 +69,12 @@ class _RecordingAudioBackend implements AudioBackend {
       VoiceSource(_nextSource++);
 
   @override
+  Future<AudioSourceRef> loadAsset(
+    String assetKey, {
+    LoadModePolicy policy = LoadModePolicy.memory,
+  }) async => AudioSourceRef(_nextSource++);
+
+  @override
   VoiceSource openPcmStream({
     required int maxBufferSizeBytes,
     required double bufferingTimeNeeds,
@@ -84,7 +98,22 @@ class _RecordingAudioBackend implements AudioBackend {
   }) => VoiceHandle(_nextHandle++);
 
   @override
+  Future<BusRef> createBus(String id) async => const BusRef(0);
+
+  @override
+  VoiceRef playRequest(PlayRequest request) => VoiceRef(_nextHandle++);
+
+  @override
+  Future<void> stop(VoiceRef voice, {Duration fadeOut = Duration.zero}) async {}
+
+  @override
   void setVolume(VoiceHandle handle, double volume) {}
+
+  @override
+  void setBusVolume(BusRef bus, double volume) {}
+
+  @override
+  void setParam(AudioParamAddress address, double value) {}
 
   @override
   void setPause(VoiceHandle handle, bool pause) {}

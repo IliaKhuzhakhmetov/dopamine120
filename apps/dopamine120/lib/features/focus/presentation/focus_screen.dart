@@ -7,17 +7,16 @@ import 'package:sound_framework/sound_framework.dart';
 import '../../../core/theme/domain/entities/app_theme.dart';
 import '../../../core/theme/presentation/theme_provider.dart';
 import '../../../l10n/l10n.dart';
-import '../domain/entities/focus_dimension.dart';
-import '../domain/usecases/select_dimension.dart';
-import '../domain/usecases/set_layer_level.dart';
+import '../domain/usecases/set_scene_dimension.dart';
+import '../domain/usecases/set_scene_knob.dart';
 import '../domain/usecases/set_temporal_distortion.dart';
 import '../domain/usecases/start_ambience.dart';
 import '../domain/usecases/stop_ambience.dart';
-import '../domain/usecases/watch_bell_strikes.dart';
+import '../domain/usecases/watch_scene_sound_events.dart';
 import 'controller/focus_controller.dart';
 
-/// Focus mode: a reactive orb, five ambient-sound knobs, an acoustic dimension
-/// selector, a task line and a session timer. Recreated from the HTML reference.
+/// Focus mode: a reactive orb, configured focus-scene knobs, an acoustic
+/// dimension selector, a task line and a session timer.
 @RoutePage()
 class FocusScreen extends StatefulWidget {
   const FocusScreen({super.key});
@@ -35,12 +34,13 @@ class _FocusScreenState extends State<FocusScreen> {
     super.initState();
     final injector = DependencyScope.of(context);
     _controller = FocusController(
+      scene: injector.get<SceneConfig>(),
       startAmbience: injector.get<StartAmbience>(),
-      setLayerLevel: injector.get<SetLayerLevel>(),
+      setSceneKnob: injector.get<SetSceneKnob>(),
+      setSceneDimension: injector.get<SetSceneDimension>(),
       setTemporalDistortion: injector.get<SetTemporalDistortion>(),
-      selectDimension: injector.get<SelectDimension>(),
       stopAmbience: injector.get<StopAmbience>(),
-      watchBellStrikes: injector.get<WatchBellStrikes>(),
+      watchSceneSoundEvents: injector.get<WatchSceneSoundEvents>(),
     );
     _taskController = TextEditingController();
     _controller.startTimer();
@@ -53,11 +53,11 @@ class _FocusScreenState extends State<FocusScreen> {
     super.dispose();
   }
 
-  /// Switches the acoustic dimension and dresses the whole app in its theme —
-  /// each dimension shares an id with its [AppTheme] (`room`, `cathedral`, …).
-  void _selectDimension(FocusDimension dimension) {
-    _controller.selectDimension(dimension);
-    context.themeController.setTheme(AppTheme.fromStorageValue(dimension.name));
+  /// Switches the configured focus-scene dimension and dresses the app theme
+  /// with the same id (`room`, `cathedral`, ...).
+  void _selectDimension(String dimensionId) {
+    _controller.selectDimension(dimensionId);
+    context.themeController.setTheme(AppTheme.fromStorageValue(dimensionId));
   }
 
   @override
@@ -109,9 +109,8 @@ class _FocusScreenState extends State<FocusScreen> {
                           child: DopFocusOrb(
                             knobs: _controller.knobs,
                             controller: _controller.orbController,
-                            dimension: _controller.dimension.orbDimension,
-                            onDistortionChanged:
-                                _controller.setTemporalDistortion,
+                            dimension: _controller.orbDimension,
+                            onDistortionChanged: _controller.setOrbDistortion,
                           ),
                         ),
                         const SizedBox(height: 12),
@@ -129,16 +128,18 @@ class _FocusScreenState extends State<FocusScreen> {
                         const SizedBox(height: 28),
                         _KnobRow(controller: _controller),
                         SizedBox(height: context.spacing.lg),
-                        DopDropdown<FocusDimension>(
+                        DopDropdown<String>(
                           label: l10n.focusDimensionLabel,
-                          value: _controller.dimension,
+                          value: _controller.dimensionId,
                           onChanged: _selectDimension,
                           options: [
-                            for (final dimension in FocusDimension.values)
+                            for (final filter in _controller.scene.filters)
                               DopDropdownOption(
-                                value: dimension,
-                                label: dimension.label,
-                                subtitle: dimension.description,
+                                value: filter.id,
+                                label: _orbDimensionFor(filter.id).label,
+                                subtitle: _orbDimensionFor(
+                                  filter.id,
+                                ).description,
                               ),
                           ],
                         ),
@@ -201,18 +202,18 @@ class _MuteButton extends StatelessWidget {
   }
 }
 
-/// The five ambient knobs in the reference order.
+/// The configured focus-scene knobs.
 class _KnobRow extends StatelessWidget {
   const _KnobRow({required this.controller});
 
   final FocusController controller;
 
-  static const Map<SoundLayer, IconData> _icons = {
-    SoundLayer.drone: Icons.graphic_eq,
-    SoundLayer.rain: Icons.grain,
-    SoundLayer.pulse: Icons.show_chart,
-    SoundLayer.bell: Icons.notifications_none,
-    SoundLayer.cicada: Icons.blur_on,
+  static const Map<String, IconData> _icons = {
+    'drone': Icons.graphic_eq,
+    'rain': Icons.grain,
+    'pulse': Icons.show_chart,
+    'bell': Icons.notifications_none,
+    'cicada': Icons.blur_on,
   };
 
   @override
@@ -220,16 +221,23 @@ class _KnobRow extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        for (final layer in SoundLayer.values)
+        for (final knob in controller.scene.knobs)
           DopKnob(
-            value: controller.levelOf(layer),
-            icon: Icon(_icons[layer]),
-            label: layer.name,
-            onChange: (value) => controller.setLayer(layer, value),
+            value: controller.knobValue(knob.id),
+            icon: Icon(_icons[knob.id] ?? Icons.tune),
+            label: knob.id,
+            onChange: (value) => controller.setKnob(knob.id, value),
           ),
       ],
     );
   }
+}
+
+DopFocusOrbDimension _orbDimensionFor(String dimensionId) {
+  return DopFocusOrbDimension.values.firstWhere(
+    (dimension) => dimension.name == dimensionId,
+    orElse: () => DopFocusOrbDimension.room,
+  );
 }
 
 /// Rounded, tappable countdown chip that resets the session on tap.

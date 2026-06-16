@@ -3,7 +3,19 @@ import 'dart:typed_data';
 
 import 'wav_codec.dart';
 
-/// Generates the procedural sample buffers the ambient voices loop.
+/// Per-sample transform used while rendering a generated buffer.
+typedef SampleTransform = double Function(double sample, double timeSeconds);
+
+/// Source spectrum used by [SampleSynth.bandNoiseWav].
+enum NoiseColor {
+  /// Flat random source.
+  white,
+
+  /// Approximate 1/f source.
+  pink,
+}
+
+/// Generates procedural sample buffers.
 ///
 /// Pure DSP with no audio-engine dependency: given the same parameters (and, for
 /// noise, the same seeded [math.Random]) it produces byte-identical WAVs, so the
@@ -50,24 +62,24 @@ class SampleSynth {
 
   /// Builds a ~2 s looping mono 16-bit WAV of band-shaped noise.
   ///
-  /// A state-variable filter centres the noise around [centreHz] with the given
-  /// [q]; [amplitudeModulated] adds the cicada's fast buzz and slow swell. When
-  /// [pink] is set the source noise is shaped to a 1/f spectrum, which sounds
-  /// fuller and softer than white noise — the difference between rainfall and
-  /// hiss on a small speaker. [random] is injected so tests stay deterministic.
+  /// A state-variable filter centers the noise around [centerHz] with the given
+  /// [q]. [color] chooses the source spectrum. [transform] can apply an
+  /// app-owned envelope or modulation to each sample without baking those
+  /// choices into the framework. [random] is injected so tests stay
+  /// deterministic.
   Uint8List bandNoiseWav({
-    required double centreHz,
+    required double centerHz,
     required double q,
     required math.Random random,
-    bool amplitudeModulated = false,
-    bool pink = false,
+    NoiseColor color = NoiseColor.white,
+    SampleTransform? transform,
   }) {
     const seconds = 2;
     final length = sampleRate * seconds;
     final samples = Float64List(length);
 
-    // State-variable bandpass over the (optionally pink) noise source.
-    final f = 2 * math.sin(math.pi * centreHz / sampleRate);
+    // State-variable bandpass over the noise source.
+    final f = 2 * math.sin(math.pi * centerHz / sampleRate);
     final damping = (1 / q).clamp(0.0, 1.0);
     var low = 0.0;
     var band = 0.0;
@@ -81,7 +93,7 @@ class SampleSynth {
     for (var i = 0; i < length; i++) {
       final white = random.nextDouble() * 2 - 1;
       double input;
-      if (pink) {
+      if (color == NoiseColor.pink) {
         b0 = 0.99765 * b0 + white * 0.0990460;
         b1 = 0.96300 * b1 + white * 0.2965164;
         b2 = 0.57000 * b2 + white * 1.0526913;
@@ -94,12 +106,8 @@ class SampleSynth {
       band += f * high;
       var sample = band;
 
-      if (amplitudeModulated) {
-        final t = i / sampleRate;
-        final buzz = 0.5 + 0.5 * (math.sin(2 * math.pi * 72 * t) >= 0 ? 1 : 0);
-        final swell = 0.6 + 0.4 * math.sin(2 * math.pi * 0.16 * t);
-        sample *= buzz * swell;
-      }
+      final t = i / sampleRate;
+      if (transform != null) sample = transform(sample, t);
 
       samples[i] = sample;
       final magnitude = sample.abs();

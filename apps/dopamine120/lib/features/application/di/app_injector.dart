@@ -6,6 +6,7 @@ import '../domain/entities/app_environment.dart';
 import 'focus_module.dart';
 import 'onboarding_module.dart';
 import 'platform_module.dart';
+import 'sound_module.dart';
 import 'storage_module.dart';
 import 'theme_module.dart';
 
@@ -21,6 +22,7 @@ Injector createAppInjector({
   );
   registerPlatformModule(injector, platformBridge: platformBridge);
   registerThemeModule(injector);
+  registerSoundModule(injector);
   registerOnboardingModule(injector);
   registerFocusModule(injector);
 

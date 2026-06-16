@@ -30,7 +30,6 @@ dependencies:
   shared_preferences: ^2.5.5    # For storing simple key-value data like user settings, onboarding status, etc.
   intl: any
   flutter_svg: ^2.0.10          # For rendering the hand-drawn SVG icons
-  just_audio: ^0.10.5           # For playing the short UI sound effects
 
 dev_dependencies:
   flutter_test:

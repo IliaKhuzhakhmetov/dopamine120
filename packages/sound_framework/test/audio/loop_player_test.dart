@@ -2,7 +2,6 @@ import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sound_framework/sound_framework.dart';
-import 'package:sound_framework/src/audio/loop_player.dart';
 import 'package:sound_framework/src/audio/wav_codec.dart';
 
 import 'fake_audio_backend.dart';

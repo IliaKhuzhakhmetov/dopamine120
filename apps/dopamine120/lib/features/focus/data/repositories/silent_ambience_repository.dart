@@ -1,45 +1,51 @@
 import 'dart:async';
 
-import '../../domain/entities/focus_dimension.dart';
-import '../../domain/repositories/ambience_repository.dart';
 import 'package:sound_framework/sound_framework.dart';
+
+import '../../domain/repositories/ambience_repository.dart';
+import '../scenes/focus_scene.dart';
 
 /// A no-op [AmbienceRepository] for tests and native-free development.
 ///
 /// Records the last requested mix so callers can assert against it without a
 /// real audio engine. Mirrors `PlatformBridgeFake`.
 class SilentAmbienceRepository implements AmbienceRepository {
-  final StreamController<BellStrike> _bellStrikes =
-      StreamController<BellStrike>.broadcast();
+  SilentAmbienceRepository({SceneConfig scene = focusScene}) : _scene = scene;
+
+  final _soundEvents = StreamController<ProceduralSoundEvent>.broadcast();
+  final SceneConfig _scene;
+
+  @override
+  SceneConfig get scene => _scene;
 
   /// Whether [start] has been called and [stop] has not since.
   bool running = false;
 
-  /// The most recently selected dimension, if any.
-  FocusDimension? dimension;
+  /// Last value requested per scene knob.
+  final Map<String, double> knobValues = {};
 
-  /// The last level requested per layer.
-  final Map<SoundLayer, double> levels = {};
+  /// Last value requested per scene dimension.
+  final Map<String, double> dimensionValues = {};
 
   /// The last requested temporary distortion amount.
   double temporalDistortion = 0;
 
   @override
-  Stream<BellStrike> get bellStrikes => _bellStrikes.stream;
+  Stream<ProceduralSoundEvent> get soundEvents => _soundEvents.stream;
 
-  /// Emits a fake bell strike for presentation tests.
-  void emitBellStrike(BellStrike strike) => _bellStrikes.add(strike);
+  /// Emits a fake sound event for presentation tests.
+  void emitSoundEvent(ProceduralSoundEvent event) => _soundEvents.add(event);
 
   @override
   Future<void> start() async => running = true;
 
   @override
-  Future<void> setLayerLevel(SoundLayer layer, double level) async =>
-      levels[layer] = level;
+  Future<void> setKnobValue(String knobId, double value) async =>
+      knobValues[knobId] = value;
 
   @override
-  Future<void> selectDimension(FocusDimension dimension) async =>
-      this.dimension = dimension;
+  Future<void> setDimensionValue(String dimensionId, double value) async =>
+      dimensionValues[dimensionId] = value;
 
   @override
   Future<void> setTemporalDistortion(double amount) async =>
@@ -51,6 +57,6 @@ class SilentAmbienceRepository implements AmbienceRepository {
   @override
   Future<void> dispose() async {
     running = false;
-    await _bellStrikes.close();
+    await _soundEvents.close();
   }
 }

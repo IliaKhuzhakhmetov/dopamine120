@@ -6,7 +6,7 @@ void main() {
     await tester.pumpWidget(const SoundFrameworkExampleApp());
 
     expect(find.text('Sound Framework'), findsWidgets);
-    expect(find.text('Layers'), findsOneWidget);
-    expect(find.text('Temporal Distortion'), findsOneWidget);
+    expect(find.text('Sounds'), findsOneWidget);
+    expect(find.text('Profile Bend'), findsOneWidget);
   });
 }

@@ -38,6 +38,87 @@ class VoiceHandle {
   final dynamic raw;
 }
 
+/// Opaque reference to a loaded asset/procedural source in the scene engine.
+class AudioSourceRef extends VoiceSource {
+  /// Wraps the backend-specific [raw] payload.
+  const AudioSourceRef(super.raw);
+}
+
+/// Opaque reference to a playing voice in the scene engine.
+class VoiceRef extends VoiceHandle {
+  /// Wraps the backend-specific [raw] payload.
+  const VoiceRef(super.raw);
+}
+
+/// Opaque reference to a backend mixing bus.
+class BusRef {
+  /// Wraps the backend-specific [raw] payload.
+  const BusRef(this.raw);
+
+  /// Backend-private payload.
+  final dynamic raw;
+}
+
+/// Asset loading strategy selected by the backend capability layer.
+enum LoadModePolicy {
+  /// Decode and keep the sound in memory.
+  memory,
+
+  /// Stream from disk when the backend supports it.
+  disk,
+}
+
+/// Backend-level configuration for scene playback.
+class AudioBackendConfig {
+  /// Creates backend policy configuration.
+  const AudioBackendConfig({this.defaultLoadMode = LoadModePolicy.memory});
+
+  /// Default load mode used when a request does not override it.
+  final LoadModePolicy defaultLoadMode;
+}
+
+/// Address for a backend parameter.
+class AudioParamAddress {
+  /// Creates a parameter address.
+  const AudioParamAddress({required this.name, this.bus, this.soundId});
+
+  /// Parameter name, for example `volume`, `pan`, or an effect parameter.
+  final String name;
+
+  /// Optional bus target.
+  final BusRef? bus;
+
+  /// Optional logical sound target.
+  final String? soundId;
+}
+
+/// A complete request to start one source.
+class PlayRequest {
+  /// Creates a play request.
+  const PlayRequest({
+    required this.source,
+    this.bus,
+    this.volume = 1,
+    this.pan = 0,
+    this.looping = false,
+  });
+
+  /// Source to play.
+  final AudioSourceRef source;
+
+  /// Optional bus to route through.
+  final BusRef? bus;
+
+  /// Start volume.
+  final double volume;
+
+  /// Stereo pan in `-1..1`, if supported.
+  final double pan;
+
+  /// Whether the voice loops.
+  final bool looping;
+}
+
 /// Fully-resolved settings for the shared filter → reverb → echo bus.
 ///
 /// Produced by a pure mapper from an `AcousticProfile` and applied verbatim by
@@ -120,6 +201,12 @@ abstract class AudioBackend {
   /// engine's cache.
   Future<VoiceSource> loadNoise(String name, Uint8List bytes);
 
+  /// Loads an app asset into a backend source.
+  Future<AudioSourceRef> loadAsset(
+    String assetKey, {
+    LoadModePolicy policy = LoadModePolicy.memory,
+  });
+
   /// Opens a PCM (s16le, mono) streaming source for the web fallback path.
   VoiceSource openPcmStream({
     required int maxBufferSizeBytes,
@@ -143,8 +230,23 @@ abstract class AudioBackend {
     bool looping = false,
   });
 
+  /// Creates a mixing bus for grouped scene control.
+  Future<BusRef> createBus(String id);
+
+  /// Starts a scene-engine [request] and returns its handle.
+  VoiceRef playRequest(PlayRequest request);
+
+  /// Stops a scene-engine [voice], optionally after a fade.
+  Future<void> stop(VoiceRef voice, {Duration fadeOut = Duration.zero});
+
   /// Sets the audible level of [handle] in `0..1`.
   void setVolume(VoiceHandle handle, double volume);
+
+  /// Sets the audible level of [bus] in `0..1`.
+  void setBusVolume(BusRef bus, double volume);
+
+  /// Sets an addressed backend parameter when the backend supports it.
+  void setParam(AudioParamAddress address, double value);
 
   /// Pauses or resumes [handle].
   void setPause(VoiceHandle handle, bool pause);

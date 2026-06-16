@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:sound_framework/sound_framework.dart';
 
+import 'sample_voices.dart';
+
 void main() {
   runApp(const SoundFrameworkExampleApp());
 }
@@ -37,30 +39,33 @@ class SoundFrameworkHome extends StatefulWidget {
 
 class _SoundFrameworkHomeState extends State<SoundFrameworkHome> {
   late final ProceduralSoundEngine _engine;
-  late final StreamSubscription<BellStrike> _bellStrikes;
+  late final StreamSubscription<ProceduralSoundEvent> _soundEvents;
 
   bool _running = false;
-  double _distortion = 0;
+  double _profileBend = 0;
   SampleSpace _space = SampleSpace.room;
-  BellStrike? _lastStrike;
+  ProceduralSoundEvent? _lastEvent;
   Object? _lastError;
 
-  final Map<SoundLayer, double> _levels = {
-    for (final layer in SoundLayer.values) layer: 0,
+  final Map<String, double> _levels = {
+    for (final sound in sampleSounds) sound.id: 0,
   };
 
   @override
   void initState() {
     super.initState();
-    _engine = ProceduralSoundEngine(onBuildError: _recordError);
-    _bellStrikes = _engine.bellStrikes.listen((strike) {
-      if (mounted) setState(() => _lastStrike = strike);
+    _engine = ProceduralSoundEngine(
+      voices: buildExampleVoices(),
+      onBuildError: _recordError,
+    );
+    _soundEvents = _engine.soundEvents.listen((event) {
+      if (mounted) setState(() => _lastEvent = event);
     });
   }
 
   @override
   void dispose() {
-    _bellStrikes.cancel();
+    _soundEvents.cancel();
     unawaited(_engine.dispose());
     super.dispose();
   }
@@ -70,9 +75,9 @@ class _SoundFrameworkHomeState extends State<SoundFrameworkHome> {
       await _engine.start();
       await _applySpace(_space);
       for (final entry in _levels.entries) {
-        await _engine.setLayer(entry.key, entry.value);
+        await _engine.setSound(entry.key, entry.value);
       }
-      await _engine.setTemporalDistortion(_distortion);
+      await _engine.setProfileBend(_profileBend);
       if (mounted) {
         setState(() {
           _running = true;
@@ -91,7 +96,6 @@ class _SoundFrameworkHomeState extends State<SoundFrameworkHome> {
 
   Future<void> _applySpace(SampleSpace space) async {
     await _engine.applyProfile(space.profile);
-    await _engine.applyTimbre(space.timbre);
   }
 
   void _recordError(Object error, StackTrace stackTrace) {
@@ -135,29 +139,29 @@ class _SoundFrameworkHomeState extends State<SoundFrameworkHome> {
           const SizedBox(height: 18),
           _StatusPanel(
             running: _running,
-            lastStrike: _lastStrike,
+            lastEvent: _lastEvent,
             lastError: _lastError,
           ),
           const SizedBox(height: 18),
-          Text('Layers', style: theme.textTheme.titleMedium),
+          Text('Sounds', style: theme.textTheme.titleMedium),
           const SizedBox(height: 8),
-          for (final layer in SoundLayer.values)
-            _LayerSlider(
-              layer: layer,
-              value: _levels[layer] ?? 0,
+          for (final sound in sampleSounds)
+            _SoundSlider(
+              sound: sound,
+              value: _levels[sound.id] ?? 0,
               onChanged: (value) async {
-                setState(() => _levels[layer] = value);
-                if (_running) await _engine.setLayer(layer, value);
+                setState(() => _levels[sound.id] = value);
+                if (_running) await _engine.setSound(sound.id, value);
               },
             ),
           const SizedBox(height: 18),
-          Text('Temporal Distortion', style: theme.textTheme.titleMedium),
+          Text('Profile Bend', style: theme.textTheme.titleMedium),
           Slider(
-            value: _distortion,
-            label: _distortion.toStringAsFixed(2),
+            value: _profileBend,
+            label: _profileBend.toStringAsFixed(2),
             onChanged: (value) async {
-              setState(() => _distortion = value);
-              if (_running) await _engine.setTemporalDistortion(value);
+              setState(() => _profileBend = value);
+              if (_running) await _engine.setProfileBend(value);
             },
           ),
         ],
@@ -166,14 +170,14 @@ class _SoundFrameworkHomeState extends State<SoundFrameworkHome> {
   }
 }
 
-class _LayerSlider extends StatelessWidget {
-  const _LayerSlider({
-    required this.layer,
+class _SoundSlider extends StatelessWidget {
+  const _SoundSlider({
+    required this.sound,
     required this.value,
     required this.onChanged,
   });
 
-  final SoundLayer layer;
+  final SampleSound sound;
   final double value;
   final ValueChanged<double> onChanged;
 
@@ -181,9 +185,9 @@ class _LayerSlider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Tooltip(message: layer.label, child: Icon(layer.icon)),
+        Tooltip(message: sound.label, child: Icon(sound.icon)),
         const SizedBox(width: 12),
-        SizedBox(width: 76, child: Text(layer.label)),
+        SizedBox(width: 76, child: Text(sound.label)),
         Expanded(
           child: Slider(
             value: value,
@@ -199,18 +203,18 @@ class _LayerSlider extends StatelessWidget {
 class _StatusPanel extends StatelessWidget {
   const _StatusPanel({
     required this.running,
-    required this.lastStrike,
+    required this.lastEvent,
     required this.lastError,
   });
 
   final bool running;
-  final BellStrike? lastStrike;
+  final ProceduralSoundEvent? lastEvent;
   final Object? lastError;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final strike = lastStrike;
+    final event = lastEvent;
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -239,9 +243,9 @@ class _StatusPanel extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              strike == null
-                  ? 'Bell strike: none'
-                  : 'Bell strike: ${strike.frequency.toStringAsFixed(1)} Hz at ${strike.intensity.toStringAsFixed(2)}',
+              event == null
+                  ? 'Sound event: none'
+                  : 'Sound event: ${event.soundId} ${event.frequencyHz?.toStringAsFixed(1) ?? '-'} Hz at ${event.intensity.toStringAsFixed(2)}',
             ),
             if (lastError != null) ...[
               const SizedBox(height: 8),
@@ -307,43 +311,20 @@ extension SampleSpaceX on SampleSpace {
       masterGain: 0.62,
     ),
   };
-
-  VoiceTimbre get timbre => switch (this) {
-    SampleSpace.room => VoiceTimbre.standard,
-    SampleSpace.hall => const VoiceTimbre(
-      droneRatio: 0.5,
-      rainCentreHz: 650,
-      rainQ: 0.4,
-      pulseHz: 41.2,
-      cicadaCentreHz: 6200,
-      bellTranspose: 2.0,
-    ),
-    SampleSpace.deep => const VoiceTimbre(
-      droneRatio: 0.75,
-      rainCentreHz: 400,
-      rainQ: 0.35,
-      pulseHz: 36.7,
-      cicadaCentreHz: 1500,
-      cicadaQ: 6,
-      bellTranspose: 0.5,
-    ),
-  };
 }
 
-extension SoundLayerExampleX on SoundLayer {
-  String get label => switch (this) {
-    SoundLayer.drone => 'Drone',
-    SoundLayer.rain => 'Rain',
-    SoundLayer.pulse => 'Pulse',
-    SoundLayer.bell => 'Bell',
-    SoundLayer.cicada => 'Cicada',
-  };
+const sampleSounds = [
+  SampleSound('drone', 'Drone', Icons.graphic_eq),
+  SampleSound('rain', 'Rain', Icons.grain),
+  SampleSound('pulse', 'Pulse', Icons.show_chart),
+  SampleSound('bell', 'Bell', Icons.notifications_none),
+  SampleSound('cicada', 'Cicada', Icons.blur_on),
+];
 
-  IconData get icon => switch (this) {
-    SoundLayer.drone => Icons.graphic_eq,
-    SoundLayer.rain => Icons.grain,
-    SoundLayer.pulse => Icons.show_chart,
-    SoundLayer.bell => Icons.notifications_none,
-    SoundLayer.cicada => Icons.blur_on,
-  };
+class SampleSound {
+  const SampleSound(this.id, this.label, this.icon);
+
+  final String id;
+  final String label;
+  final IconData icon;
 }

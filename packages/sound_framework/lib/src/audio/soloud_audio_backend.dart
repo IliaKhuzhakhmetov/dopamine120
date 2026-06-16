@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_soloud/flutter_soloud.dart';
 
 import 'audio_backend.dart';
@@ -15,15 +16,22 @@ class SoLoudAudioBackend implements AudioBackend {
   /// Wraps the SoLoud singleton by default; inject one for special cases.
   SoLoudAudioBackend({
     SoLoud? soloud,
+    AssetBundle? assetBundle,
+    bool? isWeb,
     void Function(Object error, StackTrace stackTrace)? onSessionError,
   }) : _soloud = soloud ?? SoLoud.instance,
+       _assetBundle = assetBundle ?? rootBundle,
+       _isWeb = isWeb ?? kIsWeb,
        _onSessionError = onSessionError;
 
   final SoLoud _soloud;
+  final AssetBundle _assetBundle;
+  final bool _isWeb;
   final void Function(Object error, StackTrace stackTrace)? _onSessionError;
 
   AudioSource _source(VoiceSource source) => source.raw as AudioSource;
   SoundHandle _handle(VoiceHandle handle) => handle.raw as SoundHandle;
+  Bus _bus(BusRef bus) => bus.raw as Bus;
 
   @override
   bool get isInitialized => _soloud.isInitialized;
@@ -53,6 +61,25 @@ class SoLoudAudioBackend implements AudioBackend {
   Future<VoiceSource> loadNoise(String name, Uint8List bytes) async {
     final source = await _soloud.loadMem(name, bytes);
     return VoiceSource(source);
+  }
+
+  @override
+  Future<AudioSourceRef> loadAsset(
+    String assetKey, {
+    LoadModePolicy policy = LoadModePolicy.memory,
+  }) async {
+    if (_isWeb) {
+      final data = await _assetBundle.load(assetKey);
+      final bytes = data.buffer.asUint8List(
+        data.offsetInBytes,
+        data.lengthInBytes,
+      );
+      final source = await _soloud.loadMem(assetKey, bytes);
+      return AudioSourceRef(source);
+    }
+
+    final source = await _soloud.loadAsset(assetKey, mode: _loadMode(policy));
+    return AudioSourceRef(source);
   }
 
   @override
@@ -100,8 +127,58 @@ class SoLoudAudioBackend implements AudioBackend {
   }
 
   @override
+  Future<BusRef> createBus(String id) async {
+    final bus = _soloud.createMixingBus(name: id);
+    bus.playOnEngine();
+    return BusRef(bus);
+  }
+
+  @override
+  VoiceRef playRequest(PlayRequest request) {
+    final bus = request.bus;
+    final handle = bus == null
+        ? _soloud.play(
+            _source(request.source),
+            volume: request.volume,
+            pan: request.pan,
+            looping: request.looping,
+          )
+        : _bus(bus).play(
+            _source(request.source),
+            volume: request.volume,
+            pan: request.pan,
+            looping: request.looping,
+          );
+    return VoiceRef(handle);
+  }
+
+  @override
+  Future<void> stop(VoiceRef voice, {Duration fadeOut = Duration.zero}) async {
+    if (fadeOut > Duration.zero) {
+      _soloud.fadeVolume(_handle(voice), 0, fadeOut);
+      _soloud.scheduleStop(_handle(voice), fadeOut);
+      return;
+    }
+    await _soloud.stop(_handle(voice));
+  }
+
+  @override
   void setVolume(VoiceHandle handle, double volume) =>
       _soloud.setVolume(_handle(handle), volume);
+
+  @override
+  void setBusVolume(BusRef bus, double volume) {
+    final handle = _bus(bus).soundHandle;
+    if (handle != null) _soloud.setVolume(handle, volume);
+  }
+
+  @override
+  void setParam(AudioParamAddress address, double value) {
+    final bus = address.bus;
+    if (address.name == 'volume' && bus != null) {
+      setBusVolume(bus, value);
+    }
+  }
 
   @override
   void setPause(VoiceHandle handle, bool pause) =>
@@ -158,7 +235,7 @@ class SoLoudAudioBackend implements AudioBackend {
   }
 
   Future<void> _configureAudioSession() async {
-    if (kIsWeb) return;
+    if (_isWeb) return;
 
     try {
       // flutter_soloud does not manage the iOS/macOS audio session, so the OS
@@ -177,5 +254,10 @@ class SoLoudAudioBackend implements AudioBackend {
   WaveForm _waveform(WaveFormType waveform) => switch (waveform) {
     WaveFormType.sin => WaveForm.sin,
     WaveFormType.triangle => WaveForm.triangle,
+  };
+
+  LoadMode _loadMode(LoadModePolicy policy) => switch (policy) {
+    LoadModePolicy.memory => LoadMode.memory,
+    LoadModePolicy.disk => LoadMode.disk,
   };
 }

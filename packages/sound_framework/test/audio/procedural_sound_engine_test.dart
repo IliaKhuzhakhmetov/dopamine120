@@ -41,6 +41,7 @@ void main() {
       backend: backend,
       random: Random(1),
       isWeb: false,
+      voices: [_TestVoice('rain', 0.20), _TestVoice('cicada', 0.26)],
     );
   });
 
@@ -78,10 +79,10 @@ void main() {
     });
   });
 
-  group('setLayer', () {
+  group('setSound', () {
     test('routes a continuous layer to its own voice volume', () async {
       await engine.start();
-      await engine.setLayer(SoundLayer.cicada, 1);
+      await engine.setSound('cicada', 1);
 
       expect(
         backend.volumes.values.where((v) => _isClose(v, 0.26)),
@@ -91,7 +92,7 @@ void main() {
 
     test('clamps the level into 0..1', () async {
       await engine.start();
-      await engine.setLayer(SoundLayer.rain, 5);
+      await engine.setSound('rain', 5);
 
       expect(
         backend.volumes.values.where((v) => _isClose(v, 0.20)),
@@ -99,18 +100,18 @@ void main() {
       );
     });
 
-    test('bell level never touches a continuous voice', () async {
+    test('unknown sound id is ignored', () async {
       await engine.start();
       final before = Map<int, double>.of(backend.volumes);
 
-      await engine.setLayer(SoundLayer.bell, 1);
+      await engine.setSound('missing', 1);
 
       expect(backend.volumes, before);
       expect(backend.oscillations, isEmpty);
     });
 
     test('builds lazily if a layer is set before start', () async {
-      await engine.setLayer(SoundLayer.rain, 1);
+      await engine.setSound('rain', 1);
 
       expect(engine.isReady, isTrue);
       expect(backend.initCount, 1);
@@ -127,16 +128,88 @@ void main() {
       expect(backend.busSettings.single.filterType, 2, reason: 'bandpass');
     });
 
-    test('temporal distortion bends the active profile', () async {
+    test('profile bend adjusts the active profile', () async {
       await engine.start();
       await engine.applyProfile(_room);
       backend.busSettings.clear();
 
-      await engine.setTemporalDistortion(1);
+      await engine.setProfileBend(1);
 
       final bent = backend.busSettings.single;
       expect(bent.frequency, lessThan(16000), reason: 'filter closes');
       expect(bent.globalVolume, lessThan(0.55), reason: 'gain dips');
     });
   });
+
+  group('events', () {
+    test('publishes generic events from procedural voices', () async {
+      final events = <ProceduralSoundEvent>[];
+      final engine = ProceduralSoundEngine(
+        backend: backend,
+        random: Random(1),
+        isWeb: false,
+        voices: [_EventVoice()],
+      );
+      final subscription = engine.soundEvents.listen(events.add);
+
+      await engine.start();
+      await Future<void>.delayed(Duration.zero);
+
+      expect(events, hasLength(1));
+      expect(events.single.soundId, 'event');
+      expect(events.single.intensity, 0.8);
+
+      await subscription.cancel();
+      await engine.dispose();
+    });
+  });
+}
+
+class _TestVoice extends ProceduralVoice {
+  _TestVoice(this.id, this.scale);
+
+  @override
+  final String id;
+
+  final double scale;
+
+  @override
+  Future<List<LoopVoice>> create(
+    ProceduralVoiceBuildContext context,
+    Map<String, double> params,
+  ) async {
+    final frequency = params['frequencyHz'] ?? 220;
+    return [await context.player.oscillator(WaveFormType.sin, frequency)];
+  }
+
+  @override
+  void apply(AudioBackend backend, double level) {
+    for (final handle in handles) {
+      backend.setVolume(handle, level * scale);
+    }
+  }
+}
+
+class _EventVoice extends ProceduralVoice {
+  late void Function(ProceduralSoundEvent event) _emit;
+
+  @override
+  String get id => 'event';
+
+  @override
+  Future<List<LoopVoice>> create(
+    ProceduralVoiceBuildContext context,
+    Map<String, double> params,
+  ) async {
+    _emit = context.emit;
+    return const [];
+  }
+
+  @override
+  void apply(AudioBackend backend, double level) {}
+
+  @override
+  void start(AudioBackend backend) {
+    _emit(const ProceduralSoundEvent(soundId: 'event', intensity: 0.8));
+  }
 }

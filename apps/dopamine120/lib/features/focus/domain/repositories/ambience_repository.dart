@@ -1,25 +1,27 @@
-import '../entities/focus_dimension.dart';
 import 'package:sound_framework/sound_framework.dart';
 
-/// The focus-mode sound engine contract.
+/// The focus-mode scene contract.
 ///
-/// Implementations own the synthesis graph (oscillators, noise, reverb/echo
-/// bus) and translate domain intent — start, mix a layer, change space — into
-/// engine calls. The mix is continuous: callers nudge it in real time.
+/// Implementations own the active ambient scene and translate focus intent
+/// into scene-first sound-engine calls. The mix is continuous: callers nudge
+/// configured scene knobs and dimensions in real time.
 abstract class AmbienceRepository {
-  /// Bell chimes emitted by the engine, after probability and note selection.
-  Stream<BellStrike> get bellStrikes;
+  /// Scene currently used by the focus screen.
+  SceneConfig get scene;
 
-  /// Boots the engine if needed and starts the (silent) layer voices.
+  /// Generic procedural sound events emitted by the active scene.
+  Stream<ProceduralSoundEvent> get soundEvents;
+
+  /// Boots the engine if needed and starts the focus scene.
   ///
   /// Idempotent: safe to call again after [stop].
   Future<void> start();
 
-  /// Sets the audible level of [layer] in `0..1`.
-  Future<void> setLayerLevel(SoundLayer layer, double level);
+  /// Sets a configured scene knob in `0..1`.
+  Future<void> setKnobValue(String knobId, double value);
 
-  /// Re-tunes the shared filter/reverb/echo bus to [dimension]'s signature.
-  Future<void> selectDimension(FocusDimension dimension);
+  /// Sets a configured scene dimension in `0..1`.
+  Future<void> setDimensionValue(String dimensionId, double value);
 
   /// Temporarily bends the whole mix while the orb is pressed.
   Future<void> setTemporalDistortion(double amount);
@@ -27,6 +29,6 @@ abstract class AmbienceRepository {
   /// Silences the mix while keeping the engine warm.
   Future<void> stop();
 
-  /// Tears the engine down and releases native resources.
+  /// Releases focus-scene resources.
   Future<void> dispose();
 }

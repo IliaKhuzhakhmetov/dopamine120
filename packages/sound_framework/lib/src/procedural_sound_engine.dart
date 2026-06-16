@@ -4,43 +4,41 @@ import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 
 import 'audio/acoustic_bus_mapper.dart';
-import 'audio/ambient_voice.dart';
 import 'audio/audio_backend.dart';
-import 'audio/bell_scheduler.dart';
 import 'audio/loop_player.dart';
+import 'audio/procedural_voice.dart';
 import 'audio/sample_synth.dart';
 import 'audio/soloud_audio_backend.dart';
 import 'models/acoustic_profile.dart';
-import 'models/bell_strike.dart';
-import 'models/sound_layer.dart';
-import 'models/voice_timbre.dart';
+import 'models/procedural_sound_event.dart';
 
-/// Procedural ambient synth: a thin orchestrator over a set of focused parts.
+/// Procedural sound orchestrator.
 ///
-/// Recreates the reference Web Audio graph — detuned drone oscillators, a
-/// harmonic sub-bass pulse, rain and cicada noise loops, randomly scheduled bell
-/// pings, and a shared filter → reverb → echo bus — but each concern now lives in
-/// its own collaborator:
+/// This class owns backend lifecycle, injected procedural voices and a shared
+/// filter/reverb/echo bus:
 ///
 /// * [AudioBackend] hides the audio engine (SoLoud in prod, a fake in tests);
 /// * [SampleSynth]/`WavCodec` render the buffers (pure DSP);
-/// * [AmbientVoice]s own each continuous layer's wiring and volume curve;
-/// * [BellScheduler] times the bell pings;
+/// * [ProceduralVoice]s own each sound's wiring, volume curve and events;
 /// * [AcousticBusMapper] turns a profile into [BusSettings].
 ///
-/// All voices are created once and kept looping at zero volume; mixing a layer
-/// just nudges a handle's volume, so changes are click-free and real time.
+/// Looping voices are created once and kept at zero volume; mixing a sound just
+/// nudges a handle's volume, so changes are click-free and real time.
 class ProceduralSoundEngine {
   /// Creates the engine. Inject an [AudioBackend] (and seeded [math.Random]) to
   /// drive it without native audio in tests.
   ProceduralSoundEngine({
+    Iterable<ProceduralVoice> voices = const [],
     AudioBackend? backend,
     math.Random? random,
     bool? isWeb,
+    AcousticProfile? initialProfile,
     void Function(Object error, StackTrace stackTrace)? onBuildError,
   }) : _backend = backend ?? SoLoudAudioBackend(),
        _random = random ?? math.Random(),
+       _voices = List<ProceduralVoice>.of(voices),
        _isWeb = isWeb ?? kIsWeb,
+       _currentProfile = initialProfile ?? _defaultProfile,
        _onBuildError = onBuildError;
 
   static const int _sampleRate = 44100;
@@ -58,65 +56,51 @@ class ProceduralSoundEngine {
 
   final AudioBackend _backend;
   final math.Random _random;
+  final List<ProceduralVoice> _voices;
   final bool _isWeb;
+
   final void Function(Object error, StackTrace stackTrace)? _onBuildError;
   final AcousticBusMapper _busMapper = const AcousticBusMapper();
 
-  late final List<AmbientVoice> _voices = [
-    DroneVoice(),
-    RainVoice(),
-    PulseVoice(),
-    CicadaVoice(),
-  ];
-  final StreamController<BellStrike> _bellStrikes =
-      StreamController<BellStrike>.broadcast();
-  late final BellScheduler _bell = BellScheduler(
-    _backend,
-    random: _random,
-    onStrike: _bellStrikes.add,
-  );
+  final Map<String, Map<String, double>> _soundParams = {};
+  final _soundEvents = StreamController<ProceduralSoundEvent>.broadcast();
 
   bool _ready = false;
   Future<void>? _buildOp;
-  VoiceBuildContext? _context;
-  AcousticProfile _currentProfile = _defaultProfile;
-  VoiceTimbre _currentTimbre = VoiceTimbre.standard;
-  double _temporalDistortion = 0;
+  ProceduralVoiceBuildContext? _context;
+  AcousticProfile _currentProfile;
+  double _profileBend = 0;
 
   /// Whether the engine has finished wiring its voices.
   bool get isReady => _ready;
 
-  /// Bell chimes emitted by the scheduler.
-  Stream<BellStrike> get bellStrikes => _bellStrikes.stream;
+  /// Generic events emitted by procedural voices.
+  Stream<ProceduralSoundEvent> get soundEvents => _soundEvents.stream;
 
-  /// Boots the engine (once) and resumes all voices and the bell scheduler.
+  /// Boots the engine (once) and resumes all voices.
   Future<void> start() async {
     await _ensureBuilt();
     for (final voice in _voices) {
       voice.setPaused(_backend, false);
+      voice.start(_backend);
     }
-    _bell.start();
   }
 
-  /// Silences the scheduler and pauses every voice, leaving the engine warm.
+  /// Stops voice-owned schedulers and pauses every voice, leaving the engine warm.
   Future<void> stop() async {
-    _bell.stop();
     if (!_ready) return;
     for (final voice in _voices) {
+      voice.stop(_backend);
       voice.setPaused(_backend, true);
     }
   }
 
-  /// Sets the audible level of [layer] in `0..1`.
-  Future<void> setLayer(SoundLayer layer, double level) async {
+  /// Sets the audible level of [soundId] in `0..1`.
+  Future<void> setSound(String soundId, double level) async {
     await _ensureBuilt();
-    final value = level.clamp(0.0, 1.0);
-    if (layer == SoundLayer.bell) {
-      _bell.level = value;
-      return;
-    }
+    final value = level.clamp(0.0, 1.0).toDouble();
     for (final voice in _voices) {
-      if (voice.layer == layer) voice.applyLevel(_backend, value);
+      if (voice.id == soundId) voice.applyLevel(_backend, value);
     }
   }
 
@@ -127,41 +111,60 @@ class ProceduralSoundEngine {
     _applyBus();
   }
 
-  /// Re-renders the voices for [timbre], so the rain/pulse/bell/cicada/drone
-  /// themselves change with the dimension, not just the bus filter. Voices
-  /// crossfade to the new sound and keep their current mix level.
-  Future<void> applyTimbre(VoiceTimbre timbre) async {
+  /// Applies one normalized or concrete parameter to a procedural sound.
+  ///
+  /// Voices are re-rendered and crossfaded when their synthesis parameters
+  /// change.
+  Future<void> setSoundParameter(
+    String soundId,
+    String param,
+    double value,
+  ) async {
     await _ensureBuilt();
-    _bell.transpose = timbre.bellTranspose;
-    if (timbre == _currentTimbre) return;
-    _currentTimbre = timbre;
-    final context = _context!;
-    for (final voice in _voices) {
-      await voice.retimbre(context, timbre, _backend);
+
+    ProceduralVoice? voice;
+    for (final item in _voices) {
+      if (item.id == soundId) {
+        voice = item;
+        break;
+      }
     }
+    if (voice == null) return;
+
+    final current = _soundParams[soundId] ?? const <String, double>{};
+    if (current[param] == value) return;
+    final next = {...current, param: value};
+    _soundParams[soundId] = next;
+
+    final context = _context!;
+    await voice.retune(context, next, _backend);
   }
 
-  /// Temporarily bends the shared bus while the orb is pressed.
-  Future<void> setTemporalDistortion(double amount) async {
+  /// Bends the shared bus away from the active profile by a normalized amount.
+  Future<void> setProfileBend(double amount) async {
     await _ensureBuilt();
-    _temporalDistortion = amount.clamp(0.0, 1.0).toDouble();
+    _profileBend = amount.clamp(0.0, 1.0).toDouble();
     _applyBus();
   }
 
+  /// Use [setProfileBend] for framework code.
+  @Deprecated('Use setProfileBend instead.')
+  Future<void> setTemporalDistortion(double amount) => setProfileBend(amount);
+
   /// Tears the engine down and releases native resources.
   Future<void> dispose() async {
-    _bell.dispose();
-    await _bellStrikes.close();
-    _backend.dispose();
     for (final voice in _voices) {
+      voice.dispose(_backend);
       voice.handles.clear();
     }
+    await _soundEvents.close();
+    _backend.dispose();
     _ready = false;
     _buildOp = null;
   }
 
   void _applyBus() =>
-      _backend.applyBus(_busMapper.map(_currentProfile, _temporalDistortion));
+      _backend.applyBus(_busMapper.map(_currentProfile, _profileBend));
 
   Future<void> _ensureBuilt() => _buildOp ??= _build();
 
@@ -169,17 +172,17 @@ class ProceduralSoundEngine {
     try {
       if (!_backend.isInitialized) await _backend.init();
 
-      final context = VoiceBuildContext(
+      final context = ProceduralVoiceBuildContext(
+        backend: _backend,
         player: LoopPlayer(_backend, isWeb: _isWeb, sampleRate: _sampleRate),
         synth: const SampleSynth(sampleRate: _sampleRate),
         random: _random,
+        emit: _soundEvents.add,
       );
       _context = context;
       for (final voice in _voices) {
-        await voice.build(context, _currentTimbre);
+        await voice.build(context, _soundParams[voice.id] ?? const {});
       }
-      await _bell.build();
-      _bell.transpose = _currentTimbre.bellTranspose;
 
       _backend.activateBus();
       _ready = true;

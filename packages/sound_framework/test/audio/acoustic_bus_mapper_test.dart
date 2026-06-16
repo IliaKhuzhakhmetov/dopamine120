@@ -1,6 +1,6 @@
+import 'package:flutter_test/flutter_test.dart';
 import 'package:sound_framework/sound_framework.dart';
 import 'package:sound_framework/src/audio/acoustic_bus_mapper.dart';
-import 'package:flutter_test/flutter_test.dart';
 
 const _room = AcousticProfile(
   filterShape: AcousticFilterShape.lowpass,
@@ -49,8 +49,8 @@ void main() {
     });
   });
 
-  group('with distortion', () {
-    test('closes the filter and lifts resonance as the orb is pressed', () {
+  group('with bend', () {
+    test('closes the filter and lifts resonance', () {
       final bus = mapper.map(_room, 1);
 
       expect(bus.frequency, lessThan(16000));
@@ -61,7 +61,7 @@ void main() {
       expect(bus.globalVolume, lessThan(0.55), reason: 'gain dips under bend');
     });
 
-    test('clamps to engine limits and treats >1 distortion as 1', () {
+    test('clamps to engine limits and treats >1 bend as 1', () {
       final atOne = mapper.map(_room, 1);
       final overshoot = mapper.map(_room, 5);
 

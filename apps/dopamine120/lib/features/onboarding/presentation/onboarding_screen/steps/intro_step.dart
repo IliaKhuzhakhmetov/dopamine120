@@ -1,14 +1,15 @@
 import 'dart:async';
 
 import 'package:app_logger/app_logger.dart';
+import 'package:core/core.dart';
 import 'package:dopamine_ui/dopamine_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:just_audio/just_audio.dart';
 
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../core/theme/presentation/theme_provider.dart';
+import '../../../domain/usecases/trigger_onboarding_sound.dart';
 import '../widgets/creation_icon_animation.dart';
 import '../widgets/imagination_icon_animation.dart';
 import '../widgets/onboarding_eyebrow.dart';
@@ -19,7 +20,7 @@ enum _IntroStepKind { deprivation, imagination, creation, reward }
 typedef OnboardingStep = ({
   _IntroStepKind kind,
   SvgGenImage icon,
-  String sound,
+  String triggerId,
   String title,
   String body,
   bool flashTheme,
@@ -39,10 +40,6 @@ class _IntroStepState extends State<IntroStep>
   late final CreationIconAnimationController _creationIconController;
   late final DopConfettiController _rewardConfettiController;
 
-  /// Created on the first tile tap so tests and silent sessions never touch
-  /// the audio platform channel.
-  AudioPlayer? _player;
-
   @override
   void initState() {
     super.initState();
@@ -61,18 +58,14 @@ class _IntroStepState extends State<IntroStep>
     _creationIconController.dispose();
     _imaginationIconController.dispose();
     _controller.dispose();
-    _player?.dispose();
     super.dispose();
   }
 
-  Future<void> _playSound(String asset) async {
-    final player = _player ??= AudioPlayer();
-
+  Future<void> _playSound(String triggerId) async {
     HapticFeedback.mediumImpact();
 
     try {
-      await player.setAsset(asset);
-      unawaited(player.play());
+      await context.get<TriggerOnboardingSound>()(triggerId);
     } catch (e, s) {
       // The sound is decoration; a playback failure never blocks the UI.
       Log.e('Intro step sound failed', error: e, stackTrace: s);
@@ -96,13 +89,12 @@ class _IntroStepState extends State<IntroStep>
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final spacing = context.spacing;
-    final sounds = Assets.sound.dopamine120Op1Pack;
 
     final steps = <OnboardingStep>[
       (
         kind: _IntroStepKind.deprivation,
         icon: Assets.icons.deprivationOrb,
-        sound: sounds.deprivationOp1,
+        triggerId: 'onboarding.deprivation',
         title: l10n.onboardingStepDeprivationTitle,
         body: l10n.onboardingStepDeprivationBody,
         flashTheme: true,
@@ -110,7 +102,7 @@ class _IntroStepState extends State<IntroStep>
       (
         kind: _IntroStepKind.imagination,
         icon: Assets.icons.imaginationBlob,
-        sound: sounds.imaginationOp1,
+        triggerId: 'onboarding.imagination',
         title: l10n.onboardingStepImaginationTitle,
         body: l10n.onboardingStepImaginationBody,
         flashTheme: false,
@@ -118,7 +110,7 @@ class _IntroStepState extends State<IntroStep>
       (
         kind: _IntroStepKind.creation,
         icon: Assets.icons.creation,
-        sound: sounds.creationOp1,
+        triggerId: 'onboarding.creation',
         title: l10n.onboardingStepCreationTitle,
         body: l10n.onboardingStepCreationBody,
         flashTheme: false,
@@ -126,7 +118,7 @@ class _IntroStepState extends State<IntroStep>
       (
         kind: _IntroStepKind.reward,
         icon: Assets.icons.rewardWave,
-        sound: sounds.rewardOp1,
+        triggerId: 'onboarding.reward',
         title: l10n.onboardingStepRewardTitle,
         body: l10n.onboardingStepRewardBody,
         flashTheme: false,
@@ -194,7 +186,7 @@ class _IntroStepState extends State<IntroStep>
         _rewardConfettiController.play();
       case _IntroStepKind.deprivation:
     }
-    unawaited(_playSound(step.sound));
+    unawaited(_playSound(step.triggerId));
   }
 
   Widget _buildLeading(OnboardingStep step) {

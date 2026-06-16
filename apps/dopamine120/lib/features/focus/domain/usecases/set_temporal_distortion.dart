@@ -9,6 +9,7 @@ class SetTemporalDistortion implements UseCase<void, double> {
   final AmbienceRepository _repository;
 
   @override
-  Future<void> call(double params) =>
-      _repository.setTemporalDistortion(params.clamp(0.0, 1.0).toDouble());
+  Future<void> call(double params) {
+    return _repository.setTemporalDistortion(params.clamp(0.0, 1.0).toDouble());
+  }
 }

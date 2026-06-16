@@ -5,7 +5,7 @@ import 'wav_codec.dart';
 
 /// A started looping voice: its playing [handle] plus the [source] it came from.
 ///
-/// The source is retained so the voice can be disposed when a dimension swap
+/// The source is retained so the voice can be disposed when a parameter change
 /// re-renders it, instead of leaking a buffer per switch.
 class LoopVoice {
   /// Bundles the playing [handle] with its backing [source].
@@ -22,7 +22,7 @@ class LoopVoice {
 /// web and native diverge.
 ///
 /// Every loop is created once at zero (or a tiny web-unlock) volume and kept
-/// alive by the mixer, so mixing a layer later is just a volume nudge. On web,
+/// alive by the mixer, so mixing a sound later is just a volume nudge. On web,
 /// in-memory WAVs are pushed through a PCM stream instead of [AudioBackend.loadNoise].
 class LoopPlayer {
   /// Wires the player to [_backend]; [isWeb] selects the streaming fallback.

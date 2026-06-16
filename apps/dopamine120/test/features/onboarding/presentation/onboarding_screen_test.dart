@@ -6,11 +6,13 @@ import 'package:dopamine120/features/onboarding/domain/entities/blockable_app.da
 import 'package:dopamine120/features/onboarding/domain/entities/onboarding_result.dart';
 import 'package:dopamine120/features/onboarding/domain/entities/permission_status.dart';
 import 'package:dopamine120/features/onboarding/domain/repositories/onboarding_repository.dart';
+import 'package:dopamine120/features/onboarding/domain/repositories/onboarding_sound_repository.dart';
 import 'package:dopamine120/features/onboarding/domain/usecases/complete_onboarding.dart';
 import 'package:dopamine120/features/onboarding/domain/usecases/get_health_access_status.dart';
 import 'package:dopamine120/features/onboarding/domain/usecases/request_health_access.dart';
 import 'package:dopamine120/features/onboarding/domain/usecases/request_setup_access.dart';
 import 'package:dopamine120/features/onboarding/domain/usecases/save_action_readiness.dart';
+import 'package:dopamine120/features/onboarding/domain/usecases/trigger_onboarding_sound.dart';
 import 'package:dopamine120/l10n/l10n.dart';
 import 'package:dopamine_ui/dopamine_ui.dart';
 import 'package:flutter/material.dart';
@@ -46,9 +48,12 @@ void main() {
   testWidgets('animates the imagination icon on tap and returns to idle', (
     tester,
   ) async {
+    final sounds = _FakeOnboardingSoundRepository();
+
     await tester.pumpWidget(
       _OnboardingHost(
         repository: _FakeOnboardingRepository(),
+        sounds: sounds,
         onFinished: (_) {},
       ),
     );
@@ -60,6 +65,7 @@ void main() {
     );
 
     await _tapIntroTile(tester, 'IMAGINATION');
+    expect(sounds.triggers, ['onboarding.imagination']);
     expect(
       find.byKey(const ValueKey('imagination-icon-frame-1')),
       findsOneWidget,
@@ -327,9 +333,14 @@ Future<void> _pumpPageTransition(WidgetTester tester) async {
 }
 
 class _OnboardingHost extends StatelessWidget {
-  const _OnboardingHost({required this.repository, required this.onFinished});
+  const _OnboardingHost({
+    required this.repository,
+    required this.onFinished,
+    this.sounds,
+  });
 
   final _FakeOnboardingRepository repository;
+  final _FakeOnboardingSoundRepository? sounds;
   final ValueChanged<OnboardingResult> onFinished;
 
   @override
@@ -350,6 +361,10 @@ class _OnboardingHost extends StatelessWidget {
       )
       ..registerLazySingleton<CompleteOnboarding>(
         (_) => CompleteOnboarding(repository),
+      )
+      ..registerLazySingleton<TriggerOnboardingSound>(
+        (_) =>
+            TriggerOnboardingSound(sounds ?? _FakeOnboardingSoundRepository()),
       );
 
     return DependencyScope(
@@ -369,6 +384,15 @@ class _OnboardingHost extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class _FakeOnboardingSoundRepository implements OnboardingSoundRepository {
+  final List<String> triggers = [];
+
+  @override
+  Future<void> trigger(String triggerId) async {
+    triggers.add(triggerId);
   }
 }
 

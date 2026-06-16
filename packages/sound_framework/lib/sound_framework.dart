@@ -1,12 +1,46 @@
-/// App-agnostic procedural sound framework.
+/// App-agnostic sound framework.
 library;
 
+export 'src/application/sound_engine.dart' show SoundEngine;
 export 'src/audio/audio_backend.dart'
-    show AudioBackend, BusSettings, VoiceHandle, VoiceSource, WaveFormType;
+    show
+        AudioBackend,
+        AudioBackendConfig,
+        AudioParamAddress,
+        AudioSourceRef,
+        BusRef,
+        BusSettings,
+        LoadModePolicy,
+        PlayRequest,
+        VoiceHandle,
+        VoiceRef,
+        VoiceSource,
+        WaveFormType;
 export 'src/audio/soloud_audio_backend.dart' show SoLoudAudioBackend;
+export 'src/audio/loop_player.dart' show LoopPlayer, LoopVoice;
+export 'src/audio/procedural_voice.dart'
+    show ProceduralVoice, ProceduralVoiceBuildContext;
+export 'src/audio/sample_synth.dart'
+    show NoiseColor, SampleSynth, SampleTransform;
+export 'src/core/command/sound_command_queue.dart' show SoundCommandQueue;
+export 'src/core/config/scene_registry.dart' show SceneRegistry;
+export 'src/core/config/sound_config.dart'
+    show
+        BusConfig,
+        FilterConfig,
+        KnobConfig,
+        SceneConfig,
+        SceneSoundConfig,
+        SceneSoundType,
+        SoundControlMapping,
+        SoundMappingTarget,
+        SoundPackConfig,
+        TriggerSoundConfig;
+export 'src/core/scene/asset_cache.dart' show AssetCache;
+export 'src/core/state/sound_engine_state.dart' show SoundEngineState;
+export 'src/data/sound_packs/onboarding_sound_pack.dart'
+    show onboardingSoundPack;
 export 'src/models/acoustic_profile.dart'
     show AcousticFilterShape, AcousticProfile;
-export 'src/models/bell_strike.dart' show BellStrike;
-export 'src/models/sound_layer.dart' show SoundLayer;
-export 'src/models/voice_timbre.dart' show VoiceTimbre;
+export 'src/models/procedural_sound_event.dart' show ProceduralSoundEvent;
 export 'src/procedural_sound_engine.dart' show ProceduralSoundEngine;

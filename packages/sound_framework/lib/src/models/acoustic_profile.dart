@@ -7,9 +7,9 @@ enum AcousticFilterShape {
   bandpass,
 }
 
-/// The acoustic signature of a [focus dimension]: how the shared filter,
-/// reverb, echo and master gain are set so a space sounds like a room, a
-/// cathedral, underwater, and so on.
+/// The acoustic signature of a scene filter: how the shared filter, reverb,
+/// echo and master gain are set so a space sounds like a room, a cathedral,
+/// underwater, and so on.
 ///
 /// Values are engine-agnostic and live in normalized/Hz units; the data layer
 /// maps them onto the concrete audio engine (clamping to its ranges).

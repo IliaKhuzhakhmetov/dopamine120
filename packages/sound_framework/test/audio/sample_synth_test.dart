@@ -48,9 +48,9 @@ void main() {
   group('bandNoiseWav', () {
     test('renders two seconds of samples', () {
       final wav = synth.bandNoiseWav(
-        centreHz: 1050,
+        centerHz: 1050,
         q: 0.5,
-        pink: true,
+        color: NoiseColor.pink,
         random: Random(1),
       );
       expect(_u32(wav, 40), 8000 * 2 * 2, reason: '2 s of 16-bit samples');
@@ -58,17 +58,17 @@ void main() {
 
     test('is deterministic for a given seed', () {
       Uint8List render() => synth.bandNoiseWav(
-        centreHz: 4800,
+        centerHz: 4800,
         q: 9,
-        amplitudeModulated: true,
+        transform: (sample, _) => sample * 0.5,
         random: Random(42),
       );
       expect(render(), equals(render()));
     });
 
     test('differs across seeds', () {
-      final a = synth.bandNoiseWav(centreHz: 1050, q: 0.5, random: Random(1));
-      final b = synth.bandNoiseWav(centreHz: 1050, q: 0.5, random: Random(2));
+      final a = synth.bandNoiseWav(centerHz: 1050, q: 0.5, random: Random(1));
+      final b = synth.bandNoiseWav(centerHz: 1050, q: 0.5, random: Random(2));
       expect(a, isNot(equals(b)));
     });
   });

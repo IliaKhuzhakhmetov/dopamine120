@@ -24,6 +24,9 @@ class FakeAudioBackend implements AudioBackend {
   /// Names passed to [loadNoise], in order.
   final List<String> loadedNoises = [];
 
+  /// Asset keys passed to [loadAsset], in order.
+  final List<String> loadedAssets = [];
+
   /// PCM chunks pushed via [pushPcm].
   final List<Uint8List> pushedPcm = [];
 
@@ -32,6 +35,18 @@ class FakeAudioBackend implements AudioBackend {
 
   /// Every [play] call, in order.
   final List<PlayCall> plays = [];
+
+  /// Bus ids passed to [createBus], in order.
+  final List<String> createdBuses = [];
+
+  /// Last volume set per bus id.
+  final Map<int, double> busVolumes = {};
+
+  /// Param writes.
+  final List<ParamCall> params = [];
+
+  /// Voice ids stopped by [stop].
+  final List<int> stoppedVoices = [];
 
   /// Last volume set per handle id (via [play] or [setVolume]).
   final Map<int, double> volumes = {};
@@ -101,6 +116,15 @@ class FakeAudioBackend implements AudioBackend {
   }
 
   @override
+  Future<AudioSourceRef> loadAsset(
+    String assetKey, {
+    LoadModePolicy policy = LoadModePolicy.memory,
+  }) async {
+    loadedAssets.add(assetKey);
+    return AudioSourceRef(_sourceCounter++);
+  }
+
+  @override
   VoiceSource openPcmStream({
     required int maxBufferSizeBytes,
     required double bufferingTimeNeeds,
@@ -143,8 +167,46 @@ class FakeAudioBackend implements AudioBackend {
   }
 
   @override
+  Future<BusRef> createBus(String id) async {
+    createdBuses.add(id);
+    return BusRef(createdBuses.length - 1);
+  }
+
+  @override
+  VoiceRef playRequest(PlayRequest request) {
+    final id = _handleCounter++;
+    volumes[id] = request.volume;
+    plays.add(
+      PlayCall(
+        sourceId: request.source.raw as int,
+        handleId: id,
+        volume: request.volume,
+        looping: request.looping,
+        busId: request.bus?.raw as int?,
+      ),
+    );
+    return VoiceRef(id);
+  }
+
+  @override
+  Future<void> stop(VoiceRef voice, {Duration fadeOut = Duration.zero}) async {
+    stoppedVoices.add(voice.raw as int);
+    if (fadeOut > Duration.zero) {
+      fades.add(FadeCall(handleId: voice.raw as int, to: 0, time: fadeOut));
+    }
+  }
+
+  @override
   void setVolume(VoiceHandle handle, double volume) =>
       volumes[handle.raw as int] = volume;
+
+  @override
+  void setBusVolume(BusRef bus, double volume) =>
+      busVolumes[bus.raw as int] = volume;
+
+  @override
+  void setParam(AudioParamAddress address, double value) =>
+      params.add(ParamCall(address: address, value: value));
 
   @override
   void setPause(VoiceHandle handle, bool pause) =>
@@ -192,6 +254,7 @@ class PlayCall {
     required this.handleId,
     required this.volume,
     required this.looping,
+    this.busId,
   });
 
   /// Source token id.
@@ -205,6 +268,21 @@ class PlayCall {
 
   /// Whether the voice loops.
   final bool looping;
+
+  /// Bus token id, if routed through a bus.
+  final int? busId;
+}
+
+/// A recorded parameter write.
+class ParamCall {
+  /// Bundles the parameter write.
+  const ParamCall({required this.address, required this.value});
+
+  /// Target address.
+  final AudioParamAddress address;
+
+  /// Written value.
+  final double value;
 }
 
 /// A recorded [AudioBackend.oscillateVolume] call.
