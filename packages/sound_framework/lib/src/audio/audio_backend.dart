@@ -227,6 +227,7 @@ abstract class AudioBackend {
   VoiceHandle play(
     VoiceSource source, {
     double volume = 1,
+    double pan = 0,
     bool looping = false,
   });
 

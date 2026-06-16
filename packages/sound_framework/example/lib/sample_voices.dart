@@ -50,6 +50,8 @@ class ExampleRainVoice extends ProceduralVoice {
       q: params['q'] ?? 0.5,
       color: NoiseColor.pink,
       random: context.random,
+      seconds: 4,
+      crossfadeSeconds: 0.5,
     );
     return [await context.player.noise(wav)];
   }
@@ -190,6 +192,8 @@ class ExampleCicadaVoice extends ProceduralVoice {
       centerHz: params['centerHz'] ?? 4800,
       q: params['q'] ?? 9,
       random: context.random,
+      seconds: 4,
+      crossfadeSeconds: 0.5,
       transform: _modulate,
     );
     return [await context.player.noise(wav)];
@@ -204,8 +208,11 @@ class ExampleCicadaVoice extends ProceduralVoice {
 }
 
 double _modulate(double sample, double timeSeconds) {
+  // Both LFOs complete a whole number of cycles over the 4 s buffer (72 Hz =
+  // 288 cycles, 0.25 Hz = 1 cycle), so the modulation envelope returns to its
+  // start at the loop point and the crossfade has near-identical levels to mix.
   final buzz =
       0.5 + 0.5 * (math.sin(2 * math.pi * 72 * timeSeconds) >= 0 ? 1 : 0);
-  final swell = 0.6 + 0.4 * math.sin(2 * math.pi * 0.16 * timeSeconds);
+  final swell = 0.6 + 0.4 * math.sin(2 * math.pi * 0.25 * timeSeconds);
   return sample * buzz * swell;
 }

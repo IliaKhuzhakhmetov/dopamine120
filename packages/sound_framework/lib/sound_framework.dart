@@ -38,8 +38,6 @@ export 'src/core/config/sound_config.dart'
         TriggerSoundConfig;
 export 'src/core/scene/asset_cache.dart' show AssetCache;
 export 'src/core/state/sound_engine_state.dart' show SoundEngineState;
-export 'src/data/sound_packs/onboarding_sound_pack.dart'
-    show onboardingSoundPack;
 export 'src/models/acoustic_profile.dart'
     show AcousticFilterShape, AcousticProfile;
 export 'src/models/procedural_sound_event.dart' show ProceduralSoundEvent;

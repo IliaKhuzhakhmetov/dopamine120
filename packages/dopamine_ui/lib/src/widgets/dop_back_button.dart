@@ -25,6 +25,8 @@ class _DopBackButtonState extends State<DopBackButton> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final radius = context.radius;
+    final stroke = context.stroke;
 
     return Semantics(
       button: true,
@@ -49,7 +51,10 @@ class _DopBackButtonState extends State<DopBackButton> {
               width: 44,
               height: 44,
               alignment: Alignment.center,
-              decoration: BoxDecoration(border: Border.all(color: colors.ink)),
+              decoration: BoxDecoration(
+                borderRadius: radius.controlGeometry,
+                border: Border.fromBorderSide(stroke.outlineSide(colors.ink)),
+              ),
               child: Text(
                 '←',
                 style: GoogleFonts.dmMono(

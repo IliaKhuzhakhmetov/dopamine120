@@ -43,6 +43,19 @@ void main() {
       expect(peak, lessThanOrEqualTo(32767));
       expect(peak, greaterThan((0.85 * 32767 * 0.95).round()));
     });
+
+    test('supports app-owned length and modulation controls', () {
+      final wav = synth.harmonicWav(
+        fundamentalHz: 52,
+        harmonicGains: const [1, 0.4],
+        seconds: 2.5,
+        transform: (sample, timeSeconds) => sample * (0.5 + timeSeconds * 0.1),
+        loopFadeFraction: 0.02,
+      );
+
+      expect(_u32(wav, 40), 8000 * 2.5 * 2, reason: '2.5 s of samples');
+      expect(_peakAmplitude(wav), lessThanOrEqualTo(32767));
+    });
   });
 
   group('bandNoiseWav', () {
@@ -70,6 +83,42 @@ void main() {
       final a = synth.bandNoiseWav(centerHz: 1050, q: 0.5, random: Random(1));
       final b = synth.bandNoiseWav(centerHz: 1050, q: 0.5, random: Random(2));
       expect(a, isNot(equals(b)));
+    });
+
+    test('supports longer buffers with a softened loop edge', () {
+      final wav = synth.bandNoiseWav(
+        centerHz: 920,
+        q: 0.38,
+        seconds: 5.5,
+        loopFadeFraction: 0.035,
+        random: Random(1),
+      );
+
+      expect(_u32(wav, 40), 8000 * 5.5 * 2, reason: '5.5 s of samples');
+      expect(_peakAmplitude(wav), lessThanOrEqualTo(32767));
+    });
+
+    test('crossfade keeps the loop length and joins the seam continuously', () {
+      final wav = synth.bandNoiseWav(
+        centerHz: 1050,
+        q: 0.5,
+        seconds: 2,
+        crossfadeSeconds: 0.25,
+        random: Random(7),
+      );
+
+      // Output is still exactly the loop length; the extra tail is consumed.
+      expect(_u32(wav, 40), 8000 * 2 * 2, reason: '2 s loop, tail folded in');
+
+      // The wrap (last sample -> first sample) must be a small step, not the
+      // large jump a raw noise seam produces.
+      final data = ByteData.sublistView(wav, WavCodec.headerBytes);
+      final first = data.getInt16(0, Endian.little);
+      final last = data.getInt16(data.lengthInBytes - 2, Endian.little);
+      final neighbour = data.getInt16(2, Endian.little);
+      final seamStep = (first - last).abs();
+      // The seam jump is on the order of an ordinary sample-to-sample step.
+      expect(seamStep, lessThanOrEqualTo(4 * (neighbour - first).abs() + 200));
     });
   });
 }

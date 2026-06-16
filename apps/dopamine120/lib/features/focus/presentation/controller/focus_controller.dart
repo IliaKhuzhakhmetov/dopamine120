@@ -62,11 +62,16 @@ class FocusController extends ChangeNotifier {
   bool _muted = false;
   late final ValueNotifier<Duration> _remaining = ValueNotifier(_sessionLength);
   Timer? _timer;
+  Timer? _knobFlushTimer;
   StreamSubscription<ProceduralSoundEvent>? _soundEvents;
   bool _started = false;
   bool _disposed = false;
   Future<void>? _startOp;
   Future<void> _distortionOp = Future.value();
+  Completer<void>? _knobFlushCompleter;
+  final Map<String, double> _pendingKnobValues = {};
+
+  static const Duration _knobFlushDelay = Duration(milliseconds: 48);
 
   /// Scene rendered and controlled by this focus session.
   SceneConfig get scene => _scene;
@@ -133,14 +138,14 @@ class FocusController extends ChangeNotifier {
       _dimensionValues[dimensionId] ?? 0;
 
   /// Mixes scene [knobId] to [level] and warps the orb to match.
-  Future<void> setKnob(String knobId, double level) async {
+  Future<void> setKnob(String knobId, double level) {
     final value = level.clamp(0.0, 1.0).toDouble();
-    if (_knobValues[knobId] == value) return;
+    if (_knobValues[knobId] == value) return Future<void>.value();
     _knobValues = {..._knobValues, knobId: value};
     _knobs = _orbKnobsFromScene();
     notifyListeners();
-    await _ensureStarted();
-    await _setSceneKnob(SetSceneKnobParams(knobId, value));
+    _pendingKnobValues[knobId] = value;
+    return _scheduleKnobFlush();
   }
 
   /// Adjusts one configured scene dimension.
@@ -198,6 +203,9 @@ class FocusController extends ChangeNotifier {
   void dispose() {
     _disposed = true;
     _timer?.cancel();
+    _knobFlushTimer?.cancel();
+    _knobFlushCompleter?.complete();
+    _knobFlushCompleter = null;
     unawaited(_soundEvents?.cancel());
     _orbController.dispose();
     _remaining.dispose();
@@ -221,6 +229,34 @@ class FocusController extends ChangeNotifier {
     await _startAmbience(const NoParams());
     _started = true;
     await _applySceneState();
+  }
+
+  Future<void> _scheduleKnobFlush() {
+    final completer = _knobFlushCompleter ??= Completer<void>();
+    _knobFlushTimer?.cancel();
+    _knobFlushTimer = Timer(_knobFlushDelay, () {
+      final activeCompleter = _knobFlushCompleter;
+      _knobFlushCompleter = null;
+      unawaited(
+        _flushPendingKnobs()
+            .then((_) => activeCompleter?.complete())
+            .catchError((Object error, StackTrace stackTrace) {
+              activeCompleter?.completeError(error, stackTrace);
+            }),
+      );
+    });
+    return completer.future;
+  }
+
+  Future<void> _flushPendingKnobs() async {
+    if (_disposed || _pendingKnobValues.isEmpty) return;
+    final values = Map<String, double>.of(_pendingKnobValues);
+    _pendingKnobValues.clear();
+    await _ensureStarted();
+    if (_disposed) return;
+    for (final entry in values.entries) {
+      await _setSceneKnob(SetSceneKnobParams(entry.key, entry.value));
+    }
   }
 
   Future<void> _bindSceneSoundEvents() async {

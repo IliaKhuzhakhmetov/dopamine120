@@ -1,6 +1,6 @@
-import '../../core/config/sound_config.dart';
+import 'package:sound_framework/sound_framework.dart';
 
-/// Existing Dopamine120 onboarding UI sounds.
+/// Dopamine120 onboarding UI sounds.
 const onboardingSoundPack = SoundPackConfig(
   id: 'onboarding',
   sounds: [

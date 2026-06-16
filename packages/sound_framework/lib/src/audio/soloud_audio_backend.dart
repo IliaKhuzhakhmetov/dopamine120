@@ -116,11 +116,13 @@ class SoLoudAudioBackend implements AudioBackend {
   VoiceHandle play(
     VoiceSource source, {
     double volume = 1,
+    double pan = 0,
     bool looping = false,
   }) {
     final handle = _soloud.play(
       _source(source),
       volume: volume,
+      pan: pan,
       looping: looping,
     );
     return VoiceHandle(handle);

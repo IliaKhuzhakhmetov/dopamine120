@@ -1,5 +1,7 @@
 import 'package:core/core.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:dopamine_ui/dopamine_ui.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -52,11 +54,20 @@ class _DopamineAppState extends State<DopamineApp> {
                 GlobalWidgetsLocalizations.delegate,
               ],
               supportedLocales: AppLocalizations.supportedLocales,
-              routerConfig: _router.config(),
+              routerConfig: _router.config(
+                deepLinkBuilder: _resolveInitialDeepLink,
+              ),
             );
           },
         ),
       ),
     );
+  }
+
+  DeepLink _resolveInitialDeepLink(PlatformDeepLink deepLink) {
+    if (kIsWeb && deepLink.initial && deepLink.path == '/focus') {
+      return DeepLink.defaultPath;
+    }
+    return deepLink;
   }
 }

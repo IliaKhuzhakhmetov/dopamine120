@@ -328,8 +328,9 @@ class _DopDropdownMenu<T> extends StatelessWidget {
   }
 }
 
-class _DopDropdownOptionRow<T> extends StatelessWidget {
+class _DopDropdownOptionRow<T> extends StatefulWidget {
   const _DopDropdownOptionRow({
+    super.key,
     required this.option,
     required this.selected,
     required this.divider,
@@ -342,59 +343,121 @@ class _DopDropdownOptionRow<T> extends StatelessWidget {
   final ValueChanged<DopDropdownOption<T>> onSelected;
 
   @override
+  State<_DopDropdownOptionRow<T>> createState() =>
+      _DopDropdownOptionRowState<T>();
+}
+
+class _DopDropdownOptionRowState<T> extends State<_DopDropdownOptionRow<T>> {
+  bool _hovered = false;
+  bool _focused = false;
+  bool _pressed = false;
+
+  bool get _enabled => widget.option.enabled;
+
+  void _activate() {
+    if (_enabled) widget.onSelected(widget.option);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final colors = context.colors;
     final spacing = context.spacing;
     final stroke = context.stroke;
+    final option = widget.option;
+    final selected = widget.selected;
     final foreground = selected ? colors.onVoid : colors.ink;
     final secondary = selected ? colors.onVoidSoft : colors.inkFaint;
-    final enabledOpacity = option.enabled ? 1.0 : 0.42;
+
+    // Pointer/keyboard feedback for desktop & web: hover and keyboard focus
+    // both lift the row off the menu surface; a press darkens it further.
+    final highlighted = _enabled && (_hovered || _focused);
+    final Color background;
+    if (selected) {
+      background = colors.ink;
+    } else if (_enabled && _pressed) {
+      background = colors.line;
+    } else if (highlighted) {
+      background = colors.wall;
+    } else {
+      background = colors.paper;
+    }
 
     return Semantics(
       button: true,
       selected: selected,
-      enabled: option.enabled,
+      enabled: _enabled,
       label: option.subtitle == null
           ? option.label
           : '${option.label}, ${option.subtitle}',
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: option.enabled ? () => onSelected(option) : null,
-        child: Opacity(
-          opacity: enabledOpacity,
-          child: Container(
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(
-              horizontal: spacing.lg,
-              vertical: spacing.sm,
-            ),
-            decoration: BoxDecoration(
-              color: selected ? colors.ink : colors.paper,
-              border: divider
-                  ? Border(bottom: stroke.hairlineSide(colors.line))
+      child: FocusableActionDetector(
+        enabled: _enabled,
+        mouseCursor: _enabled
+            ? SystemMouseCursors.click
+            : SystemMouseCursors.basic,
+        onShowHoverHighlight: (value) => setState(() => _hovered = value),
+        onShowFocusHighlight: (value) => setState(() => _focused = value),
+        actions: {
+          ActivateIntent: CallbackAction<ActivateIntent>(
+            onInvoke: (_) {
+              _activate();
+              return null;
+            },
+          ),
+        },
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: _enabled ? _activate : null,
+          onTapDown: _enabled ? (_) => setState(() => _pressed = true) : null,
+          onTapUp: _enabled ? (_) => setState(() => _pressed = false) : null,
+          onTapCancel: _enabled ? () => setState(() => _pressed = false) : null,
+          child: Opacity(
+            opacity: _enabled ? 1.0 : 0.42,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 80),
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(
+                horizontal: spacing.lg,
+                vertical: spacing.sm,
+              ),
+              decoration: BoxDecoration(
+                color: background,
+                border: widget.divider
+                    ? Border(bottom: stroke.hairlineSide(colors.line))
+                    : null,
+              ),
+              // A keyboard focus ring sits above the fill without disturbing
+              // the divider; mouse hover doesn't trigger it.
+              foregroundDecoration: _focused
+                  ? BoxDecoration(
+                      border: Border.fromBorderSide(
+                        stroke.outlineSide(
+                          selected ? colors.onVoid : colors.ink,
+                        ),
+                      ),
+                    )
                   : null,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  option.label,
-                  style: context.typo.control.copyWith(color: foreground),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                if (option.subtitle != null) ...[
-                  SizedBox(height: spacing.xxs),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Text(
-                    option.subtitle!,
-                    style: context.typo.controlSecondary.copyWith(
-                      color: secondary,
-                    ),
+                    option.label,
+                    style: context.typo.control.copyWith(color: foreground),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
+                  if (option.subtitle != null) ...[
+                    SizedBox(height: spacing.xxs),
+                    Text(
+                      option.subtitle!,
+                      style: context.typo.controlSecondary.copyWith(
+                        color: secondary,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
         ),

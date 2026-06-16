@@ -34,11 +34,12 @@ void main() {
     );
 
     test('noise loads in-memory and never opens a PCM stream', () async {
-      await player.noise(_wav(8));
+      await player.noise(_wav(8), pan: -0.25);
 
       expect(backend.loadedNoises, hasLength(1));
       expect(backend.pcmStreamCount, 0);
       expect(backend.plays.single.volume, 0);
+      expect(backend.plays.single.pan, -0.25);
     });
   });
 
@@ -62,8 +63,9 @@ void main() {
     });
 
     test('oscillator starts at the unlock volume', () async {
-      await player.oscillator(WaveFormType.sin, 55);
+      await player.oscillator(WaveFormType.sin, 55, pan: 0.2);
       expect(backend.plays.single.volume, 0.0001);
+      expect(backend.plays.single.pan, 0.2);
     });
   });
 }

@@ -61,6 +61,27 @@ void main() {
       expect(repository.knobValues['bell'], 0.2);
     });
 
+    test('coalesces rapid scene knob changes before touching audio', () {
+      fakeAsync((async) {
+        final controller = build();
+
+        controller.setKnob('pulse', 0.2);
+        controller.setKnob('pulse', 0.7);
+
+        async.elapse(const Duration(milliseconds: 47));
+        async.flushMicrotasks();
+        expect(repository.knobValues['pulse'], isNull);
+
+        async.elapse(const Duration(milliseconds: 1));
+        async.flushMicrotasks();
+
+        expect(controller.knobs.pulse, 0.7);
+        expect(repository.knobValues['pulse'], 0.7);
+
+        controller.dispose();
+      });
+    });
+
     test('primeAudio starts the engine before async knob updates', () async {
       final controller = build();
 

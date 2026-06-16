@@ -47,24 +47,28 @@ class LoopPlayer {
   double get _startVolume => isWeb ? unlockVolume : 0;
 
   /// Starts a looping oscillator [waveform] tuned to [freq] Hz.
-  Future<LoopVoice> oscillator(WaveFormType waveform, double freq) async {
+  Future<LoopVoice> oscillator(
+    WaveFormType waveform,
+    double freq, {
+    double pan = 0,
+  }) async {
     final source = await _backend.loadWaveform(waveform);
     _backend.setWaveformFreq(source, freq);
-    return _startLoop(source);
+    return _startLoop(source, pan: pan);
   }
 
   /// Starts a looping voice from an in-memory [wav] noise buffer.
-  Future<LoopVoice> noise(Uint8List wav) async {
-    if (isWeb) return _pcmStream(WavCodec.pcmFromWav(wav));
+  Future<LoopVoice> noise(Uint8List wav, {double pan = 0}) async {
+    if (isWeb) return _pcmStream(WavCodec.pcmFromWav(wav), pan: pan);
 
     final source = await _backend.loadNoise(
       'focus_noise_${wav.hashCode}.wav',
       wav,
     );
-    return _startLoop(source);
+    return _startLoop(source, pan: pan);
   }
 
-  LoopVoice _pcmStream(Uint8List pcm) {
+  LoopVoice _pcmStream(Uint8List pcm, {required double pan}) {
     // SoLoud stores stream samples as f32 internally (4 bytes/sample), so the
     // buffer ceiling must be sized against the decoded float length, not the
     // incoming s16le bytes. Our PCM is 2 bytes/sample, so the float buffer needs
@@ -77,13 +81,14 @@ class LoopPlayer {
     );
     _backend.pushPcm(source, pcm);
     _backend.endPcm(source);
-    return _startLoop(source, volume: unlockVolume);
+    return _startLoop(source, volume: unlockVolume, pan: pan);
   }
 
-  LoopVoice _startLoop(VoiceSource source, {double? volume}) {
+  LoopVoice _startLoop(VoiceSource source, {double? volume, double pan = 0}) {
     final handle = _backend.play(
       source,
       volume: volume ?? _startVolume,
+      pan: pan,
       looping: true,
     );
     _backend.keepLoopAlive(handle);

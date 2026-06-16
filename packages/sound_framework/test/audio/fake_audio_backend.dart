@@ -151,6 +151,7 @@ class FakeAudioBackend implements AudioBackend {
   VoiceHandle play(
     VoiceSource source, {
     double volume = 1,
+    double pan = 0,
     bool looping = false,
   }) {
     final id = _handleCounter++;
@@ -160,6 +161,7 @@ class FakeAudioBackend implements AudioBackend {
         sourceId: source.raw as int,
         handleId: id,
         volume: volume,
+        pan: pan,
         looping: looping,
       ),
     );
@@ -181,6 +183,7 @@ class FakeAudioBackend implements AudioBackend {
         sourceId: request.source.raw as int,
         handleId: id,
         volume: request.volume,
+        pan: request.pan,
         looping: request.looping,
         busId: request.bus?.raw as int?,
       ),
@@ -254,6 +257,7 @@ class PlayCall {
     required this.handleId,
     required this.volume,
     required this.looping,
+    this.pan = 0,
     this.busId,
   });
 
@@ -265,6 +269,9 @@ class PlayCall {
 
   /// Start volume.
   final double volume;
+
+  /// Initial stereo pan.
+  final double pan;
 
   /// Whether the voice loops.
   final bool looping;
