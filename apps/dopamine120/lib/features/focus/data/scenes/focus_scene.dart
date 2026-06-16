@@ -4,7 +4,7 @@ import 'package:sound_framework/sound_framework.dart';
 ///
 /// The framework only knows about scene sounds, filters and mappings. These
 /// concrete ids and acoustic choices belong to the app.
-const SceneConfig focusScene = SceneConfig(
+const focusScene = SceneConfig(
   id: 'focus',
   sounds: [
     SceneSoundConfig(id: 'drone', type: SceneSoundType.procedural),
@@ -12,6 +12,8 @@ const SceneConfig focusScene = SceneConfig(
     SceneSoundConfig(id: 'pulse', type: SceneSoundType.procedural),
     SceneSoundConfig(id: 'bell', type: SceneSoundType.procedural),
     SceneSoundConfig(id: 'cicada', type: SceneSoundType.procedural),
+    SceneSoundConfig(id: 'birdsong', type: SceneSoundType.procedural),
+    SceneSoundConfig(id: 'bamboo', type: SceneSoundType.procedural),
   ],
   knobs: [
     KnobConfig(
@@ -78,6 +80,28 @@ const SceneConfig focusScene = SceneConfig(
         SoundControlMapping(
           target: SoundMappingTarget.soundVolume,
           soundId: 'cicada',
+          min: 0,
+          max: 1,
+        ),
+      ],
+    ),
+    KnobConfig(
+      id: 'birdsong',
+      mappings: [
+        SoundControlMapping(
+          target: SoundMappingTarget.soundVolume,
+          soundId: 'birdsong',
+          min: 0,
+          max: 1,
+        ),
+      ],
+    ),
+    KnobConfig(
+      id: 'bamboo',
+      mappings: [
+        SoundControlMapping(
+          target: SoundMappingTarget.soundVolume,
+          soundId: 'bamboo',
           min: 0,
           max: 1,
         ),

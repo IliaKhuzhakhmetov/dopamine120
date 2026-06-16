@@ -27,7 +27,6 @@ class FocusScreen extends StatefulWidget {
 
 class _FocusScreenState extends State<FocusScreen> {
   late final FocusController _controller;
-  late final TextEditingController _taskController;
 
   @override
   void initState() {
@@ -42,22 +41,13 @@ class _FocusScreenState extends State<FocusScreen> {
       stopAmbience: injector.get<StopAmbience>(),
       watchSceneSoundEvents: injector.get<WatchSceneSoundEvents>(),
     );
-    _taskController = TextEditingController();
     _controller.startTimer();
   }
 
   @override
   void dispose() {
-    _taskController.dispose();
     _controller.dispose();
     super.dispose();
-  }
-
-  /// Switches the configured focus-scene dimension and dresses the app theme
-  /// with the same id (`room`, `cathedral`, ...).
-  void _selectDimension(String dimensionId) {
-    _controller.selectDimension(dimensionId);
-    context.themeController.setTheme(AppTheme.fromStorageValue(dimensionId));
   }
 
   @override
@@ -103,27 +93,15 @@ class _FocusScreenState extends State<FocusScreen> {
                   listenable: _controller,
                   builder: (context, _) {
                     return Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      crossAxisAlignment: .center,
+                      mainAxisSize: .max,
+                      mainAxisAlignment: .center,
                       children: [
-                        Center(
-                          child: DopFocusOrb(
-                            knobs: _controller.knobs,
-                            controller: _controller.orbController,
-                            dimension: _controller.orbDimension,
-                            onDistortionChanged: _controller.setOrbDistortion,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        DopText.header(
-                          l10n.focusTitle,
-                          align: TextAlign.center,
-                        ),
-                        const SizedBox(height: 16),
-                        DopInput(
-                          label: l10n.focusTaskLabel,
-                          hint: l10n.focusTaskHint,
-                          controller: _taskController,
-                          onChanged: _controller.setTask,
+                        DopFocusOrb(
+                          knobs: _controller.knobs,
+                          controller: _controller.orbController,
+                          dimension: _controller.orbDimension,
+                          onDistortionChanged: _controller.setOrbDistortion,
                         ),
                         const SizedBox(height: 28),
                         _KnobRow(controller: _controller),
@@ -166,6 +144,13 @@ class _FocusScreenState extends State<FocusScreen> {
         ),
       ),
     );
+  }
+
+  /// Switches the configured focus-scene dimension and dresses the app theme
+  /// with the same id (`room`, `cathedral`, ...).
+  void _selectDimension(String dimensionId) {
+    _controller.selectDimension(dimensionId);
+    context.themeController.setTheme(AppTheme.fromStorageValue(dimensionId));
   }
 }
 
@@ -214,12 +199,15 @@ class _KnobRow extends StatelessWidget {
     'pulse': Icons.show_chart,
     'bell': Icons.notifications_none,
     'cicada': Icons.blur_on,
+    'birdsong': Icons.flutter_dash,
+    'bamboo': Icons.spa,
   };
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Wrap(
+      spacing: 16,
+      runSpacing: 16,
       children: [
         for (final knob in controller.scene.knobs)
           DopKnob(
