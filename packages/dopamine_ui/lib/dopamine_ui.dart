@@ -21,6 +21,7 @@ export 'src/widgets/dop_header_widget.dart';
 export 'src/widgets/dop_input.dart';
 export 'src/widgets/dop_list_tile.dart';
 export 'src/widgets/dop_knob.dart';
+export 'src/widgets/dop_responsive_pane.dart';
 export 'src/widgets/dop_scale_selector.dart';
 export 'src/widgets/dop_step_indicator.dart';
 export 'src/widgets/dop_text.dart';

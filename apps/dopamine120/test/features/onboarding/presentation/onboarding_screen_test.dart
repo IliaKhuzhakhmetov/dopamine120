@@ -290,9 +290,17 @@ Future<void> _gatherAttention(WidgetTester tester) async {
     find.byKey(const ValueKey('attention-field')),
   );
   final fieldCenter = fieldBox.localToGlobal(fieldBox.size.center(Offset.zero));
+
   final gesture = await tester.startGesture(fieldCenter);
-  for (var i = 0; i < 360; i++) {
+
+  for (var i = 0; i < 5000; i++) {
     await tester.pump(const Duration(milliseconds: 16));
+    if (find
+        .byKey(const ValueKey('attention-gathered-body'))
+        .evaluate()
+        .isNotEmpty) {
+      break;
+    }
   }
   await gesture.up();
   await tester.pump(const Duration(milliseconds: 420));

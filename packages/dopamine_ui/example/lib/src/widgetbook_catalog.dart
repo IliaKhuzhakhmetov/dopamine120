@@ -10,6 +10,7 @@ import 'book/dop_header_widget.book.dart';
 import 'book/dop_input.book.dart';
 import 'book/dop_knob.book.dart';
 import 'book/dop_list_tile.book.dart';
+import 'book/dop_responsive_pane.book.dart';
 import 'book/dop_scale_selector.book.dart';
 import 'book/dop_step_indicator.book.dart';
 import 'book/dop_text.book.dart';
@@ -28,6 +29,7 @@ final dopamineUiWidgetbookDirectories = <WidgetbookNode>[
   dopCheckboxBook,
   dopHeaderWidgetBook,
   dopListTileBook,
+  dopResponsivePaneBook,
   dopScaleSelectorBook,
   dopFocusOrbBook,
   dopKnobBook,

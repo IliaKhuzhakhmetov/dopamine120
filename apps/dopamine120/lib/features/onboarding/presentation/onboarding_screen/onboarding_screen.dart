@@ -90,72 +90,77 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           builder: (context, _) {
             final page = _page;
 
-            return Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-                  child: Row(
-                    children: [
-                      AnimatedOpacity(
-                        opacity: page > 0 ? 1 : 0,
-                        duration: const Duration(milliseconds: 150),
-                        child: IgnorePointer(
-                          ignoring: page == 0,
-                          child: DopBackButton(
-                            semanticLabel: context.l10n.backLabel,
-                            onPressed: _controller.loading
-                                ? null
-                                : () => _showPage(page - 1),
+            return DopResponsivePane(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+                    child: Row(
+                      children: [
+                        AnimatedOpacity(
+                          opacity: page > 0 ? 1 : 0,
+                          duration: const Duration(milliseconds: 150),
+                          child: IgnorePointer(
+                            ignoring: page == 0,
+                            child: DopBackButton(
+                              semanticLabel: context.l10n.backLabel,
+                              onPressed: _controller.loading
+                                  ? null
+                                  : () => _showPage(page - 1),
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 20),
-                      Expanded(
-                        child: DopStepIndicator(count: _pageCount, index: page),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: PageView(
-                    controller: _pageController,
-                    onPageChanged: (value) {
-                      if (_page != value) setState(() => _page = value);
-                    },
-                    // Swiping would fight the attention field gesture, so pages
-                    // advance only through the buttons.
-                    physics: const NeverScrollableScrollPhysics(),
-                    children: [
-                      const OnboardingPage(child: IntroStep()),
-                      OnboardingPage(
-                        child: AttentionStep(
-                          active: page == 1,
-                          onGathered: () {
-                            if (_attentionGathered) return;
-                            setState(() => _attentionGathered = true);
-                          },
+                        const SizedBox(width: 20),
+                        Expanded(
+                          child: DopStepIndicator(
+                            count: _pageCount,
+                            index: page,
+                          ),
                         ),
-                      ),
-                      OnboardingPage(
-                        child: RewardStep(
-                          active: page == 2,
-                          onRewardReady: () {
-                            if (_rewardReady) return;
-                            setState(() => _rewardReady = true);
-                          },
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: PageView(
+                      controller: _pageController,
+                      onPageChanged: (value) {
+                        if (_page != value) setState(() => _page = value);
+                      },
+                      // Swiping would fight the attention field gesture, so pages
+                      // advance only through the buttons.
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: [
+                        const OnboardingPage(child: IntroStep()),
+                        OnboardingPage(
+                          child: AttentionStep(
+                            active: page == 1,
+                            onGathered: () {
+                              if (_attentionGathered) return;
+                              setState(() => _attentionGathered = true);
+                            },
+                          ),
                         ),
-                      ),
-                    ],
+                        OnboardingPage(
+                          child: RewardStep(
+                            active: page == 2,
+                            onRewardReady: () {
+                              if (_rewardReady) return;
+                              setState(() => _rewardReady = true);
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 12, 24, 16),
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 240),
-                    child: _footer(context.l10n, page),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 12, 24, 16),
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 240),
+                      child: _footer(context.l10n, page),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             );
           },
         ),

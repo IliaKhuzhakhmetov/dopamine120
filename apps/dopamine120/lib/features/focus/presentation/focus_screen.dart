@@ -60,85 +60,87 @@ class _FocusScreenState extends State<FocusScreen> {
         child: Listener(
           behavior: HitTestBehavior.translucent,
           onPointerDown: (_) => _controller.primeAudio(),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    DopBackButton(
-                      onPressed: () {
-                        context.router.pop();
-                      },
-                    ),
-                    Row(
-                      children: [
-                        DopText.label(
-                          l10n.focusEyebrow,
-                          color: colors.inkFaint,
-                        ),
-                        const SizedBox(width: 16),
-                        _MuteButton(controller: _controller),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                // Orb, knobs and the dimension selector share the controller's
-                // structural state; the per-second timer is intentionally left
-                // out so it can repaint on its own (see the chip below).
-                ListenableBuilder(
-                  listenable: _controller,
-                  builder: (context, _) {
-                    return Column(
-                      crossAxisAlignment: .center,
-                      mainAxisSize: .max,
-                      mainAxisAlignment: .center,
-                      children: [
-                        DopFocusOrb(
-                          knobs: _controller.knobs,
-                          controller: _controller.orbController,
-                          dimension: _controller.orbDimension,
-                          onDistortionChanged: _controller.setOrbDistortion,
-                        ),
-                        const SizedBox(height: 28),
-                        _KnobRow(controller: _controller),
-                        SizedBox(height: context.spacing.lg),
-                        DopDropdown<String>(
-                          label: l10n.focusDimensionLabel,
-                          value: _controller.dimensionId,
-                          onChanged: _selectDimension,
-                          options: [
-                            for (final filter in _controller.scene.filters)
-                              DopDropdownOption(
-                                value: filter.id,
-                                label: _orbDimensionFor(filter.id).label,
-                                subtitle: _orbDimensionFor(
-                                  filter.id,
-                                ).description,
-                              ),
-                          ],
-                        ),
-                      ],
-                    );
-                  },
-                ),
-                const SizedBox(height: 24),
-                Center(
-                  child: ValueListenableBuilder<Duration>(
-                    valueListenable: _controller.remaining,
-                    builder: (context, remaining, _) {
-                      return _TimerChip(
-                        label: FocusController.formatDuration(remaining),
-                        semanticLabel: l10n.focusTimerReset,
-                        onTap: _controller.startTimer,
+          child: DopResponsivePane(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      DopBackButton(
+                        onPressed: () {
+                          context.router.pop();
+                        },
+                      ),
+                      Row(
+                        children: [
+                          DopText.label(
+                            l10n.focusEyebrow,
+                            color: colors.inkFaint,
+                          ),
+                          const SizedBox(width: 16),
+                          _MuteButton(controller: _controller),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  // Orb, knobs and the dimension selector share the controller's
+                  // structural state; the per-second timer is intentionally left
+                  // out so it can repaint on its own (see the chip below).
+                  ListenableBuilder(
+                    listenable: _controller,
+                    builder: (context, _) {
+                      return Column(
+                        crossAxisAlignment: .center,
+                        mainAxisSize: .max,
+                        mainAxisAlignment: .center,
+                        children: [
+                          DopFocusOrb(
+                            knobs: _controller.knobs,
+                            controller: _controller.orbController,
+                            dimension: _controller.orbDimension,
+                            onDistortionChanged: _controller.setOrbDistortion,
+                          ),
+                          const SizedBox(height: 28),
+                          _KnobRow(controller: _controller),
+                          SizedBox(height: context.spacing.lg),
+                          DopDropdown<String>(
+                            label: l10n.focusDimensionLabel,
+                            value: _controller.dimensionId,
+                            onChanged: _selectDimension,
+                            options: [
+                              for (final filter in _controller.scene.filters)
+                                DopDropdownOption(
+                                  value: filter.id,
+                                  label: _orbDimensionFor(filter.id).label,
+                                  subtitle: _orbDimensionFor(
+                                    filter.id,
+                                  ).description,
+                                ),
+                            ],
+                          ),
+                        ],
                       );
                     },
                   ),
-                ),
-              ],
+                  const SizedBox(height: 24),
+                  Center(
+                    child: ValueListenableBuilder<Duration>(
+                      valueListenable: _controller.remaining,
+                      builder: (context, remaining, _) {
+                        return _TimerChip(
+                          label: FocusController.formatDuration(remaining),
+                          semanticLabel: l10n.focusTimerReset,
+                          onTap: _controller.startTimer,
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

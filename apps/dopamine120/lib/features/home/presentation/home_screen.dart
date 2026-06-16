@@ -16,24 +16,26 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Spacer(),
-              DopText.label('DOPAMINE120', color: colors.accent),
-              const SizedBox(height: 16),
-              DopText.header(l10n.homeTitle),
-              const SizedBox(height: 16),
-              DopText.body(l10n.homeBody, color: colors.inkSoft),
-              const SizedBox(height: 32),
-              DopButton.primary(
-                label: l10n.homeOpenFocus,
-                onPressed: () => context.router.push(const FocusRoute()),
-              ),
-              const Spacer(flex: 2),
-            ],
+        child: DopResponsivePane(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Spacer(),
+                DopText.label('DOPAMINE120', color: colors.accent),
+                const SizedBox(height: 16),
+                DopText.header(l10n.homeTitle),
+                const SizedBox(height: 16),
+                DopText.body(l10n.homeBody, color: colors.inkSoft),
+                const SizedBox(height: 32),
+                DopButton.primary(
+                  label: l10n.homeOpenFocus,
+                  onPressed: () => context.router.push(const FocusRoute()),
+                ),
+                const Spacer(flex: 2),
+              ],
+            ),
           ),
         ),
       ),
