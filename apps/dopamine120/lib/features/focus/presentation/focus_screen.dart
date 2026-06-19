@@ -178,7 +178,7 @@ class _MuteButton extends StatelessWidget {
             behavior: HitTestBehavior.opaque,
             onTap: controller.toggleMute,
             child: Icon(
-              muted ? Icons.volume_off : Icons.volume_up,
+              muted ? context.icons.muted : context.icons.unmuted,
               size: 20,
               color: muted ? colors.inkFaint : colors.ink,
             ),
@@ -195,18 +195,9 @@ class _KnobRow extends StatelessWidget {
 
   final FocusController controller;
 
-  static const Map<String, IconData> _icons = {
-    'drone': Icons.graphic_eq,
-    'rain': Icons.grain,
-    'pulse': Icons.show_chart,
-    'bell': Icons.notifications_none,
-    'cicada': Icons.blur_on,
-    'birdsong': Icons.flutter_dash,
-    'bamboo': Icons.spa,
-  };
-
   @override
   Widget build(BuildContext context) {
+    final icons = context.icons;
     return Wrap(
       spacing: 16,
       runSpacing: 16,
@@ -214,7 +205,7 @@ class _KnobRow extends StatelessWidget {
         for (final knob in controller.scene.knobs)
           DopKnob(
             value: controller.knobValue(knob.id),
-            icon: Icon(_icons[knob.id] ?? Icons.tune),
+            icon: Icon(icons.byName(knob.id)),
             label: knob.id,
             onChange: (value) => controller.setKnob(knob.id, value),
           ),

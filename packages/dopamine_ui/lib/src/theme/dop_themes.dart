@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'dop_colors.dart';
+import 'dop_icons.dart';
 import 'dop_radius.dart';
 import 'dop_spacing.dart';
 import 'dop_stroke.dart';
@@ -63,6 +64,9 @@ class RoomTheme extends DopThemeSpecBase {
 
   @override
   DopSpacing get spacing => DopSpacing.scaled(0.9);
+
+  @override
+  DopIcons get icons => const DopIcons.room();
 }
 
 /// `cathedral` — vast stone: cool, serif, roomy, heavy lines.
@@ -94,6 +98,9 @@ class CathedralTheme extends DopThemeSpecBase {
 
   @override
   DopStroke get stroke => const DopStroke(hairline: 1, outline: 1.5);
+
+  @override
+  DopIcons get icons => const DopIcons.cathedral();
 }
 
 /// `underwater` — muffled deep: low contrast, soft corners, fine lines.
@@ -119,6 +126,9 @@ class UnderwaterTheme extends DopThemeSpecBase {
 
   @override
   DopStroke get stroke => const DopStroke(hairline: 0.5, outline: 1);
+
+  @override
+  DopIcons get icons => const DopIcons.underwater();
 }
 
 /// `cosmos` — long orbit echo: dark, wide, large type.
@@ -143,6 +153,9 @@ class CosmosTheme extends DopThemeSpecBase {
 
   @override
   DopSpacing get spacing => DopSpacing.scaled(1.3);
+
+  @override
+  DopIcons get icons => const DopIcons.cosmos();
 }
 
 /// `jungle` — humid canopy: organic greens with rounded corners.
@@ -165,6 +178,9 @@ class JungleTheme extends DopThemeSpecBase {
   @override
   DopRadius get radius =>
       const DopRadius.soft(controlRadius: 8, cardRadius: 16);
+
+  @override
+  DopIcons get icons => const DopIcons.jungle();
 }
 
 /// `cave` — wet slap-back: dark earth, hard edges, tight grid.
@@ -186,6 +202,9 @@ class CaveTheme extends DopThemeSpecBase {
 
   @override
   DopSpacing get spacing => DopSpacing.scaled(0.85);
+
+  @override
+  DopIcons get icons => const DopIcons.cave();
 }
 
 /// The registry of every available DOPAMINE120 theme.

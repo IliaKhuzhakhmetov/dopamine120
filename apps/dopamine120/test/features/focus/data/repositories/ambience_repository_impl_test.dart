@@ -8,6 +8,33 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sound_framework/sound_framework.dart';
 
 void main() {
+  test('bell knob controls volume without retuning pitch', () {
+    final bell = focusScene.knobs.singleWhere((knob) => knob.id == 'bell');
+
+    expect(bell.mappings, hasLength(1));
+    expect(bell.mappings.single.target, SoundMappingTarget.soundVolume);
+    expect(bell.mappings.single.soundId, 'bell');
+  });
+
+  test('focus volume knobs use decibel range with audible default', () {
+    const initialValueForMinus21Db = 100 / 121;
+
+    for (final knob in focusScene.knobs) {
+      expect(knob.initialValue, closeTo(initialValueForMinus21Db, 0.000001));
+
+      final volumeMapping = knob.mappings.singleWhere(
+        (mapping) => mapping.target == SoundMappingTarget.soundVolume,
+      );
+      expect(volumeMapping.min, -121);
+      expect(volumeMapping.max, 0);
+      expect(volumeMapping.scale, SoundMappingScale.decibelGain);
+      expect(
+        volumeMapping.resolve(knob.initialValue),
+        closeTo(0.089125, 0.000001),
+      );
+    }
+  });
+
   test(
     'maps focus scene filter profile without retuning source sounds',
     () async {

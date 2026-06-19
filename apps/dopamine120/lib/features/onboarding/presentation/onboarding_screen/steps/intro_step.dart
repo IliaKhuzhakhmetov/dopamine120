@@ -198,11 +198,17 @@ class _IntroStepState extends State<IntroStep>
       _IntroStepKind.creation => CreationIconAnimation(
         controller: _creationIconController,
       ),
-      _IntroStepKind.reward => DopConfetti(
-        size: 62,
-        key: const ValueKey('reward-confetti'),
-        controller: _rewardConfettiController,
-        child: _IntroIcon(step.icon),
+      _IntroStepKind.reward => SizedBox(
+        width: 78,
+        child: Align(
+          alignment: Alignment.centerRight,
+          child: DopConfetti(
+            size: 62,
+            key: const ValueKey('reward-confetti'),
+            controller: _rewardConfettiController,
+            child: _IntroIcon(step.icon),
+          ),
+        ),
       ),
     };
   }

@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import '../../audio/audio_backend.dart';
 import '../../models/acoustic_profile.dart';
 
@@ -38,6 +40,15 @@ enum SoundMappingTarget {
 
   /// Controls a backend parameter.
   effectParam,
+}
+
+/// Output scale for a configured control mapping.
+enum SoundMappingScale {
+  /// Output is used directly after linear interpolation.
+  linear,
+
+  /// Output is interpreted as dB and converted to linear gain.
+  decibelGain,
 }
 
 /// Top-level scene configuration.
@@ -174,6 +185,7 @@ class SoundControlMapping {
     this.param,
     this.min = 0,
     this.max = 1,
+    this.scale = SoundMappingScale.linear,
   });
 
   /// Target kind.
@@ -194,10 +206,18 @@ class SoundControlMapping {
   /// Output value at normalized 1.
   final double max;
 
+  /// Scale used to convert the resolved value before it reaches the backend.
+  final SoundMappingScale scale;
+
   /// Resolves [input] to the configured range.
   double resolve(double input) {
     final value = input.clamp(0.0, 1.0).toDouble();
-    return min + (max - min) * value;
+    final resolved = min + (max - min) * value;
+    return switch (scale) {
+      SoundMappingScale.linear => resolved,
+      SoundMappingScale.decibelGain =>
+        resolved <= -121 ? 0 : math.pow(10, resolved / 20).toDouble(),
+    };
   }
 }
 

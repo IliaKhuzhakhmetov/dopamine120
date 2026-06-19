@@ -16,10 +16,10 @@ WidgetbookComponent get dopKnobBook => WidgetbookComponent(
     ),
     WidgetbookUseCase(
       name: 'Disabled',
-      builder: (_) => const Center(
+      builder: (context) => Center(
         child: DopKnob(
           value: 0.4,
-          icon: Icon(Icons.graphic_eq),
+          icon: Icon(context.icons.drone),
           label: 'drone',
           onChange: null,
           semanticLabel: 'drone level',
@@ -44,7 +44,7 @@ class _KnobPlaygroundState extends State<_KnobPlayground> {
   Widget build(BuildContext context) {
     return DopKnob(
       value: _value,
-      icon: const Icon(Icons.graphic_eq),
+      icon: Icon(context.icons.pulse),
       label: 'pulse',
       semanticLabel: 'pulse level',
       onChange: (value) => setState(() => _value = value),
@@ -61,15 +61,16 @@ class _KnobBank extends StatefulWidget {
 }
 
 class _KnobBankState extends State<_KnobBank> {
-  final _channels = <String, (IconData, double)>{
-    'drone': (Icons.graphic_eq, 0.22),
-    'rain': (Icons.water_drop, 0.12),
-    'pulse': (Icons.favorite, 0.36),
-    'bell': (Icons.notifications, 0.18),
+  final _channels = <String, double>{
+    'drone': 0.22,
+    'rain': 0.12,
+    'pulse': 0.36,
+    'bell': 0.18,
   };
 
   @override
   Widget build(BuildContext context) {
+    final icons = context.icons;
     return Wrap(
       spacing: 28,
       runSpacing: 24,
@@ -77,12 +78,11 @@ class _KnobBankState extends State<_KnobBank> {
       children: [
         for (final entry in _channels.entries)
           DopKnob(
-            value: entry.value.$2,
-            icon: Icon(entry.value.$1),
+            value: entry.value,
+            icon: Icon(icons.byName(entry.key)),
             label: entry.key,
             semanticLabel: '${entry.key} level',
-            onChange: (value) =>
-                setState(() => _channels[entry.key] = (entry.value.$1, value)),
+            onChange: (value) => setState(() => _channels[entry.key] = value),
           ),
       ],
     );

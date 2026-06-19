@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'dop_colors.dart';
+import 'dop_icons.dart';
 import 'dop_radius.dart';
 import 'dop_spacing.dart';
 import 'dop_stroke.dart';
@@ -46,6 +47,9 @@ abstract interface class DopThemeSpec {
 
   /// Stroke tokens.
   DopStroke get stroke;
+
+  /// Icon tokens.
+  DopIcons get icons;
 }
 
 /// Default implementation of [DopThemeSpec]: supplies the base value for every
@@ -71,4 +75,7 @@ abstract class DopThemeSpecBase implements DopThemeSpec {
 
   @override
   DopStroke get stroke => const DopStroke.base();
+
+  @override
+  DopIcons get icons => const DopIcons.base();
 }

@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:auto_route/auto_route.dart';
 import 'package:core/core.dart';
 import 'package:dopamine120/features/application/presentation/router/app_router.dart';
@@ -289,9 +291,43 @@ Future<void> _gatherAttention(WidgetTester tester) async {
   final fieldBox = tester.renderObject<RenderBox>(
     find.byKey(const ValueKey('attention-field')),
   );
-  final fieldCenter = fieldBox.localToGlobal(fieldBox.size.center(Offset.zero));
+  final listener = tester.widget<Listener>(
+    find.byWidgetPredicate(
+      (widget) =>
+          widget is Listener &&
+          widget.onPointerDown != null &&
+          widget.onPointerMove != null &&
+          widget.onPointerUp != null,
+    ),
+  );
+  final localCenter = fieldBox.size.center(Offset.zero);
+  final fieldCenter = fieldBox.localToGlobal(localCenter);
+  final transform = Matrix4.tryInvert(fieldBox.getTransformTo(null));
 
-  final gesture = await tester.startGesture(fieldCenter);
+  listener.onPointerDown?.call(
+    PointerDownEvent(position: fieldCenter).transformed(transform),
+  );
+
+  final sweepRadius = (fieldBox.size.shortestSide * 0.34)
+      .clamp(32.0, 120.0)
+      .toDouble();
+  for (var i = 0; i < 96; i++) {
+    final progress = i / 95;
+    final angle = progress * math.pi * 9;
+    final radius = sweepRadius * (1 - progress);
+    final point =
+        localCenter + Offset(math.cos(angle), math.sin(angle)) * radius;
+    final clamped = Offset(
+      point.dx.clamp(0.0, fieldBox.size.width),
+      point.dy.clamp(0.0, fieldBox.size.height),
+    );
+    listener.onPointerMove?.call(
+      PointerMoveEvent(
+        position: fieldBox.localToGlobal(clamped),
+      ).transformed(transform),
+    );
+    await tester.pump(const Duration(milliseconds: 16));
+  }
 
   for (var i = 0; i < 5000; i++) {
     await tester.pump(const Duration(milliseconds: 16));
@@ -302,7 +338,9 @@ Future<void> _gatherAttention(WidgetTester tester) async {
       break;
     }
   }
-  await gesture.up();
+  listener.onPointerUp?.call(
+    PointerUpEvent(position: fieldCenter).transformed(transform),
+  );
   await tester.pump(const Duration(milliseconds: 420));
 }
 

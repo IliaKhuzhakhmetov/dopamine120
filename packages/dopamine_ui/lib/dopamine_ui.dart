@@ -3,6 +3,7 @@ library;
 
 export 'src/theme/context_ext.dart';
 export 'src/theme/dop_colors.dart';
+export 'src/theme/dop_icons.dart';
 export 'src/theme/dop_knob_theme.dart';
 export 'src/theme/dop_radius.dart';
 export 'src/theme/dop_spacing.dart';

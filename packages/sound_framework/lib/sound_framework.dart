@@ -33,6 +33,7 @@ export 'src/core/config/sound_config.dart'
         SceneSoundConfig,
         SceneSoundType,
         SoundControlMapping,
+        SoundMappingScale,
         SoundMappingTarget,
         SoundPackConfig,
         TriggerSoundConfig;

@@ -118,6 +118,20 @@ void main() {
     expect(engine.currentState.filters['dream'], 0.5);
   });
 
+  test('decibel gain mappings resolve to linear backend volume', () {
+    const mapping = SoundControlMapping(
+      target: SoundMappingTarget.soundVolume,
+      soundId: 'bed',
+      min: -121,
+      max: 0,
+      scale: SoundMappingScale.decibelGain,
+    );
+
+    expect(mapping.resolve(1), 1);
+    expect(mapping.resolve(0), 0);
+    expect(mapping.resolve(100 / 121), closeTo(0.089125, 0.000001));
+  });
+
   test('trigger reuses cached asset and records state errors', () async {
     await engine.trigger('ui.hit');
     await engine.trigger('ui.hit');

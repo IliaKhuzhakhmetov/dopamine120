@@ -1,5 +1,11 @@
 import 'package:sound_framework/sound_framework.dart';
 
+const _volumeMinDb = -121.0;
+const _volumeMaxDb = 0.0;
+const _volumeDefaultDb = -21.0;
+const _volumeInitialValue =
+    (_volumeDefaultDb - _volumeMinDb) / (_volumeMaxDb - _volumeMinDb);
+
 /// Dopamine120 focus scene config.
 ///
 /// The framework only knows about scene sounds, filters and mappings. These
@@ -18,34 +24,40 @@ const focusScene = SceneConfig(
   knobs: [
     KnobConfig(
       id: 'drone',
+      initialValue: _volumeInitialValue,
       mappings: [
         SoundControlMapping(
           target: SoundMappingTarget.soundVolume,
           soundId: 'drone',
-          min: 0,
-          max: 1,
+          min: _volumeMinDb,
+          max: _volumeMaxDb,
+          scale: SoundMappingScale.decibelGain,
         ),
       ],
     ),
     KnobConfig(
       id: 'rain',
+      initialValue: _volumeInitialValue,
       mappings: [
         SoundControlMapping(
           target: SoundMappingTarget.soundVolume,
           soundId: 'rain',
-          min: 0,
-          max: 1,
+          min: _volumeMinDb,
+          max: _volumeMaxDb,
+          scale: SoundMappingScale.decibelGain,
         ),
       ],
     ),
     KnobConfig(
       id: 'pulse',
+      initialValue: _volumeInitialValue,
       mappings: [
         SoundControlMapping(
           target: SoundMappingTarget.soundVolume,
           soundId: 'pulse',
-          min: 0,
-          max: 1,
+          min: _volumeMinDb,
+          max: _volumeMaxDb,
+          scale: SoundMappingScale.decibelGain,
         ),
         SoundControlMapping(
           target: SoundMappingTarget.effectParam,
@@ -58,52 +70,53 @@ const focusScene = SceneConfig(
     ),
     KnobConfig(
       id: 'bell',
+      initialValue: _volumeInitialValue,
       mappings: [
         SoundControlMapping(
           target: SoundMappingTarget.soundVolume,
           soundId: 'bell',
-          min: 0,
-          max: 1,
-        ),
-        SoundControlMapping(
-          target: SoundMappingTarget.effectParam,
-          soundId: 'bell',
-          param: 'frequencyMultiplier',
-          min: 0.75,
-          max: 1.35,
+          min: _volumeMinDb,
+          max: _volumeMaxDb,
+          scale: SoundMappingScale.decibelGain,
         ),
       ],
     ),
     KnobConfig(
       id: 'cicada',
+      initialValue: _volumeInitialValue,
       mappings: [
         SoundControlMapping(
           target: SoundMappingTarget.soundVolume,
           soundId: 'cicada',
-          min: 0,
-          max: 1,
+          min: _volumeMinDb,
+          max: _volumeMaxDb,
+          scale: SoundMappingScale.decibelGain,
         ),
       ],
     ),
     KnobConfig(
       id: 'birdsong',
+      initialValue: _volumeInitialValue,
       mappings: [
         SoundControlMapping(
           target: SoundMappingTarget.soundVolume,
           soundId: 'birdsong',
-          min: 0,
-          max: 1,
+          min: _volumeMinDb,
+          max: _volumeMaxDb,
+          scale: SoundMappingScale.decibelGain,
         ),
       ],
     ),
     KnobConfig(
       id: 'bamboo',
+      initialValue: _volumeInitialValue,
       mappings: [
         SoundControlMapping(
           target: SoundMappingTarget.soundVolume,
           soundId: 'bamboo',
-          min: 0,
-          max: 1,
+          min: _volumeMinDb,
+          max: _volumeMaxDb,
+          scale: SoundMappingScale.decibelGain,
         ),
       ],
     ),

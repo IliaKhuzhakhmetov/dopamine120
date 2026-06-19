@@ -29,6 +29,7 @@ abstract final class DopTheme {
     final spacing = spec.spacing;
     final radius = spec.radius;
     final stroke = spec.stroke;
+    final icons = spec.icons;
 
     final colorScheme = ColorScheme(
       brightness: spec.brightness,
@@ -242,6 +243,7 @@ abstract final class DopTheme {
         spacing,
         radius,
         stroke,
+        icons,
         knobTheme,
       ],
     );

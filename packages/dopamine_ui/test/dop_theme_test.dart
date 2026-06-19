@@ -4,6 +4,7 @@ import 'package:dopamine_ui/dopamine_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 void main() {
   // google_fonts resolves font assets through the services binding and must
@@ -32,6 +33,7 @@ void main() {
     test('registers both token extensions', () {
       expect(theme.extension<DopColors>(), isNotNull);
       expect(theme.extension<DopTypography>(), isNotNull);
+      expect(theme.extension<DopIcons>(), isNotNull);
     });
 
     test('maps surfaces and text onto the palette', () {
@@ -114,7 +116,21 @@ void main() {
         expect(data.extension<DopSpacing>(), isNotNull);
         expect(data.extension<DopRadius>(), isNotNull);
         expect(data.extension<DopStroke>(), isNotNull);
+        expect(data.extension<DopIcons>(), isNotNull);
       }
+    });
+
+    test('theme specs can swap icons without changing consumers', () {
+      expect(DopThemes.light.icons.pulse, PhosphorIconsRegular.pulse);
+      expect(DopThemes.underwater.icons.pulse, PhosphorIconsThin.pulse);
+      expect(
+        DopThemes.jungle.icons.byName('bamboo'),
+        PhosphorIconsRegular.plant,
+      );
+      expect(
+        DopThemes.cave.icons.byName('unknown'),
+        PhosphorIconsBold.mountains,
+      );
     });
 
     test('a soft theme rounds its control corners', () {
@@ -128,6 +144,7 @@ void main() {
     test('registers both token extensions', () {
       expect(darkTheme.extension<DopColors>(), isNotNull);
       expect(darkTheme.extension<DopTypography>(), isNotNull);
+      expect(darkTheme.extension<DopIcons>(), isNotNull);
     });
 
     test('maps surfaces, text, and icons onto the dark palette', () {

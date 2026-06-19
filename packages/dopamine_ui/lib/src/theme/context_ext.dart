@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'dop_colors.dart';
+import 'dop_icons.dart';
 import 'dop_knob_theme.dart';
 import 'dop_radius.dart';
 import 'dop_spacing.dart';
@@ -27,6 +28,9 @@ extension DopContext on BuildContext {
 
   /// The [DopStroke] of the active theme.
   DopStroke get stroke => Theme.of(this).extension<DopStroke>()!;
+
+  /// The [DopIcons] of the active theme.
+  DopIcons get icons => Theme.of(this).extension<DopIcons>()!;
 
   /// The [DopKnobTheme] of the active theme.
   DopKnobTheme get knobTheme => Theme.of(this).extension<DopKnobTheme>()!;

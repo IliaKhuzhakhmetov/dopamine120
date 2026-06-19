@@ -273,9 +273,9 @@ class _AttentionStepState extends State<AttentionStep>
                   ),
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 28),
         SizedBox(
-          height: math.max(190, MediaQuery.sizeOf(context).height * 0.34),
+          height: math.max(230, MediaQuery.sizeOf(context).height * 0.38),
           child: StaggeredText(
             animation: _entrance,
             start: 0.28,
@@ -285,10 +285,12 @@ class _AttentionStepState extends State<AttentionStep>
                 _ensureSeeded(size);
                 final metrics = _particles.isEmpty ? null : _metrics();
                 final center = _gathered
-                    ? (_convergenceCenter ??
-                          metrics?.center ??
-                          size.center(Offset.zero))
+                    ? Offset(size.width * 0.5, size.height * 0.56)
                     : metrics?.center ?? size.center(Offset.zero);
+                final targetCenter = Offset(
+                  center.dx.clamp(64.0, math.max(64.0, size.width - 64)),
+                  center.dy.clamp(64.0, math.max(64.0, size.height - 64)),
+                );
 
                 return Semantics(
                   container: true,
@@ -314,6 +316,7 @@ class _AttentionStepState extends State<AttentionStep>
                       _stopTickingIfIdle();
                     },
                     child: Stack(
+                      clipBehavior: Clip.none,
                       children: [
                         Positioned.fill(
                           child: IgnorePointer(
@@ -339,8 +342,8 @@ class _AttentionStepState extends State<AttentionStep>
                         ),
                         if (_gathered)
                           Positioned(
-                            left: center.dx - 64,
-                            top: center.dy - 64,
+                            left: targetCenter.dx - 64,
+                            top: targetCenter.dy - 64,
                             width: 128,
                             height: 128,
                             child: IgnorePointer(
