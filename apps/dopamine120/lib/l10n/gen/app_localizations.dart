@@ -490,6 +490,12 @@ abstract class AppLocalizations {
   /// **'Silence'**
   String get deprivationMaskSilence;
 
+  /// No description provided for @deprivationMaskWhite.
+  ///
+  /// In en, this message translates to:
+  /// **'White'**
+  String get deprivationMaskWhite;
+
   /// No description provided for @deprivationMaskPink.
   ///
   /// In en, this message translates to:

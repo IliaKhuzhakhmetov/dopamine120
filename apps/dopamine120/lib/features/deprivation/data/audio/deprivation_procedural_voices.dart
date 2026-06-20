@@ -2,11 +2,19 @@ import 'dart:math' as math;
 
 import 'package:sound_framework/sound_framework.dart';
 
+const deprivationWhiteSoundId = 'deprivation.white';
 const deprivationPinkSoundId = 'deprivation.pink';
 const deprivationBrownSoundId = 'deprivation.brown';
 const deprivationRainSoundId = 'deprivation.rain';
 
 List<ProceduralVoice> buildDeprivationProceduralVoices() => [
+  _DeprivationNoiseVoice(
+    id: deprivationWhiteSoundId,
+    color: NoiseColor.white,
+    centerHz: 2600,
+    q: 0.2,
+    pan: 0,
+  ),
   _DeprivationNoiseVoice(
     id: deprivationPinkSoundId,
     color: NoiseColor.pink,

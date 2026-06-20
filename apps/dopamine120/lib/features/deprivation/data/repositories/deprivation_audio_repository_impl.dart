@@ -10,6 +10,7 @@ class DeprivationAudioRepositoryImpl implements DeprivationAudioRepository {
   static const double maskVolume = defaultDeprivationMaskVolume;
 
   static const Map<DeprivationMask, String> _soundIds = {
+    DeprivationMask.white: deprivationWhiteSoundId,
     DeprivationMask.pink: deprivationPinkSoundId,
     DeprivationMask.brown: deprivationBrownSoundId,
     DeprivationMask.rain: deprivationRainSoundId,

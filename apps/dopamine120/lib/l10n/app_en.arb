@@ -66,6 +66,7 @@
   "deprivationDuration45": "45 min",
   "deprivationMaskLabel": "Noise type",
   "deprivationMaskSilence": "Silence",
+  "deprivationMaskWhite": "White",
   "deprivationMaskPink": "Pink",
   "deprivationMaskBrown": "Brown",
   "deprivationMaskRain": "Rain",

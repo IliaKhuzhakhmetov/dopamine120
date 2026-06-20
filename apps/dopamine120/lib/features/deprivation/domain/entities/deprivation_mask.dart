@@ -1,5 +1,6 @@
 enum DeprivationMask {
   silence('silence'),
+  white('white'),
   pink('pink'),
   brown('brown'),
   rain('rain');

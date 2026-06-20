@@ -217,6 +217,7 @@ String _durationLabel(AppLocalizations l10n, Duration duration) {
 String _maskLabel(AppLocalizations l10n, DeprivationMask mask) {
   return switch (mask) {
     DeprivationMask.silence => l10n.deprivationMaskSilence,
+    DeprivationMask.white => l10n.deprivationMaskWhite,
     DeprivationMask.pink => l10n.deprivationMaskPink,
     DeprivationMask.brown => l10n.deprivationMaskBrown,
     DeprivationMask.rain => l10n.deprivationMaskRain,

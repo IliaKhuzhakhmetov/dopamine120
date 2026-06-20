@@ -222,6 +222,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deprivationMaskSilence => 'Silence';
 
   @override
+  String get deprivationMaskWhite => 'White';
+
+  @override
   String get deprivationMaskPink => 'Pink';
 
   @override
