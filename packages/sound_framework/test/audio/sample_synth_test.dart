@@ -120,5 +120,31 @@ void main() {
       // The seam jump is on the order of an ordinary sample-to-sample step.
       expect(seamStep, lessThanOrEqualTo(4 * (neighbour - first).abs() + 200));
     });
+
+    test(
+      'brown noise is deterministic, non-clipping, and distinct from pink',
+      () {
+        Uint8List brown() => synth.bandNoiseWav(
+          centerHz: 160,
+          q: 0.32,
+          color: NoiseColor.brown,
+          random: Random(9),
+        );
+
+        final a = brown();
+        final b = brown();
+        final pink = synth.bandNoiseWav(
+          centerHz: 160,
+          q: 0.32,
+          color: NoiseColor.pink,
+          random: Random(9),
+        );
+
+        expect(a, equals(b));
+        expect(_peakAmplitude(a), lessThanOrEqualTo(32767));
+        expect(_peakAmplitude(a), greaterThan(0));
+        expect(a, isNot(equals(pink)));
+      },
+    );
   });
 }

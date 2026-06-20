@@ -120,6 +120,19 @@ class DopColors extends ThemeExtension<DopColors> {
       onVoidSoft = const Color(0xFF6E5F4F),
       accent = const Color(0xFFC77A3C);
 
+  /// `deprivation` — OLED black: warm off-white text, no glow.
+  const DopColors.deprivation()
+    : wall = const Color(0xFF000000),
+      paper = const Color(0xFF080807),
+      ink = const Color(0xFFE8E6DE),
+      inkSoft = const Color(0xFFA7A39A),
+      inkFaint = const Color(0xFF5F5C55),
+      line = const Color(0xFF1B1A18),
+      voidBlack = const Color(0xFFE8E6DE),
+      onVoid = const Color(0xFF000000),
+      onVoidSoft = const Color(0xFF6F6B63),
+      accent = const Color(0xFFD8D2C4);
+
   /// Background.
   final Color wall;
 

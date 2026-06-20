@@ -207,6 +207,36 @@ class CaveTheme extends DopThemeSpecBase {
   DopIcons get icons => const DopIcons.cave();
 }
 
+/// `deprivation` — OLED black: minimal surfaces and readable type.
+class DeprivationTheme extends DopThemeSpecBase {
+  /// Creates the deprivation theme spec.
+  const DeprivationTheme();
+
+  @override
+  String get id => 'deprivation';
+
+  @override
+  String get description => 'oled black';
+
+  @override
+  Brightness get brightness => Brightness.dark;
+
+  @override
+  DopColors get colors => const DopColors.deprivation();
+
+  @override
+  DopTypography get typography => DopTypography.fromColors(colors, scale: 0.96);
+
+  @override
+  DopSpacing get spacing => const DopSpacing.base();
+
+  @override
+  DopRadius get radius => const DopRadius.base();
+
+  @override
+  DopStroke get stroke => const DopStroke(hairline: 1, outline: 1);
+}
+
 /// The registry of every available DOPAMINE120 theme.
 ///
 /// The single list a new theme must join — and the only place consumers
@@ -236,6 +266,9 @@ abstract final class DopThemes {
   /// Cave.
   static const CaveTheme cave = CaveTheme();
 
+  /// Deprivation.
+  static const DeprivationTheme deprivation = DeprivationTheme();
+
   /// Every theme, in presentation order.
   static const List<DopThemeSpec> all = [
     light,
@@ -246,6 +279,7 @@ abstract final class DopThemes {
     cosmos,
     jungle,
     cave,
+    deprivation,
   ];
 
   /// The spec with [id], or [light] when nothing matches.

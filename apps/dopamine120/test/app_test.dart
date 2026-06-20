@@ -35,6 +35,29 @@ void main() {
     expect(find.text('How to train your brain'), findsNothing);
   });
 
+  testWidgets('home opens deprivation and end navigates to focus', (
+    tester,
+  ) async {
+    final injector = createAppInjector();
+    await injector.get<OnboardingLocalDs>().markComplete();
+
+    await tester.pumpWidget(DopamineApp(injector: injector));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('start deprivation'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('30 minutes without fast input'), findsOneWidget);
+    expect(find.text('Silence'), findsOneWidget);
+    expect(find.text('30 min'), findsOneWidget);
+
+    await tester.ensureVisible(find.text('end'));
+    await tester.tap(find.text('end'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('focus'), findsOneWidget);
+  });
+
   testWidgets(
     'deprivation intro tile flashes dark theme and returns to light',
     (tester) async {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'dop_knob_theme.dart';
+import 'dop_slider_theme.dart';
 import 'dop_theme_spec.dart';
 import 'dop_themes.dart';
 
@@ -90,6 +91,13 @@ abstract final class DopTheme {
       colors: colors,
       typo: typo,
       spacing: spacing,
+      stroke: stroke,
+    );
+    final sliderTheme = DopSliderTheme.from(
+      colors: colors,
+      typo: typo,
+      spacing: spacing,
+      radius: radius,
       stroke: stroke,
     );
 
@@ -245,6 +253,7 @@ abstract final class DopTheme {
         stroke,
         icons,
         knobTheme,
+        sliderTheme,
       ],
     );
   }

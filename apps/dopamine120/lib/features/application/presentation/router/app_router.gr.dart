@@ -11,19 +11,68 @@
 part of 'app_router.dart';
 
 /// generated route for
+/// [DeprivationScreen]
+class DeprivationRoute extends PageRouteInfo<void> {
+  const DeprivationRoute({List<PageRouteInfo>? children})
+    : super(DeprivationRoute.name, initialChildren: children);
+
+  static const String name = 'DeprivationRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const DeprivationScreen();
+    },
+  );
+}
+
+/// generated route for
 /// [FocusScreen]
-class FocusRoute extends PageRouteInfo<void> {
-  const FocusRoute({List<PageRouteInfo>? children})
-    : super(FocusRoute.name, initialChildren: children);
+class FocusRoute extends PageRouteInfo<FocusRouteArgs> {
+  FocusRoute({
+    Key? key,
+    AppTheme initialTheme = AppTheme.room,
+    List<PageRouteInfo>? children,
+  }) : super(
+         FocusRoute.name,
+         args: FocusRouteArgs(key: key, initialTheme: initialTheme),
+         initialChildren: children,
+       );
 
   static const String name = 'FocusRoute';
 
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      return const FocusScreen();
+      final args = data.argsAs<FocusRouteArgs>(
+        orElse: () => const FocusRouteArgs(),
+      );
+      return FocusScreen(key: args.key, initialTheme: args.initialTheme);
     },
   );
+}
+
+class FocusRouteArgs {
+  const FocusRouteArgs({this.key, this.initialTheme = AppTheme.room});
+
+  final Key? key;
+
+  final AppTheme initialTheme;
+
+  @override
+  String toString() {
+    return 'FocusRouteArgs{key: $key, initialTheme: $initialTheme}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! FocusRouteArgs) return false;
+    return key == other.key && initialTheme == other.initialTheme;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ initialTheme.hashCode;
 }
 
 /// generated route for

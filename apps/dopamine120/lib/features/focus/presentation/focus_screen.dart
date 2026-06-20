@@ -19,7 +19,9 @@ import 'controller/focus_controller.dart';
 /// dimension selector, a task line and a session timer.
 @RoutePage()
 class FocusScreen extends StatefulWidget {
-  const FocusScreen({super.key});
+  const FocusScreen({super.key, this.initialTheme = AppTheme.room});
+
+  final AppTheme initialTheme;
 
   @override
   State<FocusScreen> createState() => _FocusScreenState();
@@ -42,6 +44,10 @@ class _FocusScreenState extends State<FocusScreen> {
       watchSceneSoundEvents: injector.get<WatchSceneSoundEvents>(),
     );
     _controller.startTimer();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.themeController.setTheme(widget.initialTheme);
+    });
   }
 
   @override

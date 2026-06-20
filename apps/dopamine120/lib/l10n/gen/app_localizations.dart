@@ -430,6 +430,114 @@ abstract class AppLocalizations {
   /// **'enter focus'**
   String get homeOpenFocus;
 
+  /// No description provided for @homeOpenDeprivation.
+  ///
+  /// In en, this message translates to:
+  /// **'start deprivation'**
+  String get homeOpenDeprivation;
+
+  /// No description provided for @deprivationEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'deprivation'**
+  String get deprivationEyebrow;
+
+  /// No description provided for @deprivationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'30 minutes without fast input'**
+  String get deprivationTitle;
+
+  /// No description provided for @deprivationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A short reset before effort. Reduce fast input, let the urge pass, then choose the next action deliberately. Nothing is blocked; this is practice, not punishment.'**
+  String get deprivationBody;
+
+  /// No description provided for @deprivationDurationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'duration'**
+  String get deprivationDurationLabel;
+
+  /// No description provided for @deprivationDuration15.
+  ///
+  /// In en, this message translates to:
+  /// **'15 min'**
+  String get deprivationDuration15;
+
+  /// No description provided for @deprivationDuration30.
+  ///
+  /// In en, this message translates to:
+  /// **'30 min'**
+  String get deprivationDuration30;
+
+  /// No description provided for @deprivationDuration45.
+  ///
+  /// In en, this message translates to:
+  /// **'45 min'**
+  String get deprivationDuration45;
+
+  /// No description provided for @deprivationMaskLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Noise type'**
+  String get deprivationMaskLabel;
+
+  /// No description provided for @deprivationMaskSilence.
+  ///
+  /// In en, this message translates to:
+  /// **'Silence'**
+  String get deprivationMaskSilence;
+
+  /// No description provided for @deprivationMaskPink.
+  ///
+  /// In en, this message translates to:
+  /// **'Pink'**
+  String get deprivationMaskPink;
+
+  /// No description provided for @deprivationMaskBrown.
+  ///
+  /// In en, this message translates to:
+  /// **'Brown'**
+  String get deprivationMaskBrown;
+
+  /// No description provided for @deprivationMaskRain.
+  ///
+  /// In en, this message translates to:
+  /// **'Rain'**
+  String get deprivationMaskRain;
+
+  /// No description provided for @deprivationVolumeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'noise'**
+  String get deprivationVolumeLabel;
+
+  /// No description provided for @deprivationStart.
+  ///
+  /// In en, this message translates to:
+  /// **'start'**
+  String get deprivationStart;
+
+  /// No description provided for @deprivationPause.
+  ///
+  /// In en, this message translates to:
+  /// **'pause'**
+  String get deprivationPause;
+
+  /// No description provided for @deprivationResume.
+  ///
+  /// In en, this message translates to:
+  /// **'resume'**
+  String get deprivationResume;
+
+  /// No description provided for @deprivationEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'end'**
+  String get deprivationEnd;
+
   /// No description provided for @focusEyebrow.
   ///
   /// In en, this message translates to:

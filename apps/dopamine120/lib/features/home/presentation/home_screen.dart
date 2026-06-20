@@ -31,7 +31,13 @@ class HomeScreen extends StatelessWidget {
                 const SizedBox(height: 32),
                 DopButton.primary(
                   label: l10n.homeOpenFocus,
-                  onPressed: () => context.router.push(const FocusRoute()),
+                  onPressed: () => context.router.push(FocusRoute()),
+                ),
+                const SizedBox(height: 12),
+                DopButton.outline(
+                  label: l10n.homeOpenDeprivation,
+                  onPressed: () =>
+                      context.router.push(const DeprivationRoute()),
                 ),
                 const Spacer(flex: 2),
               ],

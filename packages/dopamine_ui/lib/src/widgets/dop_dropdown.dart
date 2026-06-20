@@ -98,8 +98,16 @@ class _DopDropdownState<T> extends State<DopDropdown<T>> {
   @override
   void didUpdateWidget(covariant DopDropdown<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!_enabled && _open) _close();
-    _entry?.markNeedsBuild();
+    if (!_enabled && _open) {
+      _entry?.remove();
+      _entry = null;
+      return;
+    }
+    if (_open) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _entry?.markNeedsBuild();
+      });
+    }
   }
 
   @override

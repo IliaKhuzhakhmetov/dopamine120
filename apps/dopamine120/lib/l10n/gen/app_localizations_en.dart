@@ -191,6 +191,61 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeOpenFocus => 'enter focus';
 
   @override
+  String get homeOpenDeprivation => 'start deprivation';
+
+  @override
+  String get deprivationEyebrow => 'deprivation';
+
+  @override
+  String get deprivationTitle => '30 minutes without fast input';
+
+  @override
+  String get deprivationBody =>
+      'A short reset before effort. Reduce fast input, let the urge pass, then choose the next action deliberately. Nothing is blocked; this is practice, not punishment.';
+
+  @override
+  String get deprivationDurationLabel => 'duration';
+
+  @override
+  String get deprivationDuration15 => '15 min';
+
+  @override
+  String get deprivationDuration30 => '30 min';
+
+  @override
+  String get deprivationDuration45 => '45 min';
+
+  @override
+  String get deprivationMaskLabel => 'Noise type';
+
+  @override
+  String get deprivationMaskSilence => 'Silence';
+
+  @override
+  String get deprivationMaskPink => 'Pink';
+
+  @override
+  String get deprivationMaskBrown => 'Brown';
+
+  @override
+  String get deprivationMaskRain => 'Rain';
+
+  @override
+  String get deprivationVolumeLabel => 'noise';
+
+  @override
+  String get deprivationStart => 'start';
+
+  @override
+  String get deprivationPause => 'pause';
+
+  @override
+  String get deprivationResume => 'resume';
+
+  @override
+  String get deprivationEnd => 'end';
+
+  @override
   String get focusEyebrow => 'focus';
 
   @override

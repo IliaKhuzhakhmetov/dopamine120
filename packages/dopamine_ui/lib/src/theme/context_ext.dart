@@ -4,6 +4,7 @@ import 'dop_colors.dart';
 import 'dop_icons.dart';
 import 'dop_knob_theme.dart';
 import 'dop_radius.dart';
+import 'dop_slider_theme.dart';
 import 'dop_spacing.dart';
 import 'dop_stroke.dart';
 import 'dop_typography.dart';
@@ -34,4 +35,7 @@ extension DopContext on BuildContext {
 
   /// The [DopKnobTheme] of the active theme.
   DopKnobTheme get knobTheme => Theme.of(this).extension<DopKnobTheme>()!;
+
+  /// The [DopSliderTheme] of the active theme.
+  DopSliderTheme get sliderTheme => Theme.of(this).extension<DopSliderTheme>()!;
 }

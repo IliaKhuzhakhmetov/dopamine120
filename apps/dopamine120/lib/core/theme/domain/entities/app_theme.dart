@@ -12,7 +12,8 @@ enum AppTheme {
   underwater('underwater'),
   cosmos('cosmos'),
   jungle('jungle'),
-  cave('cave');
+  cave('cave'),
+  deprivation('deprivation');
 
   const AppTheme(this.storageValue);
 

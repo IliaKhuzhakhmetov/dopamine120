@@ -1,7 +1,6 @@
 import 'package:core/core.dart';
 import 'package:sound_framework/sound_framework.dart';
 
-import '../../focus/data/audio/focus_procedural_voices.dart';
 import '../../focus/data/repositories/ambience_repository_impl.dart';
 import '../../focus/data/scenes/focus_scene.dart';
 import '../../focus/domain/repositories/ambience_repository.dart';
@@ -15,12 +14,6 @@ import '../../focus/domain/usecases/watch_scene_sound_events.dart';
 void registerFocusModule(Injector injector) {
   injector
     ..registerLazySingleton<SceneConfig>((_) => focusScene)
-    ..registerLazySingleton<ProceduralSoundEngine>(
-      (i) => ProceduralSoundEngine(
-        backend: i.get<AudioBackend>(),
-        voices: buildFocusProceduralVoices(),
-      ),
-    )
     ..registerLazySingleton<AmbienceRepository>(
       (i) => AmbienceRepositoryImpl(
         i.get<ProceduralSoundEngine>(),

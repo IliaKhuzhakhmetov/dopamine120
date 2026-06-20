@@ -13,6 +13,9 @@ enum NoiseColor {
 
   /// Approximate 1/f source.
   pink,
+
+  /// Approximate 1/f^2 source.
+  brown,
 }
 
 /// Generates procedural sample buffers.
@@ -106,18 +109,24 @@ class SampleSynth {
     var b0 = 0.0;
     var b1 = 0.0;
     var b2 = 0.0;
+    var brown = 0.0;
 
     for (var i = 0; i < raw.length; i++) {
       final white = random.nextDouble() * 2 - 1;
       double input;
-      if (color == NoiseColor.pink) {
-        b0 = 0.99765 * b0 + white * 0.0990460;
-        b1 = 0.96300 * b1 + white * 0.2965164;
-        b2 = 0.57000 * b2 + white * 1.0526913;
-        input = (b0 + b1 + b2 + white * 0.1848) * 0.25;
-      } else {
-        input = white;
-      }
+      input = switch (color) {
+        NoiseColor.white => white,
+        NoiseColor.pink => () {
+          b0 = 0.99765 * b0 + white * 0.0990460;
+          b1 = 0.96300 * b1 + white * 0.2965164;
+          b2 = 0.57000 * b2 + white * 1.0526913;
+          return (b0 + b1 + b2 + white * 0.1848) * 0.25;
+        }(),
+        NoiseColor.brown => () {
+          brown = (brown + 0.02 * white) / 1.02;
+          return brown * 3.5;
+        }(),
+      };
       low += f * band;
       final high = input - low - damping * band;
       band += f * high;
