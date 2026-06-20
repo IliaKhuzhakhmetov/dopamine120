@@ -13,6 +13,7 @@ export 'src/theme/dop_theme.dart';
 export 'src/theme/dop_theme_spec.dart';
 export 'src/theme/dop_themes.dart';
 export 'src/theme/dop_typography.dart';
+export 'src/widgets/dop_app_bar.dart';
 export 'src/widgets/dop_back_button.dart';
 export 'src/widgets/dop_button.dart';
 export 'src/widgets/dop_checkbox.dart';

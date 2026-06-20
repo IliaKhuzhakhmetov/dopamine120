@@ -1,6 +1,7 @@
 import 'package:widgetbook/widgetbook.dart';
 
 import 'book/colors.book.dart';
+import 'book/dop_app_bar.book.dart';
 import 'book/dop_back_button.book.dart';
 import 'book/dop_button.book.dart';
 import 'book/dop_checkbox.book.dart';
@@ -26,6 +27,7 @@ import 'book/icons.book.dart';
 final dopamineUiWidgetbookDirectories = <WidgetbookNode>[
   dopTextBook,
   dopButtonBook,
+  dopAppBarBook,
   dopBackButtonBook,
   dopInputBook,
   dopDialogBook,

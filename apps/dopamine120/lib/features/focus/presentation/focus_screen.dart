@@ -58,7 +58,6 @@ class _FocusScreenState extends State<FocusScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
     final l10n = context.l10n;
 
     return Scaffold(
@@ -72,25 +71,10 @@ class _FocusScreenState extends State<FocusScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      DopBackButton(
-                        onPressed: () {
-                          context.router.pop();
-                        },
-                      ),
-                      Row(
-                        children: [
-                          DopText.label(
-                            l10n.focusEyebrow,
-                            color: colors.inkFaint,
-                          ),
-                          const SizedBox(width: 16),
-                          _MuteButton(controller: _controller),
-                        ],
-                      ),
-                    ],
+                  DopAppBar(
+                    onBack: () => context.router.pop(),
+                    title: l10n.focusEyebrow,
+                    trailing: _MuteButton(controller: _controller),
                   ),
                   const SizedBox(height: 16),
                   // Orb, knobs and the dimension selector share the controller's

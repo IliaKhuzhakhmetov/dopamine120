@@ -71,9 +71,9 @@ class _DeprivationScreenState extends State<DeprivationScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            DopText.label(
-                              l10n.deprivationEyebrow,
-                              color: colors.inkFaint,
+                            DopAppBar(
+                              onBack: () => context.router.pop(),
+                              title: l10n.deprivationEyebrow,
                             ),
                             const SizedBox(height: 20),
                             DopText.header(l10n.deprivationTitle),
