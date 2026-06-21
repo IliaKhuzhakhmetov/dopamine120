@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:core/core.dart';
 import 'package:dopamine_ui/dopamine_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:sound_framework/sound_framework.dart';
 
 import '../../../l10n/l10n.dart';
 import '../../../core/theme/domain/entities/app_theme.dart';
@@ -32,6 +33,7 @@ class _DeprivationScreenState extends State<DeprivationScreen> {
       startMask: injector.get<StartDeprivationMask>(),
       setMaskVolume: injector.get<SetDeprivationMaskVolume>(),
       stopMask: injector.get<StopDeprivationMask>(),
+      backgroundAudioSession: injector.get<BackgroundAudioSession>(),
       onCompleted: () {
         if (mounted) context.router.replace(FocusRoute());
       },

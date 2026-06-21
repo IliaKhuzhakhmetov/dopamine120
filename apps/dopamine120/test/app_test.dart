@@ -1,5 +1,7 @@
 import 'package:dopamine120/core/theme/presentation/theme_controller.dart';
 import 'package:dopamine120/features/application/application.dart';
+import 'package:dopamine120/features/focus/data/repositories/silent_ambience_repository.dart';
+import 'package:dopamine120/features/focus/domain/repositories/ambience_repository.dart';
 import 'package:dopamine120/features/onboarding/data/datasources/onboarding_local_ds.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -56,6 +58,28 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('focus'), findsOneWidget);
+  });
+
+  testWidgets('home opens focus and starts ambience immediately', (
+    tester,
+  ) async {
+    final injector = createAppInjector();
+    final ambienceRepository = SilentAmbienceRepository();
+    injector.registerLazySingleton<AmbienceRepository>(
+      (_) => ambienceRepository,
+    );
+    await injector.get<OnboardingLocalDs>().markComplete();
+
+    await tester.pumpWidget(DopamineApp(injector: injector));
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('enter focus'));
+    await tester.tap(find.text('enter focus'));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(ambienceRepository.running, isTrue);
+    expect(ambienceRepository.knobValues['drone'], isNotNull);
   });
 
   testWidgets(

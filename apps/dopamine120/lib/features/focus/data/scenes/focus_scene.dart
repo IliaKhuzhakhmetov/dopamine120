@@ -19,7 +19,7 @@ const focusScene = SceneConfig(
     SceneSoundConfig(id: 'bell', type: SceneSoundType.procedural),
     SceneSoundConfig(id: 'cicada', type: SceneSoundType.procedural),
     SceneSoundConfig(id: 'birdsong', type: SceneSoundType.procedural),
-    SceneSoundConfig(id: 'bamboo', type: SceneSoundType.procedural),
+    SceneSoundConfig(id: 'groove', type: SceneSoundType.procedural),
   ],
   knobs: [
     KnobConfig(
@@ -108,12 +108,12 @@ const focusScene = SceneConfig(
       ],
     ),
     KnobConfig(
-      id: 'bamboo',
+      id: 'groove',
       initialValue: _volumeInitialValue,
       mappings: [
         SoundControlMapping(
           target: SoundMappingTarget.soundVolume,
-          soundId: 'bamboo',
+          soundId: 'groove',
           min: _volumeMinDb,
           max: _volumeMaxDb,
           scale: SoundMappingScale.decibelGain,

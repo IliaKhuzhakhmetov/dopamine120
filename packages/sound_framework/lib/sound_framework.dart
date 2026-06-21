@@ -16,6 +16,13 @@ export 'src/audio/audio_backend.dart'
         VoiceRef,
         VoiceSource,
         WaveFormType;
+export 'src/audio/asset_loop_voice.dart' show AssetLoopVoice;
+export 'src/audio/shuffled_asset_loop_voice.dart' show ShuffledAssetLoopVoice;
+export 'src/audio/background_audio_session.dart'
+    show
+        BackgroundAudioSession,
+        BackgroundAudioSessionRequest,
+        NoopBackgroundAudioSession;
 export 'src/audio/soloud_audio_backend.dart' show SoLoudAudioBackend;
 export 'src/audio/loop_player.dart' show LoopPlayer, LoopVoice;
 export 'src/audio/procedural_voice.dart'

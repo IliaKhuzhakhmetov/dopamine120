@@ -93,9 +93,16 @@ class $AssetsIconsGen {
 class $AssetsSoundGen {
   const $AssetsSoundGen();
 
+  /// Directory path: assets/sound/deprivation
+  $AssetsSoundDeprivationGen get deprivation =>
+      const $AssetsSoundDeprivationGen();
+
   /// Directory path: assets/sound/dopamine120_op1_pack
   $AssetsSoundDopamine120Op1PackGen get dopamine120Op1Pack =>
       const $AssetsSoundDopamine120Op1PackGen();
+
+  /// Directory path: assets/sound/focus
+  $AssetsSoundFocusGen get focus => const $AssetsSoundFocusGen();
 }
 
 class $AssetsIconsImaginationGen {
@@ -119,6 +126,16 @@ class $AssetsIconsImaginationGen {
 
   /// List of all assets
   List<SvgGenImage> get values => [frame01, frame02, frame03, frame04];
+}
+
+class $AssetsSoundDeprivationGen {
+  const $AssetsSoundDeprivationGen();
+
+  /// File path: assets/sound/deprivation/white_noise.mp3
+  String get whiteNoise => 'assets/sound/deprivation/white_noise.mp3';
+
+  /// List of all assets
+  List<String> get values => [whiteNoise];
 }
 
 class $AssetsSoundDopamine120Op1PackGen {
@@ -145,6 +162,55 @@ class $AssetsSoundDopamine120Op1PackGen {
     deprivationOp1,
     imaginationOp1,
     rewardOp1,
+  ];
+}
+
+class $AssetsSoundFocusGen {
+  const $AssetsSoundFocusGen();
+
+  /// File path: assets/sound/focus/bell_1.mp3
+  String get bell1 => 'assets/sound/focus/bell_1.mp3';
+
+  /// File path: assets/sound/focus/birdsong_1.mp3
+  String get birdsong1 => 'assets/sound/focus/birdsong_1.mp3';
+
+  /// File path: assets/sound/focus/cicades_1.mp3
+  String get cicades1 => 'assets/sound/focus/cicades_1.mp3';
+
+  /// Directory path: assets/sound/focus/groove
+  $AssetsSoundFocusGrooveGen get groove => const $AssetsSoundFocusGrooveGen();
+
+  /// File path: assets/sound/focus/pink_noise.mp3
+  String get pinkNoise => 'assets/sound/focus/pink_noise.mp3';
+
+  /// File path: assets/sound/focus/rain_1.mp3
+  String get rain1 => 'assets/sound/focus/rain_1.mp3';
+
+  /// List of all assets
+  List<String> get values => [bell1, birdsong1, cicades1, pinkNoise, rain1];
+}
+
+class $AssetsSoundFocusGrooveGen {
+  const $AssetsSoundFocusGrooveGen();
+
+  /// File path: assets/sound/focus/groove/ambient_groove_1.mp3
+  String get ambientGroove1 => 'assets/sound/focus/groove/ambient_groove_1.mp3';
+
+  /// File path: assets/sound/focus/groove/ambient_groove_2.mp3
+  String get ambientGroove2 => 'assets/sound/focus/groove/ambient_groove_2.mp3';
+
+  /// File path: assets/sound/focus/groove/ambient_groove_3.mp3
+  String get ambientGroove3 => 'assets/sound/focus/groove/ambient_groove_3.mp3';
+
+  /// File path: assets/sound/focus/groove/ambient_groove_4.mp3
+  String get ambientGroove4 => 'assets/sound/focus/groove/ambient_groove_4.mp3';
+
+  /// List of all assets
+  List<String> get values => [
+    ambientGroove1,
+    ambientGroove2,
+    ambientGroove3,
+    ambientGroove4,
   ];
 }
 

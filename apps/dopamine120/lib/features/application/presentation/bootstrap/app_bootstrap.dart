@@ -1,9 +1,10 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:app_logger/app_logger.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
+import '../../data/utils/firebase_app_utils.dart';
 import '../../di/app_injector.dart';
 import '../../domain/entities/app_environment.dart';
 import '../dopamine_app.dart';
@@ -16,6 +17,8 @@ Future<void> runDopamineApplication({AppEnvironment? environment}) {
       WidgetsFlutterBinding.ensureInitialized();
 
       _configureErrorReporting();
+
+      await FirebaseAppUtils.initialize(reportError: _reportUnhandledError);
 
       final injector = await createRuntimeInjector(
         environment: resolvedEnvironment,

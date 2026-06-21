@@ -28,7 +28,7 @@ class DopIcons extends ThemeExtension<DopIcons> {
     required this.bell,
     required this.cicada,
     required this.birdsong,
-    required this.bamboo,
+    required this.groove,
     required this.muted,
     required this.unmuted,
   });
@@ -42,7 +42,7 @@ class DopIcons extends ThemeExtension<DopIcons> {
       bell = PhosphorIconsRegular.bell,
       cicada = PhosphorIconsRegular.broadcast,
       birdsong = PhosphorIconsRegular.bird,
-      bamboo = PhosphorIconsRegular.plant,
+      groove = PhosphorIconsRegular.musicNotes,
       muted = PhosphorIconsRegular.speakerSlash,
       unmuted = PhosphorIconsRegular.speakerHigh;
 
@@ -55,7 +55,7 @@ class DopIcons extends ThemeExtension<DopIcons> {
       bell = PhosphorIconsRegular.bell,
       cicada = PhosphorIconsRegular.broadcast,
       birdsong = PhosphorIconsRegular.bird,
-      bamboo = PhosphorIconsRegular.plant,
+      groove = PhosphorIconsRegular.musicNotes,
       muted = PhosphorIconsRegular.speakerSlash,
       unmuted = PhosphorIconsRegular.speakerHigh;
 
@@ -68,7 +68,7 @@ class DopIcons extends ThemeExtension<DopIcons> {
       bell = PhosphorIconsLight.bell,
       cicada = PhosphorIconsLight.broadcast,
       birdsong = PhosphorIconsLight.bird,
-      bamboo = PhosphorIconsLight.plant,
+      groove = PhosphorIconsLight.musicNotes,
       muted = PhosphorIconsLight.speakerSlash,
       unmuted = PhosphorIconsLight.speakerHigh;
 
@@ -81,7 +81,7 @@ class DopIcons extends ThemeExtension<DopIcons> {
       bell = PhosphorIconsThin.bell,
       cicada = PhosphorIconsThin.broadcast,
       birdsong = PhosphorIconsThin.bird,
-      bamboo = PhosphorIconsThin.plant,
+      groove = PhosphorIconsThin.musicNotes,
       muted = PhosphorIconsThin.speakerSlash,
       unmuted = PhosphorIconsThin.speakerHigh;
 
@@ -94,7 +94,7 @@ class DopIcons extends ThemeExtension<DopIcons> {
       bell = PhosphorIconsDuotone.bell,
       cicada = PhosphorIconsDuotone.broadcast,
       birdsong = PhosphorIconsDuotone.bird,
-      bamboo = PhosphorIconsDuotone.plant,
+      groove = PhosphorIconsDuotone.musicNotes,
       muted = PhosphorIconsDuotone.speakerSlash,
       unmuted = PhosphorIconsDuotone.speakerHigh;
 
@@ -107,7 +107,7 @@ class DopIcons extends ThemeExtension<DopIcons> {
       bell = PhosphorIconsRegular.bell,
       cicada = PhosphorIconsRegular.broadcast,
       birdsong = PhosphorIconsRegular.bird,
-      bamboo = PhosphorIconsRegular.plant,
+      groove = PhosphorIconsRegular.musicNotes,
       muted = PhosphorIconsRegular.speakerSlash,
       unmuted = PhosphorIconsRegular.speakerHigh;
 
@@ -120,7 +120,7 @@ class DopIcons extends ThemeExtension<DopIcons> {
       bell = PhosphorIconsBold.bell,
       cicada = PhosphorIconsBold.broadcast,
       birdsong = PhosphorIconsBold.bird,
-      bamboo = PhosphorIconsBold.plant,
+      groove = PhosphorIconsBold.musicNotes,
       muted = PhosphorIconsBold.speakerSlash,
       unmuted = PhosphorIconsBold.speakerHigh;
 
@@ -145,8 +145,8 @@ class DopIcons extends ThemeExtension<DopIcons> {
   /// Birdsong-like texture.
   final IconData birdsong;
 
-  /// Bamboo-like texture.
-  final IconData bamboo;
+  /// Groove-like texture.
+  final IconData groove;
 
   /// Muted audio state.
   final IconData muted;
@@ -164,7 +164,7 @@ class DopIcons extends ThemeExtension<DopIcons> {
       'bell' => bell,
       'cicada' => cicada,
       'birdsong' => birdsong,
-      'bamboo' => bamboo,
+      'groove' => groove,
       'muted' => muted,
       'unmuted' => unmuted,
       _ => tune,
@@ -180,7 +180,7 @@ class DopIcons extends ThemeExtension<DopIcons> {
     DopIconToken(name: 'bell', icon: bell),
     DopIconToken(name: 'cicada', icon: cicada),
     DopIconToken(name: 'birdsong', icon: birdsong),
-    DopIconToken(name: 'bamboo', icon: bamboo),
+    DopIconToken(name: 'groove', icon: groove),
     DopIconToken(name: 'muted', icon: muted),
     DopIconToken(name: 'unmuted', icon: unmuted),
   ];
@@ -194,7 +194,7 @@ class DopIcons extends ThemeExtension<DopIcons> {
     IconData? bell,
     IconData? cicada,
     IconData? birdsong,
-    IconData? bamboo,
+    IconData? groove,
     IconData? muted,
     IconData? unmuted,
   }) {
@@ -206,7 +206,7 @@ class DopIcons extends ThemeExtension<DopIcons> {
       bell: bell ?? this.bell,
       cicada: cicada ?? this.cicada,
       birdsong: birdsong ?? this.birdsong,
-      bamboo: bamboo ?? this.bamboo,
+      groove: groove ?? this.groove,
       muted: muted ?? this.muted,
       unmuted: unmuted ?? this.unmuted,
     );

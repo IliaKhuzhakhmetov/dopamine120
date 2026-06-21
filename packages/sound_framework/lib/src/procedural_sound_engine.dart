@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 
 import 'audio/acoustic_bus_mapper.dart';
 import 'audio/audio_backend.dart';
+import 'audio/background_audio_session.dart';
 import 'audio/loop_player.dart';
 import 'audio/procedural_voice.dart';
 import 'audio/sample_synth.dart';
@@ -33,12 +34,15 @@ class ProceduralSoundEngine {
     math.Random? random,
     bool? isWeb,
     AcousticProfile? initialProfile,
+    BackgroundAudioSession backgroundAudioSession =
+        const NoopBackgroundAudioSession(),
     void Function(Object error, StackTrace stackTrace)? onBuildError,
   }) : _backend = backend ?? SoLoudAudioBackend(),
        _random = random ?? math.Random(),
        _voices = List<ProceduralVoice>.of(voices),
        _isWeb = isWeb ?? kIsWeb,
        _currentProfile = initialProfile ?? _defaultProfile,
+       _backgroundAudioSession = backgroundAudioSession,
        _onBuildError = onBuildError;
 
   static const int _sampleRate = 44100;
@@ -55,6 +59,7 @@ class ProceduralSoundEngine {
   );
 
   final AudioBackend _backend;
+  final BackgroundAudioSession _backgroundAudioSession;
   final math.Random _random;
   final List<ProceduralVoice> _voices;
   final bool _isWeb;
@@ -84,14 +89,19 @@ class ProceduralSoundEngine {
       voice.setPaused(_backend, false);
       voice.start(_backend);
     }
+    await _backgroundAudioSession.start();
   }
 
   /// Stops voice-owned schedulers and pauses every voice, leaving the engine warm.
   Future<void> stop() async {
-    if (!_ready) return;
-    for (final voice in _voices) {
-      voice.stop(_backend);
-      voice.setPaused(_backend, true);
+    try {
+      if (!_ready) return;
+      for (final voice in _voices) {
+        voice.stop(_backend);
+        voice.setPaused(_backend, true);
+      }
+    } finally {
+      await _backgroundAudioSession.stop();
     }
   }
 
@@ -153,9 +163,13 @@ class ProceduralSoundEngine {
 
   /// Tears the engine down and releases native resources.
   Future<void> dispose() async {
-    for (final voice in _voices) {
-      voice.dispose(_backend);
-      voice.handles.clear();
+    try {
+      for (final voice in _voices) {
+        voice.dispose(_backend);
+        voice.handles.clear();
+      }
+    } finally {
+      await _backgroundAudioSession.stop();
     }
     await _soundEvents.close();
     _backend.dispose();

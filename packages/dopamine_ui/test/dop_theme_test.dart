@@ -124,8 +124,8 @@ void main() {
       expect(DopThemes.light.icons.pulse, PhosphorIconsRegular.pulse);
       expect(DopThemes.underwater.icons.pulse, PhosphorIconsThin.pulse);
       expect(
-        DopThemes.jungle.icons.byName('bamboo'),
-        PhosphorIconsRegular.plant,
+        DopThemes.jungle.icons.byName('groove'),
+        PhosphorIconsRegular.musicNotes,
       );
       expect(
         DopThemes.cave.icons.byName('unknown'),

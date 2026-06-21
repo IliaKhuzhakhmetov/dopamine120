@@ -5,7 +5,9 @@ import 'package:dopamine120/features/deprivation/domain/usecases/start_deprivati
 import 'package:dopamine120/features/deprivation/domain/usecases/stop_deprivation_mask.dart';
 import 'package:dopamine120/features/deprivation/presentation/controller/deprivation_controller.dart';
 import 'package:fake_async/fake_async.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sound_framework/sound_framework.dart';
 
 void main() {
   test('defaults, counts down, pauses, resumes, and ends', () {
@@ -87,6 +89,62 @@ void main() {
       controller.dispose();
     });
   });
+
+  test('media notification pause and play only silence and restore audio', () {
+    fakeAsync((async) {
+      final repository = _RecordingDeprivationAudioRepository();
+      final backgroundAudioSession = _RecordingBackgroundAudioSession();
+      final controller = DeprivationController(
+        startMask: StartDeprivationMask(repository),
+        setMaskVolume: SetDeprivationMaskVolume(repository),
+        stopMask: StopDeprivationMask(repository),
+        backgroundAudioSession: backgroundAudioSession,
+        initialDuration: const Duration(seconds: 4),
+      );
+
+      controller.setMask(DeprivationMask.brown);
+      controller.start();
+      async.flushMicrotasks();
+      async.elapse(const Duration(seconds: 1));
+
+      backgroundAudioSession.request(BackgroundAudioSessionRequest.stop);
+      async.flushMicrotasks();
+
+      expect(controller.isPaused, isFalse);
+      expect(repository.stopCount, 1);
+      async.elapse(const Duration(seconds: 2));
+      expect(controller.remainingLabel, '00:01');
+
+      backgroundAudioSession.request(BackgroundAudioSessionRequest.start);
+      async.flushMicrotasks();
+
+      expect(controller.isPaused, isFalse);
+      expect(repository.startedMasks, [
+        DeprivationMask.brown,
+        DeprivationMask.brown,
+      ]);
+
+      controller.dispose();
+    });
+  });
+}
+
+class _RecordingBackgroundAudioSession implements BackgroundAudioSession {
+  final _requests = ValueNotifier<BackgroundAudioSessionRequest?>(null);
+
+  @override
+  ValueListenable<BackgroundAudioSessionRequest?> get requests => _requests;
+
+  @override
+  Future<void> start() async {}
+
+  @override
+  Future<void> stop() async {}
+
+  void request(BackgroundAudioSessionRequest request) {
+    _requests.value = null;
+    _requests.value = request;
+  }
 }
 
 class _RecordingDeprivationAudioRepository

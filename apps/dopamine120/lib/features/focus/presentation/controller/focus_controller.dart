@@ -26,6 +26,8 @@ class FocusController extends ChangeNotifier {
     required SetTemporalDistortion setTemporalDistortion,
     required StopAmbience stopAmbience,
     required WatchSceneSoundEvents watchSceneSoundEvents,
+    BackgroundAudioSession backgroundAudioSession =
+        const NoopBackgroundAudioSession(),
     Duration sessionLength = const Duration(minutes: 25),
   }) : _scene = scene,
        _startAmbience = startAmbience,
@@ -34,6 +36,7 @@ class FocusController extends ChangeNotifier {
        _setTemporalDistortion = setTemporalDistortion,
        _stopAmbience = stopAmbience,
        _watchSceneSoundEvents = watchSceneSoundEvents,
+       _backgroundAudioSession = backgroundAudioSession,
        _sessionLength = sessionLength {
     _knobValues = {for (final knob in scene.knobs) knob.id: knob.initialValue};
     _dimensionValues = {
@@ -41,6 +44,7 @@ class FocusController extends ChangeNotifier {
     };
     _dimensionId = _initialDimensionId(scene);
     _knobs = _orbKnobsFromScene();
+    _backgroundAudioSession.requests.addListener(_handleBackgroundAudioRequest);
     unawaited(_bindSceneSoundEvents());
   }
 
@@ -51,6 +55,7 @@ class FocusController extends ChangeNotifier {
   final SetTemporalDistortion _setTemporalDistortion;
   final StopAmbience _stopAmbience;
   final WatchSceneSoundEvents _watchSceneSoundEvents;
+  final BackgroundAudioSession _backgroundAudioSession;
   final Duration _sessionLength;
 
   late Map<String, double> _knobValues;
@@ -179,14 +184,26 @@ class FocusController extends ChangeNotifier {
   /// Muting pauses the voices via [StopAmbience]; unmuting boots the engine if
   /// needed and resumes them. Knob levels survive, so the mix returns unchanged.
   Future<void> toggleMute() async {
-    _muted = !_muted;
-    notifyListeners();
     if (_muted) {
-      await _stopAmbience(const NoParams());
-      _started = false;
+      await unmute();
     } else {
-      await _ensureStarted();
+      await mute();
     }
+  }
+
+  Future<void> mute() async {
+    if (_muted) return;
+    _muted = true;
+    notifyListeners();
+    await _stopAmbience(const NoParams());
+    _started = false;
+  }
+
+  Future<void> unmute() async {
+    if (!_muted && _started) return;
+    _muted = false;
+    notifyListeners();
+    await _ensureStarted();
   }
 
   /// Temporarily bends the focus scene while the orb is being pressed.
@@ -202,6 +219,9 @@ class FocusController extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
+    _backgroundAudioSession.requests.removeListener(
+      _handleBackgroundAudioRequest,
+    );
     _timer?.cancel();
     _knobFlushTimer?.cancel();
     _knobFlushCompleter?.complete();
@@ -211,6 +231,20 @@ class FocusController extends ChangeNotifier {
     _remaining.dispose();
     unawaited(_stopAmbience(const NoParams()));
     super.dispose();
+  }
+
+  void _handleBackgroundAudioRequest() {
+    switch (_backgroundAudioSession.requests.value) {
+      case BackgroundAudioSessionRequest.start:
+        if (!_muted) unawaited(_ensureStarted());
+      case BackgroundAudioSessionRequest.stop:
+        if (!_muted && _started) {
+          _started = false;
+          unawaited(_stopAmbience(const NoParams()));
+        }
+      case null:
+        break;
+    }
   }
 
   Future<void> _ensureStarted() {

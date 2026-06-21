@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:dopamine120/gen/assets.gen.dart';
 import 'package:sound_framework/sound_framework.dart';
 
 const deprivationWhiteSoundId = 'deprivation.white';
@@ -8,12 +9,9 @@ const deprivationBrownSoundId = 'deprivation.brown';
 const deprivationRainSoundId = 'deprivation.rain';
 
 List<ProceduralVoice> buildDeprivationProceduralVoices() => [
-  _DeprivationNoiseVoice(
+  AssetLoopVoice(
     id: deprivationWhiteSoundId,
-    color: NoiseColor.white,
-    centerHz: 2600,
-    q: 0.2,
-    pan: 0,
+    assetKey: Assets.sound.deprivation.whiteNoise,
   ),
   _DeprivationNoiseVoice(
     id: deprivationPinkSoundId,

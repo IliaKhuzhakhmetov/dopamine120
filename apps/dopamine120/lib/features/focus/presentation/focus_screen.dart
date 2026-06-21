@@ -42,8 +42,10 @@ class _FocusScreenState extends State<FocusScreen> {
       setTemporalDistortion: injector.get<SetTemporalDistortion>(),
       stopAmbience: injector.get<StopAmbience>(),
       watchSceneSoundEvents: injector.get<WatchSceneSoundEvents>(),
+      backgroundAudioSession: injector.get<BackgroundAudioSession>(),
     );
     _controller.startTimer();
+    _controller.primeAudio();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.themeController.setTheme(widget.initialTheme);

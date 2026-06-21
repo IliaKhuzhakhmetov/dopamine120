@@ -1,9 +1,9 @@
 import 'dart:math';
-import 'dart:typed_data';
 
 import 'package:dopamine120/features/deprivation/data/audio/deprivation_procedural_voices.dart';
 import 'package:dopamine120/features/deprivation/data/repositories/deprivation_audio_repository_impl.dart';
 import 'package:dopamine120/features/deprivation/domain/entities/deprivation_mask.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sound_framework/sound_framework.dart';
 
@@ -15,24 +15,25 @@ void main() {
     await repository.startMask(DeprivationMask.pink);
     await repository.startMask(DeprivationMask.silence);
 
-    expect(backend.volumes, {0: 0, 1: 0, 2: 0});
-    expect(backend.paused, {0: true, 1: true, 2: true});
+    expect(backend.volumes, _maskVolumes());
+    expect(backend.paused, {0: true, 1: true, 2: true, 3: true});
   });
 
   test(
     'starting each mask enables only that sound at fixed low level',
     () async {
       for (final entry in {
-        DeprivationMask.pink: 0,
-        DeprivationMask.brown: 1,
-        DeprivationMask.rain: 2,
+        DeprivationMask.white: 0,
+        DeprivationMask.pink: 1,
+        DeprivationMask.brown: 2,
+        DeprivationMask.rain: 3,
       }.entries) {
         final backend = _RecordingAudioBackend();
         final repository = _buildRepository(backend);
 
         await repository.startMask(entry.key);
 
-        for (var handle = 0; handle < 3; handle++) {
+        for (var handle = 0; handle < 4; handle++) {
           expect(
             backend.volumes[handle],
             handle == entry.value
@@ -51,7 +52,7 @@ void main() {
     await repository.startMask(DeprivationMask.brown);
     await repository.setMaskVolume(0.3);
 
-    expect(backend.volumes, {0: 0, 1: 0.3, 2: 0});
+    expect(backend.volumes, _maskVolumes(brown: 0.3));
   });
 
   test('volume set while stopped is used on next start', () async {
@@ -61,21 +62,61 @@ void main() {
     await repository.setMaskVolume(0.25);
     await repository.startMask(DeprivationMask.rain);
 
-    expect(backend.volumes, {0: 0, 1: 0, 2: 0.25});
+    expect(backend.volumes, _maskVolumes(rain: 0.25));
+  });
+
+  test('start and stop toggle the engine background audio session', () async {
+    final backend = _RecordingAudioBackend();
+    final session = _RecordingBackgroundAudioSession();
+    final repository = _buildRepository(
+      backend,
+      backgroundAudioSession: session,
+    );
+
+    await repository.startMask(DeprivationMask.brown);
+    await repository.stopMask();
+
+    expect(session.starts, 1);
+    expect(session.stops, 1);
   });
 }
 
+Map<int, double> _maskVolumes({
+  double white = 0,
+  double pink = 0,
+  double brown = 0,
+  double rain = 0,
+}) => {0: white, 1: pink, 2: brown, 3: rain};
+
 DeprivationAudioRepositoryImpl _buildRepository(
-  _RecordingAudioBackend backend,
-) {
+  _RecordingAudioBackend backend, {
+  BackgroundAudioSession backgroundAudioSession =
+      const NoopBackgroundAudioSession(),
+}) {
   return DeprivationAudioRepositoryImpl(
     ProceduralSoundEngine(
       backend: backend,
+      backgroundAudioSession: backgroundAudioSession,
       random: Random(1),
       isWeb: false,
       voices: buildDeprivationProceduralVoices(),
     ),
   );
+}
+
+class _RecordingBackgroundAudioSession implements BackgroundAudioSession {
+  final _requests = ValueNotifier<BackgroundAudioSessionRequest?>(null);
+  int starts = 0;
+  int stops = 0;
+
+  @override
+  ValueListenable<BackgroundAudioSessionRequest?> get requests => _requests;
+
+  @override
+  Future<void> start() async => starts++;
+
+  @override
+  Future<void> stop() async => stops++;
 }
 
 class _RecordingAudioBackend implements AudioBackend {

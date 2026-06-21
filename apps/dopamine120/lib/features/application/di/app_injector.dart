@@ -3,6 +3,7 @@ import 'package:platform_bridge/platform_bridge.dart';
 
 import '../data/stores/app_key_value_store_factory.dart';
 import '../domain/entities/app_environment.dart';
+import 'analytics_module.dart';
 import 'deprivation_module.dart';
 import 'focus_module.dart';
 import 'mobile_pwa_install_prompt_module.dart';
@@ -23,6 +24,7 @@ Injector createAppInjector({
     keyValueStore: keyValueStore ?? InMemoryKeyValueStore(),
   );
   registerPlatformModule(injector, platformBridge: platformBridge);
+  registerAnalyticsModule(injector);
   registerThemeModule(injector);
   registerMobilePwaInstallPromptModule(injector);
   registerSoundModule(injector);

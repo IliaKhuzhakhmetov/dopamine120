@@ -31,6 +31,7 @@ dependencies:
   intl: any
   flutter_svg: ^2.0.10          # For rendering the hand-drawn SVG icons
   firebase_core: ^4.10.0
+  firebase_analytics: ^12.4.3
 
 dev_dependencies:
   flutter_test:
@@ -49,6 +50,9 @@ flutter:
     - assets/icons/
     - assets/icons/imagination/
     - assets/sound/dopamine120_op1_pack/
+    - assets/sound/focus/
+    - assets/sound/focus/groove/
+    - assets/sound/deprivation/
 
 flutter_gen:
   output: lib/gen/

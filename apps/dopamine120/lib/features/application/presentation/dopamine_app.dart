@@ -1,6 +1,8 @@
 import 'package:core/core.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:dopamine_ui/dopamine_ui.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -59,6 +61,7 @@ class _DopamineAppState extends State<DopamineApp> {
                 child: child ?? const SizedBox.shrink(),
               ),
               routerConfig: _router.config(
+                navigatorObservers: _buildNavigatorObservers,
                 deepLinkBuilder: _resolveInitialDeepLink,
               ),
             );
@@ -66,6 +69,14 @@ class _DopamineAppState extends State<DopamineApp> {
         ),
       ),
     );
+  }
+
+  /// Adds the Firebase Analytics screen-view observer, but only once Firebase
+  /// has actually been initialized. Native-free runs and widget tests never
+  /// initialize Firebase, so they get no observer and never touch the SDK.
+  List<NavigatorObserver> _buildNavigatorObservers() {
+    if (Firebase.apps.isEmpty) return const [];
+    return [widget.injector.get<FirebaseAnalyticsObserver>()];
   }
 
   DeepLink _resolveInitialDeepLink(PlatformDeepLink deepLink) {

@@ -9,6 +9,7 @@ import 'package:dopamine120/features/focus/domain/usecases/stop_ambience.dart';
 import 'package:dopamine120/features/focus/domain/usecases/watch_scene_sound_events.dart';
 import 'package:dopamine120/features/focus/presentation/controller/focus_controller.dart';
 import 'package:fake_async/fake_async.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sound_framework/sound_framework.dart';
 
@@ -16,7 +17,11 @@ void main() {
   group('FocusController', () {
     late SilentAmbienceRepository repository;
 
-    FocusController buildWith(AmbienceRepository repository) => FocusController(
+    FocusController buildWith(
+      AmbienceRepository repository, {
+      BackgroundAudioSession backgroundAudioSession =
+          const NoopBackgroundAudioSession(),
+    }) => FocusController(
       scene: repository.scene,
       startAmbience: StartAmbience(repository),
       setSceneKnob: SetSceneKnob(repository),
@@ -24,6 +29,7 @@ void main() {
       setTemporalDistortion: SetTemporalDistortion(repository),
       stopAmbience: StopAmbience(repository),
       watchSceneSoundEvents: WatchSceneSoundEvents(repository),
+      backgroundAudioSession: backgroundAudioSession,
       sessionLength: const Duration(seconds: 3),
     );
 
@@ -182,6 +188,33 @@ void main() {
       expect(repository.knobValues['drone'], 0.6);
     });
 
+    test(
+      'media notification pause and play only silence and restore audio',
+      () async {
+        final backgroundAudioSession = _RecordingBackgroundAudioSession();
+        final controller = buildWith(
+          repository,
+          backgroundAudioSession: backgroundAudioSession,
+        );
+        await controller.setKnob('drone', 0.6);
+        expect(repository.running, isTrue);
+
+        backgroundAudioSession.request(BackgroundAudioSessionRequest.stop);
+        await Future<void>.delayed(Duration.zero);
+
+        expect(controller.isMuted, isFalse);
+        expect(repository.running, isFalse);
+
+        backgroundAudioSession.request(BackgroundAudioSessionRequest.start);
+        await Future<void>.delayed(Duration.zero);
+        await Future<void>.delayed(Duration.zero);
+
+        expect(controller.isMuted, isFalse);
+        expect(repository.running, isTrue);
+        expect(repository.knobValues['drone'], 0.6);
+      },
+    );
+
     test('timer counts down and resets on demand', () {
       fakeAsync((async) {
         final controller = build()..startTimer();
@@ -207,6 +240,24 @@ void main() {
       expect(repository.running, isFalse);
     });
   });
+}
+
+class _RecordingBackgroundAudioSession implements BackgroundAudioSession {
+  final _requests = ValueNotifier<BackgroundAudioSessionRequest?>(null);
+
+  @override
+  ValueListenable<BackgroundAudioSessionRequest?> get requests => _requests;
+
+  @override
+  Future<void> start() async {}
+
+  @override
+  Future<void> stop() async {}
+
+  void request(BackgroundAudioSessionRequest request) {
+    _requests.value = null;
+    _requests.value = request;
+  }
 }
 
 class _FlakyAmbienceRepository implements AmbienceRepository {

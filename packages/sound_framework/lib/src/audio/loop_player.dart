@@ -57,6 +57,19 @@ class LoopPlayer {
     return _startLoop(source, pan: pan);
   }
 
+  /// Starts a looping voice from an app [assetKey] recording.
+  ///
+  /// Unlike [noise], the asset is decoded by the backend (`loadAsset` handles
+  /// the web vs. native split internally), so the whole file loops seamlessly.
+  Future<LoopVoice> asset(
+    String assetKey, {
+    double pan = 0,
+    LoadModePolicy policy = LoadModePolicy.memory,
+  }) async {
+    final source = await _backend.loadAsset(assetKey, policy: policy);
+    return _startLoop(source, pan: pan);
+  }
+
   /// Starts a looping voice from an in-memory [wav] noise buffer.
   Future<LoopVoice> noise(Uint8List wav, {double pan = 0}) async {
     if (isWeb) return _pcmStream(WavCodec.pcmFromWav(wav), pan: pan);

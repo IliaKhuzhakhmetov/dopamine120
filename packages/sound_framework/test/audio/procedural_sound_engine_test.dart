@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sound_framework/sound_framework.dart';
 
@@ -68,6 +69,23 @@ void main() {
 
       expect(backend.paused.values, isNotEmpty);
       expect(backend.paused.values.every((p) => p), isTrue);
+    });
+
+    test('start and stop toggle the background audio session', () async {
+      final session = _RecordingBackgroundAudioSession();
+      final engine = ProceduralSoundEngine(
+        backend: backend,
+        backgroundAudioSession: session,
+        random: Random(1),
+        isWeb: false,
+        voices: [_TestVoice('rain', 0.20)],
+      );
+
+      await engine.start();
+      await engine.stop();
+
+      expect(session.starts, 1);
+      expect(session.stops, 1);
     });
 
     test('dispose tears down the backend and clears readiness', () async {
@@ -163,6 +181,21 @@ void main() {
       await engine.dispose();
     });
   });
+}
+
+class _RecordingBackgroundAudioSession implements BackgroundAudioSession {
+  final _requests = ValueNotifier<BackgroundAudioSessionRequest?>(null);
+  int starts = 0;
+  int stops = 0;
+
+  @override
+  ValueListenable<BackgroundAudioSessionRequest?> get requests => _requests;
+
+  @override
+  Future<void> start() async => starts++;
+
+  @override
+  Future<void> stop() async => stops++;
 }
 
 class _TestVoice extends ProceduralVoice {

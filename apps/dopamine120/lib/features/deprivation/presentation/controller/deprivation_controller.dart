@@ -3,6 +3,7 @@ import 'dart:math' as math;
 
 import 'package:core/core.dart';
 import 'package:flutter/foundation.dart';
+import 'package:sound_framework/sound_framework.dart';
 
 import '../../domain/entities/deprivation_mask.dart';
 import '../../domain/repositories/deprivation_audio_repository.dart';
@@ -15,18 +16,24 @@ class DeprivationController extends ChangeNotifier {
     required StartDeprivationMask startMask,
     required SetDeprivationMaskVolume setMaskVolume,
     required StopDeprivationMask stopMask,
+    BackgroundAudioSession backgroundAudioSession =
+        const NoopBackgroundAudioSession(),
     VoidCallback? onCompleted,
     Duration initialDuration = const Duration(minutes: 30),
   }) : _startMask = startMask,
        _setMaskVolume = setMaskVolume,
        _stopMask = stopMask,
+       _backgroundAudioSession = backgroundAudioSession,
        _onCompleted = onCompleted,
        _duration = initialDuration,
-       _remaining = initialDuration;
+       _remaining = initialDuration {
+    _backgroundAudioSession.requests.addListener(_handleBackgroundAudioRequest);
+  }
 
   final StartDeprivationMask _startMask;
   final SetDeprivationMaskVolume _setMaskVolume;
   final StopDeprivationMask _stopMask;
+  final BackgroundAudioSession _backgroundAudioSession;
   final VoidCallback? _onCompleted;
 
   Duration _duration;
@@ -127,9 +134,25 @@ class DeprivationController extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
+    _backgroundAudioSession.requests.removeListener(
+      _handleBackgroundAudioRequest,
+    );
     _timer?.cancel();
     unawaited(_stopMask(const NoParams()));
     super.dispose();
+  }
+
+  void _handleBackgroundAudioRequest() {
+    switch (_backgroundAudioSession.requests.value) {
+      case BackgroundAudioSessionRequest.start:
+        if (_started && !_paused && !_completed) unawaited(_startMask(_mask));
+      case BackgroundAudioSessionRequest.stop:
+        if (_started && !_paused && !_completed) {
+          unawaited(_stopMask(const NoParams()));
+        }
+      case null:
+        break;
+    }
   }
 
   void _startTimer() {
