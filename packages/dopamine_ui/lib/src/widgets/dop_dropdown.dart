@@ -78,6 +78,8 @@ class DopDropdown<T> extends StatefulWidget {
 }
 
 class _DopDropdownState<T> extends State<DopDropdown<T>> {
+  static const _stackedBreakpoint = 240.0;
+
   final _link = LayerLink();
   final _controlKey = GlobalKey();
   OverlayEntry? _entry;
@@ -160,20 +162,15 @@ class _DopDropdownState<T> extends State<DopDropdown<T>> {
                 borderRadius: context.radius.controlGeometry,
                 border: Border.fromBorderSide(stroke.outlineSide(colors.ink)),
               ),
-              child: Row(
-                children: [
-                  DopText.label(widget.label),
-                  SizedBox(width: spacing.md),
-                  Expanded(
-                    child: Text(
-                      selected.label,
-                      style: context.typo.control,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  SizedBox(width: spacing.sm),
-                  AnimatedRotation(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final value = Text(
+                    selected.label,
+                    style: context.typo.control,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  );
+                  final arrow = AnimatedRotation(
                     turns: _open ? 0.5 : 0,
                     duration: const Duration(milliseconds: 160),
                     curve: Curves.easeOutCubic,
@@ -184,8 +181,33 @@ class _DopDropdownState<T> extends State<DopDropdown<T>> {
                       ),
                       maxLines: 1,
                     ),
-                  ),
-                ],
+                  );
+                  if (constraints.maxWidth < _stackedBreakpoint) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        DopText.label(widget.label, maxLines: 1),
+                        SizedBox(height: spacing.xs),
+                        Row(
+                          children: [
+                            Expanded(child: value),
+                            SizedBox(width: spacing.sm),
+                            arrow,
+                          ],
+                        ),
+                      ],
+                    );
+                  }
+                  return Row(
+                    children: [
+                      DopText.label(widget.label),
+                      SizedBox(width: spacing.md),
+                      Expanded(child: value),
+                      SizedBox(width: spacing.sm),
+                      arrow,
+                    ],
+                  );
+                },
               ),
             ),
           ),

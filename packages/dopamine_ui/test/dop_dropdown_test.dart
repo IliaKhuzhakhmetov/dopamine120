@@ -54,6 +54,16 @@ void main() {
     expect(find.text('room'), findsNothing);
     expect(find.text('cosmos'), findsOneWidget);
   });
+
+  testWidgets('stacks label above value when narrow', (tester) async {
+    await tester.pumpWidget(const _DropdownHost(width: 180, onChanged: null));
+
+    expect(
+      tester.getTopLeft(find.text('DIMENSION')).dy,
+      lessThan(tester.getTopLeft(find.text('cosmos')).dy),
+    );
+    expect(tester.takeException(), isNull);
+  });
 }
 
 const _options = [
@@ -78,8 +88,9 @@ const _options = [
 ];
 
 class _DropdownHost extends StatefulWidget {
-  const _DropdownHost({required this.onChanged});
+  const _DropdownHost({this.width = 360, required this.onChanged});
 
+  final double width;
   final ValueChanged<String>? onChanged;
 
   @override
@@ -99,7 +110,7 @@ class _DropdownHostState extends State<_DropdownHost> {
           child: Padding(
             padding: const EdgeInsets.only(bottom: 64),
             child: SizedBox(
-              width: 360,
+              width: widget.width,
               child: DopDropdown<String>(
                 label: 'dimension',
                 value: _value,

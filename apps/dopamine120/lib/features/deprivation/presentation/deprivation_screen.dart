@@ -109,49 +109,43 @@ class _DeprivationScreenState extends State<DeprivationScreen> {
                               ),
                             ),
                             const SizedBox(height: 24),
-                            SizedBox(
-                              height: 48,
-                              child: Row(
-                                spacing: context.spacing.lg,
-                                children: [
-                                  Expanded(
-                                    child: DopDropdown<Duration>(
-                                      label: l10n.deprivationDurationLabel,
-                                      value: _controller.duration,
-                                      options: [
-                                        for (final duration
-                                            in DeprivationController
-                                                .durationOptions)
-                                          DopDropdownOption(
-                                            value: duration,
-                                            label: _durationLabel(
-                                              l10n,
-                                              duration,
-                                            ),
-                                          ),
-                                      ],
-                                      onChanged: _controller.setDuration,
-                                    ),
+                            Row(
+                              spacing: context.spacing.lg,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: DopDropdown<Duration>(
+                                    label: l10n.deprivationDurationLabel,
+                                    value: _controller.duration,
+                                    options: [
+                                      for (final duration
+                                          in DeprivationController
+                                              .durationOptions)
+                                        DopDropdownOption(
+                                          value: duration,
+                                          label: _durationLabel(l10n, duration),
+                                        ),
+                                    ],
+                                    onChanged: _controller.setDuration,
                                   ),
-                                  Expanded(
-                                    child: DopDropdown<DeprivationMask>(
-                                      label: l10n.deprivationMaskLabel,
-                                      value: _controller.mask,
-                                      menuDirection:
-                                          DopDropdownMenuDirection.down,
-                                      options: [
-                                        for (final mask
-                                            in DeprivationMask.values)
-                                          DopDropdownOption(
-                                            value: mask,
-                                            label: _maskLabel(l10n, mask),
-                                          ),
-                                      ],
-                                      onChanged: _controller.setMask,
-                                    ),
+                                ),
+                                Expanded(
+                                  child: DopDropdown<DeprivationMask>(
+                                    label: l10n.deprivationMaskLabel,
+                                    value: _controller.mask,
+                                    menuDirection:
+                                        DopDropdownMenuDirection.down,
+                                    options: [
+                                      for (final mask in DeprivationMask.values)
+                                        DopDropdownOption(
+                                          value: mask,
+                                          label: _maskLabel(l10n, mask),
+                                        ),
+                                    ],
+                                    onChanged: _controller.setMask,
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                             const SizedBox(height: 28),
                             DopSlider(
