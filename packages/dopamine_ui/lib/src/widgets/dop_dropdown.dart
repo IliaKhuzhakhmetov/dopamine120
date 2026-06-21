@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
+import '../feedback/dop_haptic_feedback.dart';
 import '../theme/context_ext.dart';
 import 'dop_text.dart';
 
@@ -267,7 +267,7 @@ class _DopDropdownState<T> extends State<DopDropdown<T>> {
 
   void _select(DopDropdownOption<T> option) {
     if (!option.enabled) return;
-    HapticFeedback.selectionClick();
+    DopHapticFeedback.selection();
     _close();
     if (option.value != widget.value) widget.onChanged?.call(option.value);
   }

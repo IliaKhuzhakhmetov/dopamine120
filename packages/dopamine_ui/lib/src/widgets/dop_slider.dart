@@ -100,10 +100,9 @@ class DopSlider extends StatelessWidget {
     onChanged?.call(snapped);
   }
 
-  void _selectAt(Offset localPosition, double width) {
-    if (width <= 0 || onChanged == null) return;
-    final fraction = (localPosition.dx / width).clamp(0.0, 1.0);
-    _emit(min + (fraction * (max - min)));
+  void _selectAtFraction(double fraction) {
+    if (onChanged == null) return;
+    _emit(min + (fraction.clamp(0.0, 1.0) * (max - min)));
   }
 
   void _step(int direction) {
@@ -136,98 +135,83 @@ class DopSlider extends StatelessWidget {
       onDecrease: _enabled && value > min ? () => _step(-1) : null,
       child: Opacity(
         opacity: _enabled ? 1 : theme.disabledOpacity,
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            return GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              dragStartBehavior: DragStartBehavior.down,
-              onTapDown: _enabled
-                  ? (details) =>
-                        _selectAt(details.localPosition, constraints.maxWidth)
-                  : null,
-              onHorizontalDragUpdate: _enabled
-                  ? (details) =>
-                        _selectAt(details.localPosition, constraints.maxWidth)
-                  : null,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (hasHeader) ...[
+              Row(
                 children: [
-                  if (hasHeader) ...[
-                    Row(
-                      children: [
-                        if (label != null)
-                          Expanded(
-                            child: Text(
-                              label!,
-                              style: theme.labelStyle,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          )
-                        else
-                          const Spacer(),
-                        if (valueWidget != null) ...[
-                          SizedBox(width: context.spacing.sm),
-                          DefaultTextStyle(
-                            style: theme.valueStyle,
-                            child: valueWidget,
-                          ),
-                        ] else ...[
-                          SizedBox(width: context.spacing.sm),
-                          Text(valueText, style: theme.valueStyle),
-                        ],
-                      ],
-                    ),
-                    SizedBox(height: theme.headerGap),
-                  ],
-                  Row(
-                    children: [
-                      if (leadingIcon != null) ...[
-                        _SliderIcon(theme: theme, child: leadingIcon!),
-                        SizedBox(width: theme.iconGap),
-                      ],
-                      Expanded(
-                        child: _SliderTrack(
-                          theme: theme,
-                          normalValue: _normalValue,
-                        ),
+                  if (label != null)
+                    Expanded(
+                      child: Text(
+                        label!,
+                        style: theme.labelStyle,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      if (trailingIcon != null) ...[
-                        SizedBox(width: theme.iconGap),
-                        _SliderIcon(theme: theme, child: trailingIcon!),
-                      ],
-                    ],
-                  ),
-                  if (hasCaptions) ...[
-                    SizedBox(height: theme.captionGap),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            minLabel ?? '',
-                            style: theme.captionStyle,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        SizedBox(width: context.spacing.md),
-                        Expanded(
-                          child: Text(
-                            maxLabel ?? '',
-                            style: theme.captionStyle,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.right,
-                          ),
-                        ),
-                      ],
+                    )
+                  else
+                    const Spacer(),
+                  if (valueWidget != null) ...[
+                    SizedBox(width: context.spacing.sm),
+                    DefaultTextStyle(
+                      style: theme.valueStyle,
+                      child: valueWidget,
                     ),
+                  ] else ...[
+                    SizedBox(width: context.spacing.sm),
+                    Text(valueText, style: theme.valueStyle),
                   ],
                 ],
               ),
-            );
-          },
+              SizedBox(height: theme.headerGap),
+            ],
+            Row(
+              children: [
+                if (leadingIcon != null) ...[
+                  _SliderIcon(theme: theme, child: leadingIcon!),
+                  SizedBox(width: theme.iconGap),
+                ],
+                Expanded(
+                  child: _SliderTrack(
+                    theme: theme,
+                    normalValue: _normalValue,
+                    onSelectFraction: _enabled ? _selectAtFraction : null,
+                  ),
+                ),
+                if (trailingIcon != null) ...[
+                  SizedBox(width: theme.iconGap),
+                  _SliderIcon(theme: theme, child: trailingIcon!),
+                ],
+              ],
+            ),
+            if (hasCaptions) ...[
+              SizedBox(height: theme.captionGap),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      minLabel ?? '',
+                      style: theme.captionStyle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  SizedBox(width: context.spacing.md),
+                  Expanded(
+                    child: Text(
+                      maxLabel ?? '',
+                      style: theme.captionStyle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.right,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ],
         ),
       ),
     );
@@ -253,66 +237,95 @@ class _SliderIcon extends StatelessWidget {
 }
 
 class _SliderTrack extends StatelessWidget {
-  const _SliderTrack({required this.theme, required this.normalValue});
+  const _SliderTrack({
+    required this.theme,
+    required this.normalValue,
+    required this.onSelectFraction,
+  });
 
   final DopSliderTheme theme;
   final double normalValue;
+
+  /// Called with the tapped/dragged position as a 0..1 fraction of the track.
+  ///
+  /// When null, the track is non-interactive.
+  final ValueChanged<double>? onSelectFraction;
+
+  void _select(Offset localPosition, double width) {
+    if (width <= 0) return;
+    onSelectFraction?.call((localPosition.dx / width).clamp(0.0, 1.0));
+  }
 
   @override
   Widget build(BuildContext context) {
     final trackRadius = BorderRadius.circular(theme.trackRadius);
 
-    return SizedBox(
-      height: theme.touchHeight,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          ClipRRect(
-            borderRadius: trackRadius,
-            child: SizedBox(
-              height: theme.trackHeight,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: theme.inactiveColor,
-                      borderRadius: trackRadius,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth;
+        return GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          dragStartBehavior: DragStartBehavior.down,
+          onTapDown: onSelectFraction != null
+              ? (details) => _select(details.localPosition, width)
+              : null,
+          onHorizontalDragUpdate: onSelectFraction != null
+              ? (details) => _select(details.localPosition, width)
+              : null,
+          child: SizedBox(
+            height: theme.touchHeight,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                ClipRRect(
+                  borderRadius: trackRadius,
+                  child: SizedBox(
+                    height: theme.trackHeight,
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: theme.inactiveColor,
+                            borderRadius: trackRadius,
+                          ),
+                        ),
+                        FractionallySizedBox(
+                          alignment: Alignment.centerLeft,
+                          widthFactor: normalValue,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: theme.activeColor,
+                              borderRadius: trackRadius,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  FractionallySizedBox(
-                    alignment: Alignment.centerLeft,
-                    widthFactor: normalValue,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: theme.activeColor,
-                        borderRadius: trackRadius,
+                ),
+                Align(
+                  alignment: Alignment(-1 + (normalValue * 2), 0),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 120),
+                    curve: Curves.easeOutCubic,
+                    width: theme.thumbSize,
+                    height: theme.thumbSize,
+                    decoration: BoxDecoration(
+                      color: theme.thumbColor,
+                      borderRadius: BorderRadius.circular(theme.thumbRadius),
+                      border: Border.all(
+                        color: theme.thumbBorderColor,
+                        width: theme.thumbBorderWidth,
                       ),
                     ),
                   ),
-                ],
-              ),
-            ),
-          ),
-          Align(
-            alignment: Alignment(-1 + (normalValue * 2), 0),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 120),
-              curve: Curves.easeOutCubic,
-              width: theme.thumbSize,
-              height: theme.thumbSize,
-              decoration: BoxDecoration(
-                color: theme.thumbColor,
-                borderRadius: BorderRadius.circular(theme.thumbRadius),
-                border: Border.all(
-                  color: theme.thumbBorderColor,
-                  width: theme.thumbBorderWidth,
                 ),
-              ),
+              ],
             ),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

@@ -3,7 +3,6 @@ import 'dart:math' as math;
 import 'package:dopamine_ui/dopamine_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/services.dart';
 
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../l10n/l10n.dart';
@@ -163,7 +162,7 @@ class _AttentionStepState extends State<AttentionStep>
         _gathered = true;
         _pointerActive = false;
         _convergenceCenter = metrics.center;
-        HapticFeedback.lightImpact();
+        DopHapticFeedback.light();
         widget.onGathered();
       }
     } else {

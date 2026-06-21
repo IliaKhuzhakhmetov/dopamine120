@@ -10,6 +10,7 @@ import '../../../core/theme/presentation/theme_provider.dart';
 import '../../../l10n/l10n.dart';
 import '../../onboarding/data/datasources/onboarding_local_ds.dart';
 import '../domain/entities/app_environment.dart';
+import 'mobile_pwa_install_prompt.dart';
 import 'router/app_router.dart';
 
 class DopamineApp extends StatefulWidget {
@@ -54,6 +55,9 @@ class _DopamineAppState extends State<DopamineApp> {
                 GlobalWidgetsLocalizations.delegate,
               ],
               supportedLocales: AppLocalizations.supportedLocales,
+              builder: (context, child) => MobilePwaInstallPrompt(
+                child: child ?? const SizedBox.shrink(),
+              ),
               routerConfig: _router.config(
                 deepLinkBuilder: _resolveInitialDeepLink,
               ),

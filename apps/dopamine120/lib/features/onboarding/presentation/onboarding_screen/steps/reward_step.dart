@@ -3,7 +3,6 @@ import 'dart:math' as math;
 import 'package:dopamine_ui/dopamine_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/services.dart';
 
 import '../../../../../l10n/l10n.dart';
 import '../widgets/onboarding_eyebrow.dart';
@@ -138,7 +137,7 @@ class _RewardStepState extends State<RewardStep> with TickerProviderStateMixin {
   void _setHint(_RewardHint value, {bool haptic = false}) {
     _hint = value;
     _warned = value == _RewardHint.slow || value == _RewardHint.stopped;
-    if (haptic) HapticFeedback.lightImpact();
+    if (haptic) DopHapticFeedback.light();
   }
 
   void _finishReward() {
@@ -152,7 +151,7 @@ class _RewardStepState extends State<RewardStep> with TickerProviderStateMixin {
     _sparks.clear();
     _setHint(_RewardHint.ready);
     _ticker.stop();
-    HapticFeedback.mediumImpact();
+    DopHapticFeedback.medium();
     _confettiController.play();
     widget.onRewardReady();
   }
@@ -164,7 +163,7 @@ class _RewardStepState extends State<RewardStep> with TickerProviderStateMixin {
     _slowMs = 0;
     _warned = false;
     _setHint(_RewardHint.active);
-    HapticFeedback.selectionClick();
+    DopHapticFeedback.selection();
     _startTicking();
   }
 

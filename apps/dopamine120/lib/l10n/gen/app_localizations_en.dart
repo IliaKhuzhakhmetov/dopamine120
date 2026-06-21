@@ -194,6 +194,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeOpenDeprivation => 'start deprivation';
 
   @override
+  String get mobilePwaInstallTitle => 'install app';
+
+  @override
+  String get mobilePwaInstallIosBody => 'Share -> Add to Home Screen -> Add.';
+
+  @override
+  String get mobilePwaInstallAndroidBody =>
+      'Chrome menu -> Add to home screen -> Install.';
+
+  @override
+  String get mobilePwaInstallAction => 'got it';
+
+  @override
   String get deprivationEyebrow => 'deprivation';
 
   @override

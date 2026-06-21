@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart' show DragStartBehavior;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
+import '../feedback/dop_haptic_feedback.dart';
 import '../theme/context_ext.dart';
 import 'dop_text.dart';
 
@@ -46,7 +46,7 @@ class DopScaleSelector extends StatelessWidget {
   bool get _enabled => onChanged != null;
 
   void _select(int next) {
-    HapticFeedback.selectionClick();
+    DopHapticFeedback.selection();
     onChanged!(next);
   }
 

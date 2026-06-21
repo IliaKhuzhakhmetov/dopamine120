@@ -436,6 +436,30 @@ abstract class AppLocalizations {
   /// **'start deprivation'**
   String get homeOpenDeprivation;
 
+  /// No description provided for @mobilePwaInstallTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'install app'**
+  String get mobilePwaInstallTitle;
+
+  /// No description provided for @mobilePwaInstallIosBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Share -> Add to Home Screen -> Add.'**
+  String get mobilePwaInstallIosBody;
+
+  /// No description provided for @mobilePwaInstallAndroidBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Chrome menu -> Add to home screen -> Install.'**
+  String get mobilePwaInstallAndroidBody;
+
+  /// No description provided for @mobilePwaInstallAction.
+  ///
+  /// In en, this message translates to:
+  /// **'got it'**
+  String get mobilePwaInstallAction;
+
   /// No description provided for @deprivationEyebrow.
   ///
   /// In en, this message translates to:

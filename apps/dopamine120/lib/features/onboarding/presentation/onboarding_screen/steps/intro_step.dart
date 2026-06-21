@@ -4,7 +4,6 @@ import 'package:app_logger/app_logger.dart';
 import 'package:core/core.dart';
 import 'package:dopamine_ui/dopamine_ui.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../l10n/l10n.dart';
@@ -62,7 +61,7 @@ class _IntroStepState extends State<IntroStep>
   }
 
   Future<void> _playSound(String triggerId) async {
-    HapticFeedback.mediumImpact();
+    DopHapticFeedback.medium();
 
     try {
       await context.get<TriggerOnboardingSound>()(triggerId);

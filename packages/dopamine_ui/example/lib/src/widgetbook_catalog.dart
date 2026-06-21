@@ -5,6 +5,7 @@ import 'book/dop_app_bar.book.dart';
 import 'book/dop_back_button.book.dart';
 import 'book/dop_button.book.dart';
 import 'book/dop_checkbox.book.dart';
+import 'book/dop_deprivation_orb.book.dart';
 import 'book/dop_dialog.book.dart';
 import 'book/dop_dropdown.book.dart';
 import 'book/dop_focus_orb.book.dart';
@@ -15,6 +16,7 @@ import 'book/dop_list_tile.book.dart';
 import 'book/dop_responsive_pane.book.dart';
 import 'book/dop_scale_selector.book.dart';
 import 'book/dop_slider.book.dart';
+import 'book/dop_snack_bar.book.dart';
 import 'book/dop_step_indicator.book.dart';
 import 'book/dop_text.book.dart';
 import 'book/icons.book.dart';
@@ -33,11 +35,13 @@ final dopamineUiWidgetbookDirectories = <WidgetbookNode>[
   dopDialogBook,
   dopDropdownBook,
   dopCheckboxBook,
+  dopDeprivationOrbBook,
   dopHeaderWidgetBook,
   dopListTileBook,
   dopResponsivePaneBook,
   dopScaleSelectorBook,
   dopSliderBook,
+  dopSnackBarBook,
   dopFocusOrbBook,
   dopKnobBook,
   dopStepIndicatorBook,

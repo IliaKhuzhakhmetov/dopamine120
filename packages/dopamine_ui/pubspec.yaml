@@ -14,6 +14,7 @@ dependencies:
     sdk: flutter
   google_fonts: ^8.1.0
   phosphor_flutter: ^2.1.0
+  web_haptics: ^0.0.2
 
 dev_dependencies:
   flutter_test:

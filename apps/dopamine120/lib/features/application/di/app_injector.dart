@@ -5,6 +5,7 @@ import '../data/stores/app_key_value_store_factory.dart';
 import '../domain/entities/app_environment.dart';
 import 'deprivation_module.dart';
 import 'focus_module.dart';
+import 'mobile_pwa_install_prompt_module.dart';
 import 'onboarding_module.dart';
 import 'platform_module.dart';
 import 'sound_module.dart';
@@ -23,6 +24,7 @@ Injector createAppInjector({
   );
   registerPlatformModule(injector, platformBridge: platformBridge);
   registerThemeModule(injector);
+  registerMobilePwaInstallPromptModule(injector);
   registerSoundModule(injector);
   registerOnboardingModule(injector);
   registerDeprivationModule(injector);

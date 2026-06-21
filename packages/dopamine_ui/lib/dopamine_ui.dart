@@ -1,6 +1,7 @@
 /// DOPAMINE120 UI kit: design tokens, theme, and core widgets.
 library;
 
+export 'src/feedback/dop_haptic_feedback.dart';
 export 'src/theme/context_ext.dart';
 export 'src/theme/dop_colors.dart';
 export 'src/theme/dop_icons.dart';
@@ -18,6 +19,7 @@ export 'src/widgets/dop_back_button.dart';
 export 'src/widgets/dop_button.dart';
 export 'src/widgets/dop_checkbox.dart';
 export 'src/widgets/dop_confetti.dart';
+export 'src/widgets/dop_deprivation_orb.dart';
 export 'src/widgets/dop_dialog.dart';
 export 'src/widgets/dop_dropdown.dart';
 export 'src/widgets/dop_focus_orb.dart';
@@ -28,5 +30,6 @@ export 'src/widgets/dop_knob.dart';
 export 'src/widgets/dop_responsive_pane.dart';
 export 'src/widgets/dop_scale_selector.dart';
 export 'src/widgets/dop_slider.dart';
+export 'src/widgets/dop_snack_bar.dart';
 export 'src/widgets/dop_step_indicator.dart';
 export 'src/widgets/dop_text.dart';

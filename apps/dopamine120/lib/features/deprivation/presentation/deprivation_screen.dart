@@ -82,14 +82,33 @@ class _DeprivationScreenState extends State<DeprivationScreen> {
                               l10n.deprivationBody,
                               color: colors.inkSoft,
                             ),
-                            const SizedBox(height: 40),
-                            Text(
-                              _controller.remainingLabel,
-                              style: context.typo.giant.copyWith(
-                                letterSpacing: 1,
+                            const SizedBox(height: 24),
+                            SizedBox(
+                              height: 180,
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  DopDeprivationOrb(
+                                    size: 180,
+                                    color: colors.ink,
+                                    glowColor: colors.accent,
+                                    opacity: 0.5,
+                                    breathingSpeed: 0.8,
+                                    drift: 7,
+                                    spread: 1,
+                                    particleCount: 500,
+                                  ),
+                                  Text(
+                                    _controller.remainingLabel,
+                                    textAlign: TextAlign.center,
+                                    style: context.typo.giant.copyWith(
+                                      letterSpacing: 1,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            const SizedBox(height: 36),
+                            const SizedBox(height: 24),
                             SizedBox(
                               height: 48,
                               child: Row(
