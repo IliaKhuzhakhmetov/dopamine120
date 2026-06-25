@@ -66,6 +66,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   onPressed: () =>
                       context.router.push(const DeprivationRoute()),
                 ),
+                const SizedBox(height: 12),
+                DopButton.outline(
+                  label: l10n.homeOpenImagination,
+                  onPressed: () =>
+                      context.router.push(const ImaginationRoute()),
+                ),
                 const SizedBox(height: 24),
                 DopDropdown<AppTheme>(
                   label: l10n.homeThemeLabel,
@@ -76,7 +82,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       DopDropdownOption(
                         value: theme,
                         label: DopThemes.byId(theme.storageValue).label,
-                        subtitle: DopThemes.byId(theme.storageValue).description,
+                        subtitle: DopThemes.byId(
+                          theme.storageValue,
+                        ).description,
                       ),
                   ],
                 ),

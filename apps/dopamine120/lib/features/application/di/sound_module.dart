@@ -3,6 +3,7 @@ import 'package:sound_framework/sound_framework.dart';
 
 import '../../deprivation/data/audio/deprivation_procedural_voices.dart';
 import '../../focus/data/audio/focus_procedural_voices.dart';
+import '../../imagination/data/audio/imagination_procedural_voices.dart';
 import '../../onboarding/data/audio/onboarding_sound_pack.dart';
 import '../data/datasources/dopamine_background_audio_session.dart';
 
@@ -19,6 +20,7 @@ void registerSoundModule(Injector injector) {
         voices: [
           ...buildFocusProceduralVoices(),
           ...buildDeprivationProceduralVoices(),
+          ...buildImaginationProceduralVoices(),
         ],
       ),
     )

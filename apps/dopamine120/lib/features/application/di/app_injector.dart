@@ -6,6 +6,7 @@ import 'analytics_module.dart';
 import 'app_info_module.dart';
 import 'deprivation_module.dart';
 import 'focus_module.dart';
+import 'imagination_module.dart';
 import 'mobile_pwa_install_prompt_module.dart';
 import 'onboarding_module.dart';
 import 'sound_module.dart';
@@ -26,6 +27,7 @@ Injector createAppInjector({KeyValueStore? keyValueStore}) {
   registerSoundModule(injector);
   registerOnboardingModule(injector);
   registerDeprivationModule(injector);
+  registerImaginationModule(injector);
   registerFocusModule(injector);
 
   return injector;

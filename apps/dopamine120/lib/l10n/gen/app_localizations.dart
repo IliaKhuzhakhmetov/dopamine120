@@ -436,6 +436,12 @@ abstract class AppLocalizations {
   /// **'start deprivation'**
   String get homeOpenDeprivation;
 
+  /// No description provided for @homeOpenImagination.
+  ///
+  /// In en, this message translates to:
+  /// **'start imagination'**
+  String get homeOpenImagination;
+
   /// No description provided for @homeThemeLabel.
   ///
   /// In en, this message translates to:
@@ -579,6 +585,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'end'**
   String get deprivationEnd;
+
+  /// No description provided for @imaginationEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'imagination'**
+  String get imaginationEyebrow;
+
+  /// No description provided for @imaginationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Let the brain choose'**
+  String get imaginationTitle;
+
+  /// No description provided for @imaginationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Name what will fill the next focus.'**
+  String get imaginationBody;
+
+  /// No description provided for @imaginationModeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'mode'**
+  String get imaginationModeLabel;
+
+  /// No description provided for @imaginationModeAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'add'**
+  String get imaginationModeAdd;
+
+  /// No description provided for @imaginationModeDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'delete'**
+  String get imaginationModeDelete;
+
+  /// No description provided for @imaginationTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'block'**
+  String get imaginationTypeLabel;
+
+  /// No description provided for @imaginationTypeCore.
+  ///
+  /// In en, this message translates to:
+  /// **'core'**
+  String get imaginationTypeCore;
+
+  /// No description provided for @imaginationTypeGlass.
+  ///
+  /// In en, this message translates to:
+  /// **'glass'**
+  String get imaginationTypeGlass;
+
+  /// No description provided for @imaginationTypeGoo.
+  ///
+  /// In en, this message translates to:
+  /// **'goo'**
+  String get imaginationTypeGoo;
+
+  /// No description provided for @imaginationThemeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'theme'**
+  String get imaginationThemeLabel;
+
+  /// No description provided for @imaginationDroneLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'drone'**
+  String get imaginationDroneLabel;
+
+  /// No description provided for @imaginationTimerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Imagination timer'**
+  String get imaginationTimerLabel;
+
+  /// No description provided for @imaginationStart.
+  ///
+  /// In en, this message translates to:
+  /// **'start'**
+  String get imaginationStart;
+
+  /// No description provided for @imaginationSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'skip'**
+  String get imaginationSkip;
+
+  /// No description provided for @imaginationNext.
+  ///
+  /// In en, this message translates to:
+  /// **'next'**
+  String get imaginationNext;
+
+  /// No description provided for @imaginationMute.
+  ///
+  /// In en, this message translates to:
+  /// **'Mute the imagination scene'**
+  String get imaginationMute;
+
+  /// No description provided for @imaginationUnmute.
+  ///
+  /// In en, this message translates to:
+  /// **'Unmute the imagination scene'**
+  String get imaginationUnmute;
 
   /// No description provided for @focusEyebrow.
   ///

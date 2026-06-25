@@ -194,6 +194,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeOpenDeprivation => 'start deprivation';
 
   @override
+  String get homeOpenImagination => 'start imagination';
+
+  @override
   String get homeThemeLabel => 'theme';
 
   @override
@@ -268,6 +271,60 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deprivationEnd => 'end';
+
+  @override
+  String get imaginationEyebrow => 'imagination';
+
+  @override
+  String get imaginationTitle => 'Let the brain choose';
+
+  @override
+  String get imaginationBody => 'Name what will fill the next focus.';
+
+  @override
+  String get imaginationModeLabel => 'mode';
+
+  @override
+  String get imaginationModeAdd => 'add';
+
+  @override
+  String get imaginationModeDelete => 'delete';
+
+  @override
+  String get imaginationTypeLabel => 'block';
+
+  @override
+  String get imaginationTypeCore => 'core';
+
+  @override
+  String get imaginationTypeGlass => 'glass';
+
+  @override
+  String get imaginationTypeGoo => 'goo';
+
+  @override
+  String get imaginationThemeLabel => 'theme';
+
+  @override
+  String get imaginationDroneLabel => 'drone';
+
+  @override
+  String get imaginationTimerLabel => 'Imagination timer';
+
+  @override
+  String get imaginationStart => 'start';
+
+  @override
+  String get imaginationSkip => 'skip';
+
+  @override
+  String get imaginationNext => 'next';
+
+  @override
+  String get imaginationMute => 'Mute the imagination scene';
+
+  @override
+  String get imaginationUnmute => 'Unmute the imagination scene';
 
   @override
   String get focusEyebrow => 'focus';

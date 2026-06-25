@@ -92,6 +92,22 @@ class HomeRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [ImaginationScreen]
+class ImaginationRoute extends PageRouteInfo<void> {
+  const ImaginationRoute({List<PageRouteInfo>? children})
+    : super(ImaginationRoute.name, initialChildren: children);
+
+  static const String name = 'ImaginationRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const ImaginationScreen();
+    },
+  );
+}
+
+/// generated route for
 /// [OnboardingScreen]
 class OnboardingRoute extends PageRouteInfo<OnboardingRouteArgs> {
   OnboardingRoute({
