@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'dop_colors.dart';
+import 'dop_block_field_theme.dart';
 import 'dop_icons.dart';
 import 'dop_knob_theme.dart';
 import 'dop_radius.dart';
@@ -38,4 +39,8 @@ extension DopContext on BuildContext {
 
   /// The [DopSliderTheme] of the active theme.
   DopSliderTheme get sliderTheme => Theme.of(this).extension<DopSliderTheme>()!;
+
+  /// The [DopBlockFieldTheme] of the active theme.
+  DopBlockFieldTheme get blockFieldTheme =>
+      Theme.of(this).extension<DopBlockFieldTheme>()!;
 }

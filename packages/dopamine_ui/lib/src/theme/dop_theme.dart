@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'dop_block_field_theme.dart';
 import 'dop_knob_theme.dart';
 import 'dop_slider_theme.dart';
 import 'dop_theme_spec.dart';
@@ -98,6 +99,11 @@ abstract final class DopTheme {
       typo: typo,
       spacing: spacing,
       radius: radius,
+      stroke: stroke,
+    );
+    final blockFieldTheme = DopBlockFieldTheme.from(
+      colors: colors,
+      spacing: spacing,
       stroke: stroke,
     );
 
@@ -254,6 +260,7 @@ abstract final class DopTheme {
         icons,
         knobTheme,
         sliderTheme,
+        blockFieldTheme,
       ],
     );
   }

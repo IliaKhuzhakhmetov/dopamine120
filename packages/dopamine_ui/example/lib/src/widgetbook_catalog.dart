@@ -1,5 +1,6 @@
 import 'package:widgetbook/widgetbook.dart';
 
+import 'book/block_field.book.dart';
 import 'book/colors.book.dart';
 import 'book/dop_app_bar.book.dart';
 import 'book/dop_back_button.book.dart';
@@ -15,6 +16,7 @@ import 'book/dop_knob.book.dart';
 import 'book/dop_list_tile.book.dart';
 import 'book/dop_responsive_pane.book.dart';
 import 'book/dop_scale_selector.book.dart';
+import 'book/dop_segmented_control.book.dart';
 import 'book/dop_slider.book.dart';
 import 'book/dop_snack_bar.book.dart';
 import 'book/dop_step_indicator.book.dart';
@@ -40,10 +42,12 @@ final dopamineUiWidgetbookDirectories = <WidgetbookNode>[
   dopListTileBook,
   dopResponsivePaneBook,
   dopScaleSelectorBook,
+  dopSegmentedControlBook,
   dopSliderBook,
   dopSnackBarBook,
   dopFocusOrbBook,
   dopKnobBook,
+  blockFieldBook,
   dopStepIndicatorBook,
   colorsBook,
   iconsBook,

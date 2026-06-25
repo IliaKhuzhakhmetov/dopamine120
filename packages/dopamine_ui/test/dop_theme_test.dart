@@ -30,10 +30,11 @@ void main() {
   });
 
   group('DopTheme.light', () {
-    test('registers both token extensions', () {
+    test('registers token extensions', () {
       expect(theme.extension<DopColors>(), isNotNull);
       expect(theme.extension<DopTypography>(), isNotNull);
       expect(theme.extension<DopIcons>(), isNotNull);
+      expect(theme.extension<DopBlockFieldTheme>(), isNotNull);
     });
 
     test('maps surfaces and text onto the palette', () {
@@ -83,8 +84,8 @@ void main() {
   });
 
   group('DopThemes registry', () {
-    test('exposes the eight named themes', () {
-      expect(DopThemes.all, hasLength(8));
+    test('exposes the named themes', () {
+      expect(DopThemes.all, hasLength(9));
       expect(
         DopThemes.all.map((spec) => spec.id),
         containsAll(<String>[
@@ -96,6 +97,7 @@ void main() {
           'cosmos',
           'jungle',
           'cave',
+          'deprivation',
         ]),
       );
     });
@@ -117,6 +119,9 @@ void main() {
         expect(data.extension<DopRadius>(), isNotNull);
         expect(data.extension<DopStroke>(), isNotNull);
         expect(data.extension<DopIcons>(), isNotNull);
+        expect(data.extension<DopKnobTheme>(), isNotNull);
+        expect(data.extension<DopSliderTheme>(), isNotNull);
+        expect(data.extension<DopBlockFieldTheme>(), isNotNull);
       }
     });
 
@@ -141,10 +146,11 @@ void main() {
   });
 
   group('DopTheme.dark', () {
-    test('registers both token extensions', () {
+    test('registers token extensions', () {
       expect(darkTheme.extension<DopColors>(), isNotNull);
       expect(darkTheme.extension<DopTypography>(), isNotNull);
       expect(darkTheme.extension<DopIcons>(), isNotNull);
+      expect(darkTheme.extension<DopBlockFieldTheme>(), isNotNull);
     });
 
     test('maps surfaces, text, and icons onto the dark palette', () {
