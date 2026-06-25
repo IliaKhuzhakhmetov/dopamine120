@@ -57,6 +57,16 @@
   "homeBody": "Onboarding complete. The product starts here.",
   "homeOpenFocus": "enter focus",
   "homeOpenDeprivation": "start deprivation",
+  "homeThemeLabel": "theme",
+  "homeVersion": "v{version}",
+  "@homeVersion": {
+    "description": "App version shown on the home screen",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
   "mobilePwaInstallTitle": "install app",
   "mobilePwaInstallIosBody": "Share -> Add to Home Screen -> Add.",
   "mobilePwaInstallAndroidBody": "Chrome menu -> Add to home screen -> Install.",

@@ -4,15 +4,10 @@ import 'package:auto_route/auto_route.dart';
 import 'package:core/core.dart';
 import 'package:dopamine120/features/application/presentation/router/app_router.dart';
 import 'package:dopamine120/features/onboarding/domain/entities/action_readiness.dart';
-import 'package:dopamine120/features/onboarding/domain/entities/blockable_app.dart';
 import 'package:dopamine120/features/onboarding/domain/entities/onboarding_result.dart';
-import 'package:dopamine120/features/onboarding/domain/entities/permission_status.dart';
 import 'package:dopamine120/features/onboarding/domain/repositories/onboarding_repository.dart';
 import 'package:dopamine120/features/onboarding/domain/repositories/onboarding_sound_repository.dart';
 import 'package:dopamine120/features/onboarding/domain/usecases/complete_onboarding.dart';
-import 'package:dopamine120/features/onboarding/domain/usecases/get_health_access_status.dart';
-import 'package:dopamine120/features/onboarding/domain/usecases/request_health_access.dart';
-import 'package:dopamine120/features/onboarding/domain/usecases/request_setup_access.dart';
 import 'package:dopamine120/features/onboarding/domain/usecases/save_action_readiness.dart';
 import 'package:dopamine120/features/onboarding/domain/usecases/trigger_onboarding_sound.dart';
 import 'package:dopamine120/l10n/l10n.dart';
@@ -253,14 +248,10 @@ void main() {
     await tester.pump();
 
     expect(result?.readiness.score, ActionReadiness.neutralScore);
-    expect(result?.setupAccessStatus, PermissionStatus.idle);
-    expect(result?.healthAccessStatus, PermissionStatus.idle);
-    expect(repository.setupRequests, 0);
-    expect(repository.healthRequests, 0);
     expect(repository.completed, isTrue);
   });
 
-  testWidgets('skip completes onboarding without requesting permissions', (
+  testWidgets('skip completes onboarding', (
     tester,
   ) async {
     final repository = _FakeOnboardingRepository();
@@ -279,10 +270,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(result?.readiness.score, ActionReadiness.neutralScore);
-    expect(result?.setupAccessStatus, PermissionStatus.idle);
-    expect(result?.healthAccessStatus, PermissionStatus.idle);
-    expect(repository.setupRequests, 0);
-    expect(repository.healthRequests, 0);
     expect(repository.completed, isTrue);
   });
 }
@@ -396,15 +383,6 @@ class _OnboardingHost extends StatelessWidget {
       ..registerLazySingleton<SaveActionReadiness>(
         (_) => SaveActionReadiness(repository),
       )
-      ..registerLazySingleton<GetHealthAccessStatus>(
-        (_) => GetHealthAccessStatus(repository),
-      )
-      ..registerLazySingleton<RequestHealthAccess>(
-        (_) => RequestHealthAccess(repository),
-      )
-      ..registerLazySingleton<RequestSetupAccess>(
-        (_) => RequestSetupAccess(repository),
-      )
       ..registerLazySingleton<CompleteOnboarding>(
         (_) => CompleteOnboarding(repository),
       )
@@ -443,55 +421,12 @@ class _FakeOnboardingSoundRepository implements OnboardingSoundRepository {
 }
 
 class _FakeOnboardingRepository implements OnboardingRepository {
-  _FakeOnboardingRepository({
-    Future<PermissionStatus>? setupPermission,
-    Future<PermissionStatus>? healthPermission,
-  }) : _setupPermission =
-           setupPermission ?? Future.value(PermissionStatus.denied),
-       _healthPermission =
-           healthPermission ?? Future.value(PermissionStatus.granted);
-
-  final Future<PermissionStatus> _setupPermission;
-  final Future<PermissionStatus> _healthPermission;
-
   ActionReadiness? savedReadiness;
-  List<BlockableApp> savedApps = const [];
-  List<BlockableApp> enabledApps = const [];
-  var setupRequests = 0;
-  var healthRequests = 0;
   var completed = false;
-
-  @override
-  Future<List<BlockableApp>> blockableApps() async => const [];
-
-  @override
-  Future<void> enableBlocking(List<BlockableApp> apps) async {
-    enabledApps = apps;
-  }
 
   @override
   Future<void> markComplete() async {
     completed = true;
-  }
-
-  @override
-  Future<PermissionStatus> requestSetupAccess() {
-    setupRequests++;
-    return _setupPermission;
-  }
-
-  @override
-  Future<PermissionStatus> healthAccessStatus() async => PermissionStatus.idle;
-
-  @override
-  Future<PermissionStatus> requestHealthAccess() {
-    healthRequests++;
-    return _healthPermission;
-  }
-
-  @override
-  Future<void> saveBlockedApps(List<BlockableApp> apps) async {
-    savedApps = apps;
   }
 
   @override

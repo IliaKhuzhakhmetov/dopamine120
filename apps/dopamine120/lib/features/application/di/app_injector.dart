@@ -1,29 +1,25 @@
 import 'package:core/core.dart';
-import 'package:platform_bridge/platform_bridge.dart';
 
 import '../data/stores/app_key_value_store_factory.dart';
 import '../domain/entities/app_environment.dart';
 import 'analytics_module.dart';
+import 'app_info_module.dart';
 import 'deprivation_module.dart';
 import 'focus_module.dart';
 import 'mobile_pwa_install_prompt_module.dart';
 import 'onboarding_module.dart';
-import 'platform_module.dart';
 import 'sound_module.dart';
 import 'storage_module.dart';
 import 'theme_module.dart';
 
-Injector createAppInjector({
-  KeyValueStore? keyValueStore,
-  PlatformBridge? platformBridge,
-}) {
+Injector createAppInjector({KeyValueStore? keyValueStore}) {
   final injector = Injector();
 
   registerStorageModule(
     injector,
     keyValueStore: keyValueStore ?? InMemoryKeyValueStore(),
   );
-  registerPlatformModule(injector, platformBridge: platformBridge);
+  registerAppInfoModule(injector);
   registerAnalyticsModule(injector);
   registerThemeModule(injector);
   registerMobilePwaInstallPromptModule(injector);
@@ -37,14 +33,10 @@ Injector createAppInjector({
 
 Future<Injector> createRuntimeInjector({
   required AppEnvironment environment,
-  PlatformBridge? platformBridge,
 }) async {
   final keyValueStore = await const AppKeyValueStoreFactory().create(
     environment,
   );
 
-  return createAppInjector(
-    keyValueStore: keyValueStore,
-    platformBridge: platformBridge,
-  );
+  return createAppInjector(keyValueStore: keyValueStore);
 }

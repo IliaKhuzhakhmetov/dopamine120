@@ -8,7 +8,7 @@ import '../scenes/focus_scene.dart';
 /// A no-op [AmbienceRepository] for tests and native-free development.
 ///
 /// Records the last requested mix so callers can assert against it without a
-/// real audio engine. Mirrors `PlatformBridgeFake`.
+/// real audio engine.
 class SilentAmbienceRepository implements AmbienceRepository {
   SilentAmbienceRepository({SceneConfig scene = focusScene}) : _scene = scene;
 

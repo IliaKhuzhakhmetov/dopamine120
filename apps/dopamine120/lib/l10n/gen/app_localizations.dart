@@ -436,6 +436,18 @@ abstract class AppLocalizations {
   /// **'start deprivation'**
   String get homeOpenDeprivation;
 
+  /// No description provided for @homeThemeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'theme'**
+  String get homeThemeLabel;
+
+  /// App version shown on the home screen
+  ///
+  /// In en, this message translates to:
+  /// **'v{version}'**
+  String homeVersion(String version);
+
   /// No description provided for @mobilePwaInstallTitle.
   ///
   /// In en, this message translates to:

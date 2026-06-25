@@ -194,6 +194,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeOpenDeprivation => 'start deprivation';
 
   @override
+  String get homeThemeLabel => 'theme';
+
+  @override
+  String homeVersion(String version) {
+    return 'v$version';
+  }
+
+  @override
   String get mobilePwaInstallTitle => 'install app';
 
   @override

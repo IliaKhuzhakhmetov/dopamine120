@@ -7,9 +7,6 @@ import 'package:flutter/material.dart';
 import '../../../../l10n/l10n.dart';
 import '../../domain/entities/onboarding_result.dart';
 import '../../domain/usecases/complete_onboarding.dart';
-import '../../domain/usecases/get_health_access_status.dart';
-import '../../domain/usecases/request_health_access.dart';
-import '../../domain/usecases/request_setup_access.dart';
 import '../../domain/usecases/save_action_readiness.dart';
 import '../controller/onboarding_controller.dart';
 import 'steps/attention_step.dart';
@@ -45,12 +42,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
     _controller = OnboardingController(
       saveActionReadiness: injector.get<SaveActionReadiness>(),
-      getHealthAccessStatus: injector.get<GetHealthAccessStatus>(),
-      requestHealthAccess: injector.get<RequestHealthAccess>(),
-      requestSetupAccess: injector.get<RequestSetupAccess>(),
       completeOnboarding: injector.get<CompleteOnboarding>(),
     );
-    _controller.init();
     _pageController = PageController();
   }
 
